@@ -31,8 +31,8 @@ case class ModelProperties(name: String,
                   required: Boolean = true)
 
 case class Operation(httpMethod: String,
-                     responseClass: String,
                      summary: String,
+                     responseClass: String = "void",
                      notes: Option[String] = None,
                      deprecated: Boolean = false,
                      nickname: Option[String] = None,
