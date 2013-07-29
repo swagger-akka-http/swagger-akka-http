@@ -32,10 +32,12 @@ import ReflectionUtils._
 import org.json4s.Formats
 import org.json4s.DefaultFormats
 import org.json4s._
-import org.json4s.native.JsonMethods._
+import org.json4s.jackson.JsonMethods._
 import spray.httpx.Json4sSupport
 import com.typesafe.scalalogging.slf4j.Logging
 import com.wordnik.swagger.annotations.ApiClass
+import com.wordnik.swagger.annotations.ApiProperty
+import java.util.Date
 
 trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   def apiTypes: Seq[Type]
@@ -52,12 +54,51 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
     (name, modelType) <- modelTypes
     classAnnotation <- getClassAnnotation[ApiClass](modelType)
   } yield {
+    val fieldAnnotationsSymbols = getAllFieldAnnotations[ApiProperty](modelType)
+    val modelProperties = (for((annotation, symbol) <- fieldAnnotationsSymbols) yield {
+      val description = getStringJavaAnnotation("value", annotation).get
+      val modelName = symbol.name.decoded
+      val optionType = extractOptionType(symbol)
+      val required = optionType.isEmpty
+      val modelType = optionType.getOrElse(symbol.typeSignature)
+      val modelTypeName = getModelTypeName(modelType)
+      (modelName, ModelProperty(description = description, required = required, `type` = modelType.typeSymbol.name.decoded))
+    }).toMap
+    
     (name, Model(
       id = name, 
       description = getStringJavaAnnotation("description", classAnnotation).get,
-      properties = Map[String, ModelProperties]()
+      properties = modelProperties
     ))
   }).toMap
+  
+  private def getModelTypeName(modelType: Type): String = {
+    val typeName = modelType.typeSymbol.name.decoded 
+    if(modelType <:< typeOf[Seq[_]] || modelType <:< typeOf[Set[_]] || modelType <:< typeOf[Array[_]]) {
+      //TODO: must handle inner type of Seq, Set, or Array
+      if(typeName == "Seq") "List" else typeName
+    } else if(
+      modelType =:= typeOf[Byte] || modelType =:= typeOf[Boolean] || modelType =:= typeOf[Int] ||
+      modelType =:= typeOf[Long] || modelType =:= typeOf[Float] || modelType =:= typeOf[Double] || 
+      modelType =:= typeOf[String] || modelType =:= typeOf[Date]
+    ) {
+      typeName
+    } else if(modelTypes.contains(typeName)) {
+      typeName 
+    } else {
+      throw new UnsupportedTypeSignature(s"$modelType") 
+    }
+  }
+  
+  private def extractOptionType(symbol: TermSymbol): Option[Type] = symbol.typeSignature match {
+    case TypeRef(_, tpe, args) =>
+      if(tpe == typeOf[Option[_]].asInstanceOf[ExistentialTypeApi].typeSymbol) {
+        Some(args.head)
+      } else {
+        None
+      }
+    case _ => None
+  }
   
   final def routes: Route = get { pathPrefix(basePath) {
     val (apiRoutes, listApis) = buildApiRoutes
@@ -84,14 +125,14 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
         getArrayJavaAnnotation("value", apiParamAnnotation) match {
           case Some(annotationParams) =>
             val params = annotationParams.map(annotationParam => Parameter(
-		      name        = getStringJavaAnnotation("name", annotationParam).get, 
-		      description = getStringJavaAnnotation("value", annotationParam).get, 
-		      dataType    = getStringJavaAnnotation("dataType", annotationParam).get,
-		      paramType   = getStringJavaAnnotation("paramType", annotationParam).get
-		      /*required = annotationParam.required,
-		      allowMultiple = annotationParam.allowMultiple,
-		      defaultValue = if(annotationParam.defaultValue == "") None else Some(annotationParam.defaultValue)*/
-		    ))
+  		        name        = getStringJavaAnnotation("name", annotationParam).get, 
+    		      description = getStringJavaAnnotation("value", annotationParam).get, 
+    		      dataType    = getStringJavaAnnotation("dataType", annotationParam).get,
+    		      paramType   = getStringJavaAnnotation("paramType", annotationParam).get
+    		      /*required = annotationParam.required,
+    		      allowMultiple = annotationParam.allowMultiple,
+    		      defaultValue = if(annotationParam.defaultValue == "") None else Some(annotationParam.defaultValue)*/
+    		    ))
             val pathParams = params.filter(_.paramType == "path").map(_.name)
             (pathParams.foldLeft(path)(_ + "/{" + _ + "}"), params.toList)
           case None =>
@@ -101,7 +142,8 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
     }
   }
     
-  private def buildApiRoute(listApi: ListApi, classType: Type): Route = path(listApi.path.drop(1)) {
+  private def buildApiRoute(listApi: ListApi, classType: Type): Route = path(resourcePath / listApi.path.drop(1)) {
+     logger.info(s"${resourcePath}${listApi.path}")
      var apis = Map[String, ListApi]()
      var models = Map[String, Model]()
      //Get all methods with an ApiOperation and iterate.
@@ -112,9 +154,12 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
      } {
        //Extract fullpath with and path params and list of optional params
        val (fullPath, params) = getPathAndParams(listApi.path, classType, termSymbol)
+       //TODO: Allow annotation to override nickname
+       val methodName = termSymbol.name.decoded
        val currentApiOperation = Operation(
            httpMethod = httpMethod,
            summary = summary,
+           nickname = methodName,
            responseClass = getStringJavaAnnotation("responseClass", apiOperationAnnotation).getOrElse("void"),
            parameters = params
        )
@@ -134,15 +179,17 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
          models += model.id -> model
        }
      }
-     
-     complete(ApiListing(
+     val apiListing = ApiListing(
        swaggerVersion = swaggerVersion,
        apiVersion = apiVersion,
        basePath = s"http://${host}/${basePath}",
        resourcePath = listApi.path,
        apis = apis.values.toList,
        models = if(models.size > 0) Some(models) else None
-     ))
+     )
+    
+     println(apiListing)
+     complete(apiListing)
   }
     
   private def buildApiRoutes: (Route, Seq[ListApi]) = {
@@ -155,4 +202,6 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
     
     (route, listApis.map(_._1))
   }
+  
+  class UnsupportedTypeSignature(msg: String) extends Exception(msg)
 }

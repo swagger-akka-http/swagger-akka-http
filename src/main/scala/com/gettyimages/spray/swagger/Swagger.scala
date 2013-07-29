@@ -35,22 +35,22 @@ case class ResourceListing(swaggerVersion: String,
  
 case class Model(id: String,
                  description: String,
-                 properties: Map[String, ModelProperties]) {
+                 properties: Map[String, ModelProperty]) {
 }
 
-case class ModelProperties(name: String,
+case class ModelProperty(
                   description: String,
                   `type`: String,
                   defaultValue: Option[String] = None,
-                  enum: List[String] = Nil,
+                  enum: Option[List[String]] = None,
                   required: Boolean = true)
 
 case class Operation(httpMethod: String,
                      summary: String,
+                     nickname: String,
                      responseClass: String = "void",
                      notes: Option[String] = None,
                      deprecated: Boolean = false,
-                     nickname: Option[String] = None,
                      parameters: List[Parameter] = Nil,
                      errorResponses: List[Error] = Nil)
 
