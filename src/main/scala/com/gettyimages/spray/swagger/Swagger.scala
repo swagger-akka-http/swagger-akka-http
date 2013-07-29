@@ -28,10 +28,9 @@ case class ApiListing(swaggerVersion: String,
 						apis: List[ListApi],
 						models: Option[Map[String, Model]])
 					
-case class ResourceListing(
-    swaggerVersion: String,
-    apiVersion: String,
-    apis: List[ListApi]
+case class ResourceListing(swaggerVersion: String,
+                             apiVersion: String,
+                             apis: List[ListApi]
 )
  
 case class Model(id: String,

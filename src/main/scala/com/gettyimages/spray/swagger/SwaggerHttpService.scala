@@ -35,9 +35,11 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 import spray.httpx.Json4sSupport
 import com.typesafe.scalalogging.slf4j.Logging
+import com.wordnik.swagger.annotations.ApiClass
 
 trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   def apiTypes: Seq[Type]
+  def modelTypes: Map[String, Type]
   def apiVersion: String
   def swaggerVersion: String
   def basePath: String 
@@ -45,6 +47,17 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   def host: String
   
   implicit def json4sFormats: Formats = DefaultFormats
+  
+  private val modelJsonMap = (for {
+    (name, modelType) <- modelTypes
+    classAnnotation <- getClassAnnotation[ApiClass](modelType)
+  } yield {
+    (name, Model(
+      id = name, 
+      description = getStringJavaAnnotation("description", classAnnotation).get,
+      properties = Map[String, ModelProperties]()
+    ))
+  }).toMap
   
   final def routes: Route = get { pathPrefix(basePath) {
     val (apiRoutes, listApis) = buildApiRoutes
@@ -58,12 +71,12 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   private def buildResourceListApis(
     swaggerApiAnnotations: Seq[(Annotation, Type)]
   ): Seq[(ListApi, Type)] = for {
-      (apiAnnotation, classType) <- swaggerApiAnnotations 
-      apiPath <- getStringJavaAnnotation("value", apiAnnotation)
-      description <- getStringJavaAnnotation("description", apiAnnotation)
-    } yield {
-        (ListApi(apiPath, Some(description), None), classType)
-    }
+    (apiAnnotation, classType) <- swaggerApiAnnotations 
+    apiPath <- getStringJavaAnnotation("value", apiAnnotation)
+    description <- getStringJavaAnnotation("description", apiAnnotation)
+  } yield {
+    (ListApi(apiPath, Some(description), None), classType)
+  }
     
   private def getPathAndParams(path: String, classType: Type, termSymbol: Symbol): (String, List[Parameter]) = {
     getMethodAnnotation[ApiParamsImplicit](classType)(termSymbol.name.decoded) match {
@@ -90,6 +103,7 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
     
   private def buildApiRoute(listApi: ListApi, classType: Type): Route = path(listApi.path.drop(1)) {
      var apis = Map[String, ListApi]()
+     var models = Map[String, Model]()
      //Get all methods with an ApiOperation and iterate.
      for {
        (apiOperationAnnotation, termSymbol) <- getAllMethodAnnotations[ApiOperation](classType)
@@ -104,7 +118,6 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
            responseClass = getStringJavaAnnotation("responseClass", apiOperationAnnotation).getOrElse("void"),
            parameters = params
        )
-       println(currentApiOperation)
        //This indicates a new operation for a prexisting api listing, just add it
        if(apis.contains(fullPath)) {
          val prevApi = apis(fullPath)
@@ -112,11 +125,15 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
          apis += fullPath -> prevApi.copy(operations = Some(newOperations))
        //First operation for this type of api listing, create it.
        } else {
-	     apis += fullPath -> ListApi(fullPath, None, Some(List(currentApiOperation)))
+  	     apis += fullPath -> ListApi(fullPath, None, Some(List(currentApiOperation)))
+       }
+     
+       val responseClass: String = currentApiOperation.responseClass
+       if((responseClass != "void") && modelJsonMap.contains(responseClass)) {
+         val model = modelJsonMap(responseClass)
+         models += model.id -> model
        }
      }
-     
-     println(apis)
      
      complete(ApiListing(
        swaggerVersion = swaggerVersion,
@@ -124,7 +141,7 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
        basePath = s"http://${host}/${basePath}",
        resourcePath = listApi.path,
        apis = apis.values.toList,
-       models = None
+       models = if(models.size > 0) Some(models) else None
      ))
   }
     
