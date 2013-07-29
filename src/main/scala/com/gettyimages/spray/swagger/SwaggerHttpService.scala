@@ -49,18 +49,27 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
         (ListApi(apiPath, Some(description), None), classType)
     }
     
-  private def getPathAndParams(path: String, classType: Type, termSymbol: Symbol): (String, Array[ApiParamImplicit]) = {
+  private def getPathAndParams(path: String, classType: Type, termSymbol: Symbol): (String, List[Parameter]) = {
     getMethodAnnotation[ApiParamsImplicit](classType)(termSymbol.name.decoded) match {
-         case Some(apiParamAnnotation) => 
-           getArrayJavaAnnotation[ApiParamImplicit]("value", apiParamAnnotation) match {
-             case Some(params) =>
-               val pathParams = params.filter(_.paramType == "path").map(_.name)
-               (pathParams.foldLeft(path)(_ + "/{" + _ + "}"), params)
-             case None =>
-               (path, Array[ApiParamImplicit]())
-           }
-         case None => (path, Array[ApiParamImplicit]())
-       }
+      case Some(apiParamAnnotation) => 
+        getArrayJavaAnnotation("value", apiParamAnnotation) match {
+          case Some(annotationParams) =>
+            val params = annotationParams.map(annotationParam => Parameter(
+		      name        = getStringJavaAnnotation("name", annotationParam).get, 
+		      description = getStringJavaAnnotation("value", annotationParam).get, 
+		      dataType    = getStringJavaAnnotation("dataType", annotationParam).get,
+		      paramType   = getStringJavaAnnotation("paramType", annotationParam).get
+		      /*required = annotationParam.required,
+		      allowMultiple = annotationParam.allowMultiple,
+		      defaultValue = if(annotationParam.defaultValue == "") None else Some(annotationParam.defaultValue)*/
+		    ))
+            val pathParams = params.filter(_.paramType == "path").map(_.name)
+            (pathParams.foldLeft(path)(_ + "/{" + _ + "}"), params.toList)
+          case None =>
+            (path, List[Parameter]())
+         }
+      case None => (path, List[Parameter]())
+    }
   }
     
   private def buildApiRoute(listApi: ListApi, classType: Type): Route = path(listApi.path.drop(1)) {
@@ -75,7 +84,9 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
        val (fullPath, params) = getPathAndParams(listApi.path, classType, termSymbol)
        val currentApiOperation = Operation(
            httpMethod = httpMethod,
-           summary = summary
+           summary = summary,
+           responseClass = getStringJavaAnnotation("responseClass", apiOperationAnnotation).getOrElse("void"),
+           parameters = params
        )
        println(currentApiOperation)
        //This indicates a new operation for a prexisting api listing, just add it
@@ -102,7 +113,6 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   }
     
   private def buildApiRoutes: (Route, Seq[ListApi]) = {
-    println(apiTypes)
     val swaggerApiAnnotations = apiTypes.flatMap(t => getClassAnnotation[Api](t).map(a => (a, t)))
     val listApis = buildResourceListApis(swaggerApiAnnotations)
     

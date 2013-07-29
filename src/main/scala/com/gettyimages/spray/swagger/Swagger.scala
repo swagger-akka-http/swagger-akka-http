@@ -50,8 +50,14 @@ case class Error(code: Int,
 case class Parameter(name: String,
                  description: String,
                  dataType: String,
-                 notes: Option[String] = None,
                  paramType: String,
+                 notes: Option[String] = None,
                  defaultValue: Option[String] = None,                     
                  required: Boolean = true,
-                 allowMultiple: Boolean = false)	
+                 allowMultiple: Boolean = false) {
+  require(
+    paramType == "path" || paramType == "query" || paramType == "body" || 
+    paramType == "header" || paramType == "form",
+    s"Invalid ParamType: ${paramType}"
+  )
+}

@@ -58,7 +58,15 @@ object ReflectionUtils {
     name: String, annotationValues: ListMap[Name, JavaArgument]
   ): Option[T] = annotationValues(name: TermName) match {
     case (LiteralArgument(Constant(x))) => Some(x.asInstanceOf[T])
-    case x                              => println(x); None
+    case x                              => None
+  }
+  private def getArrayJavaAnnotation(
+    name: String, annotationValues: ListMap[Name, JavaArgument]
+  ): Option[Array[Annotation]] = annotationValues(name: TermName) match {
+    case (ArrayArgument(arr)) => Some(arr.map( _ match {
+      case NestedArgument(ann) => ann
+    }))
+    case x 					  => None	
   }
   
   def getStringJavaAnnotation(name: String, annotation: Annotation): Option[String] = {
@@ -70,6 +78,6 @@ object ReflectionUtils {
   def getBooleanJavaAnnotation(name: String, annotation: Annotation): Option[Boolean] = 
     getLiteralJavaAnnotation(name, annotation.javaArgs)
     
-  def getArrayJavaAnnotation[T](name: String, annotation: Annotation): Option[Array[T]] =
-    getLiteralJavaAnnotation(name, annotation.javaArgs)
+  def getArrayJavaAnnotation(name: String, annotation: Annotation): Option[Array[Annotation]] =
+    getArrayJavaAnnotation(name, annotation.javaArgs)
 }
