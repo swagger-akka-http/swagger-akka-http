@@ -36,6 +36,11 @@ object ReflectionUtils {
     getSymbolAnnotation[K](objectType.typeSymbol.asClass)
   }
   
+  def hasClassAnnotation[K: TypeTag](objectType: Type): Boolean = {
+    val annotations = objectType.typeSymbol.asClass.annotations
+    annotations.find(_.tpe =:= typeOf[K]).isDefined
+  }
+  
   def getAllMethodAnnotations[K: TypeTag](objectType: Type): Seq[(Annotation, TermSymbol)] = 
     getAllDeclarationAnnotations[K](objectType, _.asTerm.isMethod, _.asTerm)
   

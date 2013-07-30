@@ -41,7 +41,7 @@ import java.util.Date
 
 trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   def apiTypes: Seq[Type]
-  def modelTypes: Map[String, Type]
+  def modelTypes: Seq[Type]
   def apiVersion: String
   def swaggerVersion: String
   def basePath: String 

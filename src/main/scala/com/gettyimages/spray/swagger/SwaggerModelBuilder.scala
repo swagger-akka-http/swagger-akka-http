@@ -1,3 +1,19 @@
+/**
+ * Copyright 2013 Getty Imges, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.gettyimages.spray.swagger
 
 import scala.reflect.runtime.universe._
@@ -6,14 +22,22 @@ import com.wordnik.swagger.annotations.ApiClass
 import java.util.Date
 import com.wordnik.swagger.annotations.ApiProperty
 
-class SwaggerModelBuilder(modelTypes: Map[String, Type]) {
+class SwaggerModelBuilder(modelTypes: Seq[Type]) {
+ 
+  //validate models
+  val modelAnnotationTypesMap = modelTypes.map(tpe => { getClassAnnotation[ApiClass](tpe) match {
+    case Some(annotation) =>
+      val value = getStringJavaAnnotation("value", annotation)
+      val key = value.getOrElse(tpe.typeSymbol.name.decoded)
+      (key, (annotation, getAllFieldAnnotations[ApiProperty](tpe), tpe))
+    case None =>
+      throw new IllegalArgumentException(
+        s"Model does not have ApiClass Annotation $tpe")
+  }}).toMap
   
-  def buildAll: Map[String, Model] = (for {
-    (name, modelType) <- modelTypes
-    classAnnotation <- getClassAnnotation[ApiClass](modelType)
-  } yield {
-    val fieldAnnotationsSymbols = getAllFieldAnnotations[ApiProperty](modelType)
-    val modelProperties = (for((annotation, symbol) <- fieldAnnotationsSymbols) yield {
+  def build(name: String): Option[Model] = modelAnnotationTypesMap.get(name).map(modelAnnotationType => {
+    val (classAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
+    val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
       val modelName = symbol.name.decoded
       val optionType = extractOptionType(symbol)
@@ -23,11 +47,15 @@ class SwaggerModelBuilder(modelTypes: Map[String, Type]) {
       (modelName, ModelProperty(description = description, required = required, `type` = modelType.typeSymbol.name.decoded))
     }).toMap
     
-    (name, Model(
+    Model(
       id = name, 
       description = getStringJavaAnnotation("description", classAnnotation).get,
       properties = modelProperties
-    ))
+    )
+  }) 
+  
+  def buildAll: Map[String, Model] = modelAnnotationTypesMap.keys.map(name => {
+    (name, build(name).get)
   }).toMap
   
   private def getModelTypeName(modelType: Type): (String, Option[(String, String)]) = {
