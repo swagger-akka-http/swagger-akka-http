@@ -49,56 +49,8 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   def host: String
   
   implicit def json4sFormats: Formats = DefaultFormats
-  
-  private val modelJsonMap = (for {
-    (name, modelType) <- modelTypes
-    classAnnotation <- getClassAnnotation[ApiClass](modelType)
-  } yield {
-    val fieldAnnotationsSymbols = getAllFieldAnnotations[ApiProperty](modelType)
-    val modelProperties = (for((annotation, symbol) <- fieldAnnotationsSymbols) yield {
-      val description = getStringJavaAnnotation("value", annotation).get
-      val modelName = symbol.name.decoded
-      val optionType = extractOptionType(symbol)
-      val required = optionType.isEmpty
-      val modelType = optionType.getOrElse(symbol.typeSignature)
-      val modelTypeName = getModelTypeName(modelType)
-      (modelName, ModelProperty(description = description, required = required, `type` = modelType.typeSymbol.name.decoded))
-    }).toMap
-    
-    (name, Model(
-      id = name, 
-      description = getStringJavaAnnotation("description", classAnnotation).get,
-      properties = modelProperties
-    ))
-  }).toMap
-  
-  private def getModelTypeName(modelType: Type): String = {
-    val typeName = modelType.typeSymbol.name.decoded 
-    if(modelType <:< typeOf[Seq[_]] || modelType <:< typeOf[Set[_]] || modelType <:< typeOf[Array[_]]) {
-      //TODO: must handle inner type of Seq, Set, or Array
-      if(typeName == "Seq") "List" else typeName
-    } else if(
-      modelType =:= typeOf[Byte] || modelType =:= typeOf[Boolean] || modelType =:= typeOf[Int] ||
-      modelType =:= typeOf[Long] || modelType =:= typeOf[Float] || modelType =:= typeOf[Double] || 
-      modelType =:= typeOf[String] || modelType =:= typeOf[Date]
-    ) {
-      typeName
-    } else if(modelTypes.contains(typeName)) {
-      typeName 
-    } else {
-      throw new UnsupportedTypeSignature(s"$modelType") 
-    }
-  }
-  
-  private def extractOptionType(symbol: TermSymbol): Option[Type] = symbol.typeSignature match {
-    case TypeRef(_, tpe, args) =>
-      if(tpe == typeOf[Option[_]].asInstanceOf[ExistentialTypeApi].typeSymbol) {
-        Some(args.head)
-      } else {
-        None
-      }
-    case _ => None
-  }
+ 
+  private val modelJsonMap = (new SwaggerModelBuilder(modelTypes)).buildAll
   
   final def routes: Route = get { pathPrefix(basePath) {
     val (apiRoutes, listApis) = buildApiRoutes
@@ -143,7 +95,6 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   }
     
   private def buildApiRoute(listApi: ListApi, classType: Type): Route = path(resourcePath / listApi.path.drop(1)) {
-     logger.info(s"${resourcePath}${listApi.path}")
      var apis = Map[String, ListApi]()
      var models = Map[String, Model]()
      //Get all methods with an ApiOperation and iterate.
@@ -187,8 +138,6 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
        apis = apis.values.toList,
        models = if(models.size > 0) Some(models) else None
      )
-    
-     println(apiListing)
      complete(apiListing)
   }
     
@@ -203,5 +152,4 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
     (route, listApis.map(_._1))
   }
   
-  class UnsupportedTypeSignature(msg: String) extends Exception(msg)
 }

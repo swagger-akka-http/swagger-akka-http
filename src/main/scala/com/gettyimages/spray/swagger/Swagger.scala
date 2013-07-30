@@ -43,7 +43,8 @@ case class ModelProperty(
                   `type`: String,
                   defaultValue: Option[String] = None,
                   enum: Option[List[String]] = None,
-                  required: Boolean = true)
+                  required: Boolean = true,
+                  items: Option[(String,String)] = None)
 
 case class Operation(httpMethod: String,
                      summary: String,
