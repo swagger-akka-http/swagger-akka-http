@@ -44,7 +44,7 @@ case class ModelProperty(
                   defaultValue: Option[String] = None,
                   enum: Option[List[String]] = None,
                   required: Boolean = true,
-                  items: Option[(String,String)] = None)
+                  items: Option[Map[String,String]] = None)
 
 case class Operation(httpMethod: String,
                      summary: String,

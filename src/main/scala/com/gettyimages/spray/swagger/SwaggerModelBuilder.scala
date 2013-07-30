@@ -41,10 +41,9 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
       val description = getStringJavaAnnotation("value", annotation).get
       val modelName = symbol.name.decoded
       val optionType = extractOptionType(symbol)
-      val required = optionType.isEmpty
-      val modelType = optionType.getOrElse(symbol.typeSignature)
-      val modelTypeName = getModelTypeName(modelType)
-      (modelName, ModelProperty(description = description, required = required, `type` = modelType.typeSymbol.name.decoded))
+      val required = getBooleanJavaAnnotation("required", annotation).getOrElse(optionType.isEmpty)
+      val (modelTypeName, items) = getModelTypeName(optionType.getOrElse(symbol.typeSignature))
+      (modelName, ModelProperty(description = description, required = required, `type` = modelTypeName, items = items.map(Map(_))))
     }).toMap
     
     Model(
@@ -63,7 +62,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
     if(modelType <:< typeOf[Seq[_]] || modelType <:< typeOf[Set[_]] || modelType <:< typeOf[Array[_]]) {
       //Doesn't handle nesting
       (if(modelType <:< typeOf[Seq[_]]) "List" else modelType.typeSymbol.name.decoded , 
-          Some(getLiteralOrComplexTypeName(modelType)))
+          Some(getLiteralOrComplexTypeName(modelType.asInstanceOf[TypeRefApi].args.head)))
     //Literal/Complex Type
     } else {
       (getLiteralOrComplexTypeName(modelType)._2, None)
@@ -80,7 +79,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
     ) {
       ("type", typeName)
     //Reference to complex model type
-    } else if(modelTypes.contains(typeName)) {
+    } else if(modelAnnotationTypesMap.contains(typeName)) {
       ("$ref", typeName)
     //Unknown type
     } else {

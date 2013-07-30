@@ -77,10 +77,11 @@ object ReflectionUtils {
   
   private def getLiteralJavaAnnotation[T: TypeTag](
     name: String, annotationValues: ListMap[Name, JavaArgument]
-  ): Option[T] = annotationValues(name: TermName) match {
+  ): Option[T] = annotationValues.get(name: TermName).flatMap(_ match {
     case (LiteralArgument(Constant(x))) => Some(x.asInstanceOf[T])
     case x                              => None
-  }
+  })
+  
   private def getArrayJavaAnnotation(
     name: String, annotationValues: ListMap[Name, JavaArgument]
   ): Option[Array[Annotation]] = annotationValues(name: TermName) match {
