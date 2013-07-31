@@ -25,12 +25,14 @@ import ReflectionUtils._
 class JavaAnnotationReflectionSpec extends WordSpec with ShouldMatchers {
   
   @TestJavaAnnotation(
-    booleanValue = true, stringValue = "hello", intValue = 10
+    booleanValue = true, stringValue = "hello", intValue = 10, 
+    arrayValue = Array(new ArrayTestJavaAnnotation("good"))
   )
   case class TestModel(
-      @(TestJavaAnnotation @field)(
-        booleanValue = false, stringValue = "world", intValue = -10
-      )
+    @(TestJavaAnnotation @field)(
+      booleanValue = false, stringValue = "world", intValue = -10,
+      arrayValue = Array(new ArrayTestJavaAnnotation("bye"))
+    )
       val testValue: String
   )
   
@@ -63,6 +65,12 @@ class JavaAnnotationReflectionSpec extends WordSpec with ShouldMatchers {
           getIntJavaAnnotation("intValue", annotation.get), 
           10
       )}
+      /*"have array properties be extractable" in {
+        testAnnotationProperty(
+          getArrayJavaAnnotation("arrayValue", annotation.get),
+          Array(getClassAnnotation[TestJavaAnnotation, ArrayTestJavaAnnotation].get)
+        )
+      } */
     }
     "it has a constructor level java annotation with @field" should {
       

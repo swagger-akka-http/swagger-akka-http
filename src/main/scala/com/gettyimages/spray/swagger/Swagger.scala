@@ -34,7 +34,7 @@ case class ResourceListing(swaggerVersion: String,
 )
  
 case class Model(id: String,
-                 description: String,
+                 description: Option[String],
                  properties: Map[String, ModelProperty]) {
 }
 

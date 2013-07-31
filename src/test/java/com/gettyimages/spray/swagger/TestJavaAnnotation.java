@@ -16,8 +16,16 @@
 
 package com.gettyimages.spray.swagger;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface TestJavaAnnotation {
   boolean booleanValue() default false;
   String stringValue() default "";
   int intValue() default 0;
+  ArrayTestJavaAnnotation[] arrayValue();
 }
