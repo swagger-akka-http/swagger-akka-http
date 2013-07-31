@@ -21,6 +21,7 @@ import ReflectionUtils._
 import com.wordnik.swagger.annotations.Api
 import com.wordnik.swagger.annotations.ApiParamsImplicit
 import com.wordnik.swagger.annotations.ApiOperation
+import spray.routing.HttpService
 
 class SwaggerApiBuilder(
   swaggerVersion: String,
@@ -33,6 +34,8 @@ class SwaggerApiBuilder(
   private val modelJsonMap = (new SwaggerModelBuilder(modelTypes)).buildAll
   
   val swaggerApiAnnotations = apiTypes.map(apiType => getClassAnnotation[Api](apiType) match {
+    case Some(annotation) if !(apiType  <:< typeOf[HttpService]) => 
+      throw new IllegalArgumentException(s"Class must mix with HttpServie")
     case Some(annotation) => (annotation, apiType)
     case None => throw new IllegalArgumentException(s"Class must have Api annotation: $apiType")
   })

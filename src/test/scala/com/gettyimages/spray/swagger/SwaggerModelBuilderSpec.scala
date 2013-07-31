@@ -12,7 +12,7 @@ import com.wordnik.swagger.annotations.ApiProperty
 
 
 class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
-  "SwaggerModelBuilder " when {
+  "A SwaggerModelBuilder " when {
     "passed a test model" should {
       "throw an IllegalArgumentException if it has no annotation" in {
          intercept[IllegalArgumentException] {
