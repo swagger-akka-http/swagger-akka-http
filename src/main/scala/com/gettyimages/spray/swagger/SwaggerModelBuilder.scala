@@ -35,13 +35,11 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
         s"Model does not have ApiClass Annotation $tpe")
   }}).toMap
   
-  println(modelAnnotationTypesMap)
-  
   def build(name: String): Option[Model] = modelAnnotationTypesMap.get(name).map(modelAnnotationType => {
     val (classAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
     val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
-      val modelName = symbol.name.decoded
+      val modelName = symbol.name.decoded.trim
       val optionType = extractOptionType(symbol)
       val required = getBooleanJavaAnnotation("required", annotation).getOrElse(optionType.isEmpty)
       val (modelTypeName, items) = getModelTypeName(optionType.getOrElse(symbol.typeSignature))
