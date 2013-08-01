@@ -102,4 +102,11 @@ object ReflectionUtils {
     
   def getArrayJavaAnnotation(name: String, annotation: Annotation): Option[Array[Annotation]] =
     getArrayJavaAnnotation(name, annotation.javaArgs)
+    
+  def valueSymbols[E <: Enumeration: TypeTag] = {
+    val valueType = typeOf[E#Value]
+    typeOf[E].members.filter(sym => !sym.isMethod &&
+      sym.typeSignature.baseType(valueType.typeSymbol) =:= valueType
+    )
+  }
 }

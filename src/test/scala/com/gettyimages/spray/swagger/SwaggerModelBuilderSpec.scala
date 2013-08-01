@@ -41,12 +41,13 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       }
       "has the correct ApiProperty annotations" in {
         implicit val model = buildAndGetModel("TestModel", typeOf[TestModel], typeOf[TestModelNode])
-        model.properties should have size (5)
+        model.properties should have size (6)
         checkProperty[String]("name", NameDescription)
         checkProperty[Int]("count", CountDescription)
         checkProperty[Boolean]("isStale", IsStaleDescription)
         checkProperty[Int]("offset", OffsetDescription)
         checkProperty[List[_]]("nodes", NodesDescription)
+        checkProperty[String]("enum", EnumDescription)
       }
     }
     "passed multiple test models" should {
@@ -86,6 +87,7 @@ object SwaggerModelBuilderSpecValues {
   final val IsStaleDescription = "isStale9325"
   final val OffsetDescription = "offestDescription9034"
   final val NodesDescription = "nodesDescription9043"
+  final val EnumDescription = "enumDescription2135432"
 }
 
 case class TestModelWithNoAnnotation
@@ -108,10 +110,18 @@ case class TestModel(
     val offset: Option[Int] = None,
     @(ApiProperty @field)(value = NodesDescription)
     val nodes: List[TestModelNode] = List[TestModelNode](),
+    @(ApiProperty @field)(value = EnumDescription)
+    val enum: TestEnum.TestEnum = TestEnum.AEnum,
     
     val noAnnotationProperty: String,
     val secondNoAnnotationProperty: String
 )
+
+object TestEnum extends Enumeration {
+  type TestEnum = Value
+  val AEnum = Value("AEnum")
+  val BEnum = Value("BEnum")
+}
 
 @ApiClass
 case class TestModelNode(

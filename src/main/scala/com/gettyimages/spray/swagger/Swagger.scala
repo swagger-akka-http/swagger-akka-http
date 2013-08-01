@@ -44,7 +44,18 @@ case class ModelProperty(
                   defaultValue: Option[String] = None,
                   enum: Option[List[String]] = None,
                   required: Boolean = true,
-                  items: Option[Map[String,String]] = None)
+                  items: Option[Map[String,String]] = None,
+                  allowableValues: Option[AllowableValue] = None)
+                  
+object AllowableValue {
+  def buildList(values: Seq[String]) = AllowableValue("LIST", values = Some(values))
+}
+case class AllowableValue(
+  valueType: String,
+  values: Option[Seq[String]] = None,
+  min: Option[Int] = None,
+  max: Option[Int] = None
+)
 
 case class Operation(httpMethod: String,
                      summary: String,

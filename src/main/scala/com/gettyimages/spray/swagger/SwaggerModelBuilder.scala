@@ -42,8 +42,15 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
       val modelName = symbol.name.decoded.trim
       val optionType = extractOptionType(symbol)
       val required = getBooleanJavaAnnotation("required", annotation).getOrElse(optionType.isEmpty)
-      val (modelTypeName, items) = getModelTypeName(optionType.getOrElse(symbol.typeSignature))
-      (modelName, ModelProperty(description = description, required = required, `type` = modelTypeName, items = items.map(Map(_))))
+      val typeInfo = getModelTypeName(optionType.getOrElse(symbol.typeSignature))
+      val allowableValues = getAllowableValues(modelType, typeInfo)
+      (modelName, ModelProperty(
+          description = description, 
+          required = required, 
+          `type` = typeInfo.`type`,
+          items = typeInfo.collectionType.map(ti => Map(ti.typeLabel -> ti.`type`)),
+          allowableValues = allowableValues
+      ))
     }).toMap
     
     Model(
@@ -57,19 +64,37 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
     (name, build(name).get)
   }).toMap
   
-  private def getModelTypeName(modelType: Type): (String, Option[(String, String)]) = {
-    //Container type
-    if(modelType <:< typeOf[Seq[_]] || modelType <:< typeOf[Set[_]] || modelType <:< typeOf[Array[_]]) {
-      //Doesn't handle nesting
-      (if(modelType <:< typeOf[Seq[_]]) "List" else modelType.typeSymbol.name.decoded , 
-          Some(getLiteralOrComplexTypeName(modelType.asInstanceOf[TypeRefApi].args.head)))
-    //Literal/Complex Type
+  private def getAllowableValues(modelType: Type, typeInfo: SwaggerTypeInfo): Option[AllowableValue] = {
+    if(typeInfo.isEnum) {
+      //val values = valueSymbols(modelType)
+      val values = List[String]()
+      Some(AllowableValue.buildList(values)) 
     } else {
-      (getLiteralOrComplexTypeName(modelType)._2, None)
+      None 
     }
   }
   
-  private def getLiteralOrComplexTypeName(modelType: Type): (String, String) = {
+  private def getModelTypeName(modelType: Type): SwaggerTypeInfo = {
+    //Container type
+    if(modelType <:< typeOf[Seq[_]] || modelType <:< typeOf[Set[_]] || modelType <:< typeOf[Array[_]]) {
+      //Doesn't handle nesting
+      val typeName = if(modelType <:< typeOf[Seq[_]]) "List" else modelType.typeSymbol.name.decoded
+      SwaggerTypeInfo("type", typeName, 
+          collectionType = Some(getLiteralOrComplexTypeName(modelType.asInstanceOf[TypeRefApi].args.head)))
+    //Literal/Complex Type
+    } else {
+      getLiteralOrComplexTypeName(modelType)
+    }
+  }
+  
+  case class SwaggerTypeInfo(
+    val typeLabel: String,
+    val `type`: String,
+    val collectionType: Option[SwaggerTypeInfo] = None,
+    val isEnum: Boolean = false
+  )
+  
+  private def getLiteralOrComplexTypeName(modelType: Type): SwaggerTypeInfo = {
     val typeName = modelType.typeSymbol.name.decoded 
     //Literal type
     if (
@@ -77,13 +102,17 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
       modelType =:= typeOf[Long] || modelType =:= typeOf[Float] || modelType =:= typeOf[Double] || 
       modelType =:= typeOf[String] || modelType =:= typeOf[Date]
     ) {
-      ("type", typeName)
+      SwaggerTypeInfo("type", typeName)
+    //Handle enums
+    } else if(modelType.typeSymbol.fullName == "scala.Enumeration.Value") { 
+    //} else if(modelType <:< typeOf[Enumeration.Value]) {
+      SwaggerTypeInfo("type", "String", isEnum = true)
     //Reference to complex model type
     } else if(modelAnnotationTypesMap.contains(typeName)) {
-      ("$ref", typeName)
+      SwaggerTypeInfo("$ref", typeName)
     //Unknown type
     } else {
-      throw new UnsupportedTypeSignature(s"$modelType") 
+      throw new UnsupportedTypeSignature(s"$modelType ${modelType.typeSymbol.fullName}") 
     }
   }
   
