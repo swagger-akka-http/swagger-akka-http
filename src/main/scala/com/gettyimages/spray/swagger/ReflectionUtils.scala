@@ -105,7 +105,15 @@ object ReflectionUtils {
     
   def valueSymbols[E <: Enumeration: TypeTag] = {
     val valueType = typeOf[E#Value]
-    typeOf[E].members.filter(sym => !sym.isMethod &&
+    println(typeOf[E])
+    typeOf[E].members.filter(sym => !sym.isMethod && !sym.isType &&
+      sym.typeSignature.baseType(valueType.typeSymbol) =:= valueType
+    )
+  }
+  
+  def valueSymbols(valueType: Type) = {
+    val enumType = valueType.asInstanceOf[TypeRef].pre
+    enumType.members.filter(sym => !sym.isMethod && !sym.isType &&
       sym.typeSignature.baseType(valueType.typeSymbol) =:= valueType
     )
   }

@@ -45,12 +45,12 @@ case class ModelProperty(
                   enum: Option[List[String]] = None,
                   required: Boolean = true,
                   items: Option[Map[String,String]] = None,
-                  allowableValues: Option[AllowableValue] = None)
+                  allowableValues: Option[AllowableValues] = None)
                   
 object AllowableValue {
-  def buildList(values: Seq[String]) = AllowableValue("LIST", values = Some(values))
+  def buildList(values: Seq[String]) = AllowableValues("LIST", values = Some(values))
 }
-case class AllowableValue(
+case class AllowableValues(
   valueType: String,
   values: Option[Seq[String]] = None,
   min: Option[Int] = None,

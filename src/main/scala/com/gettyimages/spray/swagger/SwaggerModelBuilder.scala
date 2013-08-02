@@ -39,16 +39,16 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
     val (classAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
     val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
-      val modelName = symbol.name.decoded.trim
+      val propertyName = symbol.name.decoded.trim
       val optionType = extractOptionType(symbol)
       val required = getBooleanJavaAnnotation("required", annotation).getOrElse(optionType.isEmpty)
       val typeInfo = getModelTypeName(optionType.getOrElse(symbol.typeSignature))
-      val allowableValues = getAllowableValues(modelType, typeInfo)
-      (modelName, ModelProperty(
+      val allowableValues = getAllowableValues(typeInfo)
+      (propertyName, ModelProperty(
           description = description, 
           required = required, 
-          `type` = typeInfo.`type`,
-          items = typeInfo.collectionType.map(ti => Map(ti.typeLabel -> ti.`type`)),
+          `type` = typeInfo.typeName,
+          items = typeInfo.collectionType.map(ti => Map(ti.typeLabel -> ti.typeName)),
           allowableValues = allowableValues
       ))
     }).toMap
@@ -64,55 +64,55 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
     (name, build(name).get)
   }).toMap
   
-  private def getAllowableValues(modelType: Type, typeInfo: SwaggerTypeInfo): Option[AllowableValue] = {
+  private def getAllowableValues(typeInfo: PropertyTypeInfo): Option[AllowableValues] = {
     if(typeInfo.isEnum) {
-      //val values = valueSymbols(modelType)
-      val values = List[String]()
+      val values = valueSymbols(typeInfo.`type`).map(_.name.decoded.trim).toList
       Some(AllowableValue.buildList(values)) 
     } else {
       None 
     }
   }
   
-  private def getModelTypeName(modelType: Type): SwaggerTypeInfo = {
+  private def getModelTypeName(propertyType: Type): PropertyTypeInfo = {
     //Container type
-    if(modelType <:< typeOf[Seq[_]] || modelType <:< typeOf[Set[_]] || modelType <:< typeOf[Array[_]]) {
+    if(propertyType <:< typeOf[Seq[_]] || propertyType <:< typeOf[Set[_]] || propertyType <:< typeOf[Array[_]]) {
       //Doesn't handle nesting
-      val typeName = if(modelType <:< typeOf[Seq[_]]) "List" else modelType.typeSymbol.name.decoded
-      SwaggerTypeInfo("type", typeName, 
-          collectionType = Some(getLiteralOrComplexTypeName(modelType.asInstanceOf[TypeRefApi].args.head)))
+      val typeName = if(propertyType <:< typeOf[Seq[_]]) "List" else propertyType.typeSymbol.name.decoded
+      PropertyTypeInfo(propertyType, "type", typeName, 
+          collectionType = Some(getLiteralOrComplexTypeName(propertyType.asInstanceOf[TypeRefApi].args.head)))
     //Literal/Complex Type
     } else {
-      getLiteralOrComplexTypeName(modelType)
+      getLiteralOrComplexTypeName(propertyType)
     }
   }
   
-  case class SwaggerTypeInfo(
-    val typeLabel: String,
-    val `type`: String,
-    val collectionType: Option[SwaggerTypeInfo] = None,
+  case class PropertyTypeInfo(
+    val `type`: Type,
+    val typeLabel: String, 
+    val typeName: String, 
+    val collectionType: Option[PropertyTypeInfo] = None, 
     val isEnum: Boolean = false
   )
   
-  private def getLiteralOrComplexTypeName(modelType: Type): SwaggerTypeInfo = {
-    val typeName = modelType.typeSymbol.name.decoded 
+  private def getLiteralOrComplexTypeName(propertyType: Type): PropertyTypeInfo = {
+    val typeName = propertyType.typeSymbol.name.decoded 
     //Literal type
     if (
-      modelType =:= typeOf[Byte] || modelType =:= typeOf[Boolean] || modelType =:= typeOf[Int] ||
-      modelType =:= typeOf[Long] || modelType =:= typeOf[Float] || modelType =:= typeOf[Double] || 
-      modelType =:= typeOf[String] || modelType =:= typeOf[Date]
+      propertyType =:= typeOf[Byte]   || propertyType =:= typeOf[Boolean] || propertyType =:= typeOf[Int] ||
+      propertyType =:= typeOf[Long]   || propertyType =:= typeOf[Float]   || propertyType =:= typeOf[Double] || 
+      propertyType =:= typeOf[String] || propertyType =:= typeOf[Date]
     ) {
-      SwaggerTypeInfo("type", typeName)
+      PropertyTypeInfo(propertyType, "type", typeName)
     //Handle enums
-    } else if(modelType.typeSymbol.fullName == "scala.Enumeration.Value") { 
+    } else if(propertyType.typeSymbol.fullName == "scala.Enumeration.Value") { 
     //} else if(modelType <:< typeOf[Enumeration.Value]) {
-      SwaggerTypeInfo("type", "String", isEnum = true)
+      PropertyTypeInfo(propertyType, "type", "String", isEnum = true)
     //Reference to complex model type
     } else if(modelAnnotationTypesMap.contains(typeName)) {
-      SwaggerTypeInfo("$ref", typeName)
+      PropertyTypeInfo(propertyType, "$ref", typeName)
     //Unknown type
     } else {
-      throw new UnsupportedTypeSignature(s"$modelType ${modelType.typeSymbol.fullName}") 
+      throw new UnsupportedTypeSignature(s"$propertyType ${propertyType.typeSymbol.fullName}") 
     }
   }
   

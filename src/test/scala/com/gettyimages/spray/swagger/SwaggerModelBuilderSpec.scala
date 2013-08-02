@@ -48,6 +48,13 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         checkProperty[Int]("offset", OffsetDescription)
         checkProperty[List[_]]("nodes", NodesDescription)
         checkProperty[String]("enum", EnumDescription)
+        
+        model.properties("enum").allowableValues should be ('defined) 
+        val allowableValues = model.properties("enum").allowableValues.get
+        allowableValues.valueType should equal ("LIST")
+        allowableValues.values should be ('defined)
+        allowableValues.values.get should contain ("AEnum")
+        allowableValues.values.get should contain ("BEnum")
       }
     }
     "passed multiple test models" should {
