@@ -21,6 +21,7 @@ import ReflectionUtils._
 import com.wordnik.swagger.annotations.ApiClass
 import java.util.Date
 import com.wordnik.swagger.annotations.ApiProperty
+import org.joda.time.DateTime
 
 class SwaggerModelBuilder(modelTypes: Seq[Type]) {
  
@@ -103,6 +104,8 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
       propertyType =:= typeOf[String] || propertyType =:= typeOf[Date]
     ) {
       PropertyTypeInfo(propertyType, "type", typeName)
+    } else if(propertyType =:= typeOf[DateTime]) {
+      PropertyTypeInfo(propertyType, "type", "Date")
     //Handle enums
     } else if(propertyType.typeSymbol.fullName == "scala.Enumeration.Value") { 
     //} else if(modelType <:< typeOf[Enumeration.Value]) {
