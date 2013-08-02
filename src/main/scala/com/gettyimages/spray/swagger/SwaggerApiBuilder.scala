@@ -102,18 +102,38 @@ class SwaggerApiBuilder(
      )
   }
   
+  val SwaggerTypes = List(
+      "Byte", "Boolean", "Int", "Long", "Float", "Double", "String", "Date",
+      "List", "Set", "Array")
+  
   private def findDependentModels(responseClass: String): Map[String, Model] = {
     var models = Map[String, Model]()
     if((responseClass != "void") && modelJsonMap.contains(responseClass)) {
       val model = modelJsonMap(responseClass)
       models += model.id -> model
+      
       //Get any models that this model depends upon.
-      val allRefItems = model.properties.values.flatMap(_.items).flatMap(_.get("$ref"))
-      allRefItems.foreach(refItemId => {
-        models += refItemId -> modelJsonMap(refItemId)
-      })
+      models ++= findDependentModelsRecursively(model, models)
     }
     models
+  }
+  
+  private def findDependentModelsRecursively(model: Model, models: Map[String, Model]): Map[String, Model] = {
+    var updatedModels = models
+    //Get property based models
+    model.properties.values.filter(
+      prop => !SwaggerTypes.contains(prop.`type`) && !models.contains(prop.`type`)
+    ).foreach(complexProp =>{
+      updatedModels += complexProp.`type` -> modelJsonMap(complexProp.`type`)
+      updatedModels ++= findDependentModelsRecursively(modelJsonMap(complexProp.`type`), updatedModels)
+    })
+      //Get all collection models
+    val allRefItems = model.properties.values.flatMap(_.items).flatMap(_.get("$ref"))
+    allRefItems.filter(key => !models.contains(key)).foreach(refItemId => {
+      updatedModels += refItemId -> modelJsonMap(refItemId)
+      updatedModels ++= findDependentModelsRecursively(modelJsonMap(refItemId), updatedModels)
+    })
+    updatedModels
   }
     
   private def getPathAndParams(path: String, classType: Type, termSymbol: Symbol): (String, List[Parameter]) = {
