@@ -19,7 +19,7 @@ package com.gettyimages.spray.swagger
 import scala.reflect.runtime.universe._
 import ReflectionUtils._
 import com.wordnik.swagger.annotations.Api
-import com.wordnik.swagger.annotations.ApiParamsImplicit
+import com.wordnik.swagger.annotations.ApiImplicitParams
 import com.wordnik.swagger.annotations.ApiOperation
 import spray.routing.HttpService
 
@@ -138,7 +138,7 @@ class SwaggerApiBuilder(
   }
     
   private def getPathAndParams(path: String, classType: Type, termSymbol: Symbol): (String, List[Parameter]) = {
-    getMethodAnnotation[ApiParamsImplicit](classType)(termSymbol.name.decoded) match {
+    getMethodAnnotation[ApiImplicitParams](classType)(termSymbol.name.decoded) match {
       case Some(apiParamAnnotation) => 
         getArrayJavaAnnotation("value", apiParamAnnotation) match {
           case Some(annotationParams) =>

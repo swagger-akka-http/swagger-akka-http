@@ -3,12 +3,12 @@ package com.gettyimages.spray.swagger
 import scala.reflect.runtime.universe._
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.WordSpec
-import com.wordnik.swagger.annotations.ApiClass
+import com.wordnik.swagger.annotations.ApiModel
 import ReflectionUtils._
 import SwaggerModelBuilderSpecValues._
 import org.scalatest.matchers.BePropertyMatcher
 import scala.annotation.meta.field
-import com.wordnik.swagger.annotations.ApiProperty
+import com.wordnik.swagger.annotations.ApiModelProperty
 import org.joda.time.DateTime
 import java.util.Date
 
@@ -59,6 +59,9 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         allowableValues.values should be ('defined)
         allowableValues.values.get should contain ("a")
         allowableValues.values.get should contain ("b")
+        
+        model.`extends` should be ('defined)
+        model.`extends`.get should be ("TestModelParent")
       }
     }
     "passed multiple test models" should {
@@ -108,31 +111,36 @@ case class TestModelWithNoAnnotation
 @Deprecated
 case class TestModelWithWrongAnnotation
 
-@ApiClass
+@ApiModel
 case class TestModelEmptyAnnotation
 
-@ApiClass(description = TestModelDescription)
+@ApiModel
+trait TestModelParent {
+  
+}
+
+@ApiModel(description = TestModelDescription)
 case class TestModel(
-    @(ApiProperty @field)(value = NameDescription)
+    @(ApiModelProperty @field)(value = NameDescription)
     val name: String,
-    @(ApiProperty @field)(value = CountDescription)
+    @(ApiModelProperty @field)(value = CountDescription)
     val count: Int,
-    @(ApiProperty @field)(value = IsStaleDescription)
+    @(ApiModelProperty @field)(value = IsStaleDescription)
     val isStale: Boolean,
-    @(ApiProperty @field)(value = OffsetDescription)
+    @(ApiModelProperty @field)(value = OffsetDescription)
     val offset: Option[Int] = None,
-    @(ApiProperty @field)(value = NodesDescription)
+    @(ApiModelProperty @field)(value = NodesDescription)
     val nodes: List[TestModelNode] = List[TestModelNode](),
-    @(ApiProperty @field)(value = EnumDescription)
+    @(ApiModelProperty @field)(value = EnumDescription)
     val enum: TestEnum.TestEnum = TestEnum.AEnum,
-    @(ApiProperty @field)(value = StartDateDescription)
+    @(ApiModelProperty @field)(value = StartDateDescription)
     val startDate: Date,
-    @(ApiProperty @field)(value = EndDateDescription)
+    @(ApiModelProperty @field)(value = EndDateDescription)
     val endDate: DateTime,
     
     val noAnnotationProperty: String,
     val secondNoAnnotationProperty: String
-)
+) extends TestModelParent
 
 object TestEnum extends Enumeration {
   type TestEnum = Value
@@ -140,7 +148,7 @@ object TestEnum extends Enumeration {
   val BEnum = Value("b")
 }
 
-@ApiClass
+@ApiModel
 case class TestModelNode(
   val value: Option[String]
 )

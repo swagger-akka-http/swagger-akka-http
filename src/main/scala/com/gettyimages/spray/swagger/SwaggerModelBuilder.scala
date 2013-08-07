@@ -18,9 +18,9 @@ package com.gettyimages.spray.swagger
 
 import scala.reflect.runtime.universe._
 import ReflectionUtils._
-import com.wordnik.swagger.annotations.ApiClass
+import com.wordnik.swagger.annotations.ApiModel
 import java.util.Date
-import com.wordnik.swagger.annotations.ApiProperty
+import com.wordnik.swagger.annotations.ApiModelProperty
 import org.joda.time.DateTime
 
 class SwaggerModelBuilder(modelTypes: Seq[Type]) {
@@ -28,11 +28,11 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
   implicit val mirror = runtimeMirror(getClass.getClassLoader)
  
   //validate models
-  val modelAnnotationTypesMap = modelTypes.map(tpe => { getClassAnnotation[ApiClass](tpe) match {
+  val modelAnnotationTypesMap = modelTypes.map(tpe => { getClassAnnotation[ApiModel](tpe) match {
     case Some(annotation) =>
       val value = getStringJavaAnnotation("value", annotation)
       val key = value.getOrElse(tpe.typeSymbol.name.decoded)
-      (key, (annotation, getAllFieldAnnotations[ApiProperty](tpe), tpe))
+      (key, (annotation, getAllFieldAnnotations[ApiModelProperty](tpe), tpe))
     case None =>
       throw new IllegalArgumentException(
         s"Model does not have ApiClass Annotation $tpe")
@@ -41,7 +41,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
   def build(name: String): Option[Model] = modelAnnotationTypesMap.get(name).map(modelAnnotationType => {
     val (classAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
     val extendedName = modelType.baseClasses.filter(sym => sym != modelType.typeSymbol && 
-      getSymbolAnnotation[ApiClass](sym).isDefined).headOption.map(_.name.decoded.trim)
+      getSymbolAnnotation[ApiModel](sym).isDefined).headOption.map(_.name.decoded.trim)
     val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
       val propertyName = symbol.name.decoded.trim

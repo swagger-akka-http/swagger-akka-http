@@ -24,14 +24,18 @@ import ReflectionUtils._
 
 class JavaAnnotationReflectionSpec extends WordSpec with ShouldMatchers {
   
+  class TestClass
+  
   @TestJavaAnnotation(
     booleanValue = true, stringValue = "hello", intValue = 10, 
-    arrayValue = Array(new ArrayTestJavaAnnotation("good"))
+    arrayValue = Array(new ArrayTestJavaAnnotation("good")),
+    classValue = classOf[TestClass]
   )
   case class TestModel(
     @(TestJavaAnnotation @field)(
       booleanValue = false, stringValue = "world", intValue = -10,
-      arrayValue = Array(new ArrayTestJavaAnnotation("bye"))
+      arrayValue = Array(new ArrayTestJavaAnnotation("bye")),
+      classValue = classOf[TestClass]
     )
       val testValue: String
   )
@@ -100,10 +104,18 @@ class JavaAnnotationReflectionSpec extends WordSpec with ShouldMatchers {
           getIntJavaAnnotation("intValue", annotation.get), 
           -10
       )}
+      "have class properties be extractable" in {
+        testAnnotationProperty(
+            getClassJavaAnnotation[TestClass]("classValue", annotation.get),
+            classOf[TestClass]
+        )
+      }
     }
     
     def testAnnotationProperty[T: TypeTag](value: Option[T], actualValue: T): Unit = {
       assert(!value.isEmpty, "${typeOf[T]} value does not exist")
+      println(value.get)
+      println(actualValue)
       assert(value.get === actualValue)
     }
   }

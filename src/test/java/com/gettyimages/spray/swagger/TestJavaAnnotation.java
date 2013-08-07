@@ -28,4 +28,5 @@ public @interface TestJavaAnnotation {
   String stringValue() default "";
   int intValue() default 0;
   ArrayTestJavaAnnotation[] arrayValue();
+  Class<?> classValue();
 }
