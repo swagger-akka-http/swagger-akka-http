@@ -111,6 +111,7 @@ class SwaggerApiBuilder(
     if((responseClass != "void") && modelJsonMap.contains(responseClass)) {
       val model = modelJsonMap(responseClass)
       models += model.id -> model
+      val subClassSymbols = model
       
       //Get any models that this model depends upon.
       models ++= findDependentModelsRecursively(model, models)

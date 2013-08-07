@@ -9,6 +9,8 @@ import SwaggerModelBuilderSpecValues._
 import org.scalatest.matchers.BePropertyMatcher
 import scala.annotation.meta.field
 import com.wordnik.swagger.annotations.ApiProperty
+import org.joda.time.DateTime
+import java.util.Date
 
 
 class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
@@ -41,20 +43,22 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       }
       "has the correct ApiProperty annotations" in {
         implicit val model = buildAndGetModel("TestModel", typeOf[TestModel], typeOf[TestModelNode])
-        model.properties should have size (6)
+        model.properties should have size (8)
         checkProperty[String]("name", NameDescription)
         checkProperty[Int]("count", CountDescription)
         checkProperty[Boolean]("isStale", IsStaleDescription)
         checkProperty[Int]("offset", OffsetDescription)
         checkProperty[List[_]]("nodes", NodesDescription)
         checkProperty[String]("enum", EnumDescription)
+        checkProperty[Date]("startDate", StartDateDescription)
+        checkProperty[Date]("endDate", EndDateDescription)
         
         model.properties("enum").allowableValues should be ('defined) 
         val allowableValues = model.properties("enum").allowableValues.get
         allowableValues.valueType should equal ("LIST")
         allowableValues.values should be ('defined)
-        allowableValues.values.get should contain ("AEnum")
-        allowableValues.values.get should contain ("BEnum")
+        allowableValues.values.get should contain ("a")
+        allowableValues.values.get should contain ("b")
       }
     }
     "passed multiple test models" should {
@@ -95,6 +99,8 @@ object SwaggerModelBuilderSpecValues {
   final val OffsetDescription = "offestDescription9034"
   final val NodesDescription = "nodesDescription9043"
   final val EnumDescription = "enumDescription2135432"
+  final val StartDateDescription = "startDateDescription294290"
+  final val EndDateDescription = "endDateDescription294290"
 }
 
 case class TestModelWithNoAnnotation
@@ -119,6 +125,10 @@ case class TestModel(
     val nodes: List[TestModelNode] = List[TestModelNode](),
     @(ApiProperty @field)(value = EnumDescription)
     val enum: TestEnum.TestEnum = TestEnum.AEnum,
+    @(ApiProperty @field)(value = StartDateDescription)
+    val startDate: Date,
+    @(ApiProperty @field)(value = EndDateDescription)
+    val endDate: DateTime,
     
     val noAnnotationProperty: String,
     val secondNoAnnotationProperty: String
@@ -126,8 +136,8 @@ case class TestModel(
 
 object TestEnum extends Enumeration {
   type TestEnum = Value
-  val AEnum = Value("AEnum")
-  val BEnum = Value("BEnum")
+  val AEnum = Value("a")
+  val BEnum = Value("b")
 }
 
 @ApiClass

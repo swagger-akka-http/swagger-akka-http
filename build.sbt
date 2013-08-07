@@ -17,6 +17,8 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.3.1"
 )
 
+testOptions in Test += Tests.Argument("-oDF")
+
 publishMavenStyle := true
 
 publishTo <<= version { (v: String) =>

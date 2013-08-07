@@ -22,7 +22,7 @@ import scala.Option.option2Iterable
 
 object ReflectionUtils {
 
-  private def getSymbolAnnotation[K: TypeTag](baseTypeSymbol: Symbol): Option[Annotation] = {
+  def getSymbolAnnotation[K: TypeTag](baseTypeSymbol: Symbol): Option[Annotation] = {
     val annotations = baseTypeSymbol.annotations
     val annotationType = typeOf[K]
     annotations.find(_.tpe =:= annotationType)
@@ -111,10 +111,16 @@ object ReflectionUtils {
     )
   }
   
+  def getOuterType(valueType: Type) = valueType.asInstanceOf[TypeRef].pre
+  
   def valueSymbols(valueType: Type) = {
-    val enumType = valueType.asInstanceOf[TypeRef].pre
+    val enumType = getOuterType(valueType)
     enumType.members.filter(sym => !sym.isMethod && !sym.isType &&
       sym.typeSignature.baseType(valueType.typeSymbol) =:= valueType
     )
+  }
+  
+  def getCompanionObject(`type`: Type)(implicit mirror: Mirror): Any = {
+    mirror.reflectModule(`type`.typeSymbol.companionSymbol.asModule).instance 
   }
 }

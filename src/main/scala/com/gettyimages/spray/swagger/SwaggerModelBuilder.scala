@@ -24,6 +24,8 @@ import com.wordnik.swagger.annotations.ApiProperty
 import org.joda.time.DateTime
 
 class SwaggerModelBuilder(modelTypes: Seq[Type]) {
+  
+  implicit val mirror = runtimeMirror(getClass.getClassLoader)
  
   //validate models
   val modelAnnotationTypesMap = modelTypes.map(tpe => { getClassAnnotation[ApiClass](tpe) match {
@@ -38,6 +40,8 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
   
   def build(name: String): Option[Model] = modelAnnotationTypesMap.get(name).map(modelAnnotationType => {
     val (classAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
+    val extendedName = modelType.baseClasses.filter(sym => sym != modelType.typeSymbol && 
+      getSymbolAnnotation[ApiClass](sym).isDefined).headOption.map(_.name.decoded.trim)
     val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
       val propertyName = symbol.name.decoded.trim
@@ -57,6 +61,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
     Model(
       id = name, 
       description = getStringJavaAnnotation("description", classAnnotation),
+      `extends` = extendedName,
       properties = modelProperties
     )
   }) 
@@ -67,7 +72,17 @@ class SwaggerModelBuilder(modelTypes: Seq[Type]) {
   
   private def getAllowableValues(typeInfo: PropertyTypeInfo): Option[AllowableValues] = {
     if(typeInfo.isEnum) {
-      val values = valueSymbols(typeInfo.`type`).map(_.name.decoded.trim).toList
+      val enumType = getOuterType(typeInfo.`type`)
+      val enumObj = getCompanionObject(enumType)
+      val enumMirror = mirror.reflect(enumObj)
+      val values = valueSymbols(typeInfo.`type`).map(valueSymbol => {
+        val valueObj = enumMirror.reflectField(valueSymbol.asTerm).get
+        val valueMirror = mirror.reflect(valueObj)
+        val toStringMethodSymbol = valueSymbol.typeSignature.member("toString": TermName).asMethod
+        val toStringMethodMirror = valueMirror.reflectMethod(toStringMethodSymbol)
+        
+        toStringMethodMirror().asInstanceOf[String]
+      }).toList
       Some(AllowableValue.buildList(values)) 
     } else {
       None 
