@@ -1,3 +1,5 @@
+import sbtrelease.ReleasePlugin.ReleaseKeys._
+
 organization := "com.gettyimages"
 
 name := "spray-swagger"
@@ -16,6 +18,8 @@ libraryDependencies ++= Seq(
   "joda-time" % "joda-time" % "2.2",
   "org.joda" % "joda-convert" % "1.3.1"
 )
+
+releaseSettings
 
 testOptions in Test += Tests.Argument("-oDF")
 
