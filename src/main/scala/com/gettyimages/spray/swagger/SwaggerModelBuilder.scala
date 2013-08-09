@@ -23,10 +23,8 @@ import java.util.Date
 import com.wordnik.swagger.annotations.ApiModelProperty
 import org.joda.time.DateTime
 
-class SwaggerModelBuilder(modelTypes: Seq[Type]) {
+class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
   
-  implicit val mirror = runtimeMirror(getClass.getClassLoader)
- 
   //validate models
   val modelAnnotationTypesMap = modelTypes.map(tpe => { getClassAnnotation[ApiModel](tpe) match {
     case Some(annotation) =>

@@ -40,6 +40,8 @@ class JavaAnnotationReflectionSpec extends WordSpec with ShouldMatchers {
       val testValue: String
   )
   
+  implicit val mirror = runtimeMirror(getClass.getClassLoader)
+  
   "A case class" when {
     "it has a class level java annotation" should {
       
@@ -114,8 +116,6 @@ class JavaAnnotationReflectionSpec extends WordSpec with ShouldMatchers {
     
     def testAnnotationProperty[T: TypeTag](value: Option[T], actualValue: T): Unit = {
       assert(!value.isEmpty, "${typeOf[T]} value does not exist")
-      println(value.get)
-      println(actualValue)
       assert(value.get === actualValue)
     }
   }

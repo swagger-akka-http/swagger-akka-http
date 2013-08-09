@@ -100,8 +100,12 @@ object ReflectionUtils {
   def getBooleanJavaAnnotation(name: String, annotation: Annotation): Option[Boolean] = 
     getLiteralJavaAnnotation(name, annotation.javaArgs)
     
-  def getClassJavaAnnotation[T <: AnyRef](name: String, annotation: Annotation): Option[Class[T]] =
-    getLiteralJavaAnnotation(name, annotation.javaArgs)
+  def getClassJavaAnnotation[T <: AnyRef: TypeTag](name: String, annotation: Annotation)(implicit mirror: Mirror): Option[Class[T]] = {
+    annotation.javaArgs.get(name: TermName).flatMap(_ match {
+      case (LiteralArgument(Constant(x: Type))) => Some(mirror.runtimeClass(x.typeSymbol.asClass).asInstanceOf[Class[T]])
+      case _ => None
+    })
+  }
     
   def getArrayJavaAnnotation(name: String, annotation: Annotation): Option[Array[Annotation]] =
     getArrayJavaAnnotation(name, annotation.javaArgs)

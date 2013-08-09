@@ -14,6 +14,9 @@ import java.util.Date
 
 
 class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
+  
+  implicit val mirror = runtimeMirror(getClass.getClassLoader)
+  
   "A SwaggerModelBuilder " when {
     "passed a test model" should {
       "throw an IllegalArgumentException if it has no annotation" in {

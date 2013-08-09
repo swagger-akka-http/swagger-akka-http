@@ -31,6 +31,8 @@ class SwaggerApiBuilder(
   modelTypes: Seq[Type]
 ) {
   
+  implicit val mirror = runtimeMirror(getClass.getClassLoader)
+  
   private val modelJsonMap = (new SwaggerModelBuilder(modelTypes)).buildAll
   
   val swaggerApiAnnotations = apiTypes.map(apiType => getClassAnnotation[Api](apiType) match {
@@ -77,7 +79,7 @@ class SwaggerApiBuilder(
            httpMethod = httpMethod,
            summary = summary,
            nickname = getStringJavaAnnotation("nickname", apiOperationAnnotation).getOrElse(methodName),
-           responseClass = getStringJavaAnnotation("responseClass", apiOperationAnnotation).getOrElse("void"),
+           responseClass = getClassJavaAnnotation[AnyRef]("response", apiOperationAnnotation).map(_.getSimpleName).getOrElse("void"),
            parameters = params
        )
        //This indicates a new operation for a prexisting api listing, just add it
