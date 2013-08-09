@@ -113,7 +113,6 @@ class SwaggerApiBuilder(
     if((responseClass != "void") && modelJsonMap.contains(responseClass)) {
       val model = modelJsonMap(responseClass)
       models += model.id -> model
-      val subClassSymbols = model
       
       //Get any models that this model depends upon.
       models ++= findDependentModelsRecursively(model, models)
@@ -135,6 +134,13 @@ class SwaggerApiBuilder(
     allRefItems.filter(key => !models.contains(key)).foreach(refItemId => {
       updatedModels += refItemId -> modelJsonMap(refItemId)
       updatedModels ++= findDependentModelsRecursively(modelJsonMap(refItemId), updatedModels)
+    })
+    //Get all subclass models
+    modelJsonMap.values.filter(m => {
+      m.`extends` == model.id && !models.contains(m.id)
+    }).foreach(m => {
+      updatedModels += m.id -> m
+      updatedModels ++= findDependentModelsRecursively(m, updatedModels)
     })
     updatedModels
   }
