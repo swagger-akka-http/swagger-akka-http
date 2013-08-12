@@ -121,6 +121,7 @@ class SwaggerApiBuilder(
   }
   
   private def findDependentModelsRecursively(model: Model, models: Map[String, Model]): Map[String, Model] = {
+    
     var updatedModels = models
     //Get property based models
     model.properties.values.filter(
@@ -137,7 +138,7 @@ class SwaggerApiBuilder(
     })
     //Get all subclass models
     modelJsonMap.values.filter(m => {
-      m.`extends` == model.id && !models.contains(m.id)
+      m.`extends`.exists(e => e == model.id) && !models.contains(m.id)
     }).foreach(m => {
       updatedModels += m.id -> m
       updatedModels ++= findDependentModelsRecursively(m, updatedModels)
