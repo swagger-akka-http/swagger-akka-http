@@ -152,11 +152,11 @@ class SwaggerApiBuilder(
         getArrayJavaAnnotation("value", apiParamAnnotation) match {
           case Some(annotationParams) =>
             val params = annotationParams.map(annotationParam => Parameter(
-  		        name        = getStringJavaAnnotation("name", annotationParam).get, 
-    		      description = getStringJavaAnnotation("value", annotationParam).get, 
-    		      dataType    = getStringJavaAnnotation("dataType", annotationParam).get,
-    		      paramType   = getStringJavaAnnotation("paramType", annotationParam).get,
-    		      required    = getBooleanJavaAnnotation("required", annotationParam).getOrElse(true),
+  		        name         = getStringJavaAnnotation("name", annotationParam).get, 
+    		      description  = getStringJavaAnnotation("value", annotationParam).get, 
+    		      `type`       = getStringJavaAnnotation("dataType", annotationParam).get,
+    		      paramType    = getStringJavaAnnotation("paramType", annotationParam).get,
+    		      required     = getBooleanJavaAnnotation("required", annotationParam).getOrElse(true),
     		      defaultValue = getStringJavaAnnotation("defaultValue", annotationParam)
     		      //allowMultiple = annotationParam.allowMultiple,
     		    ))

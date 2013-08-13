@@ -44,21 +44,13 @@ case class ModelProperty(
                   description: String,
                   `type`: String,
                   defaultValue: Option[String] = None,
-                  enum: Option[List[String]] = None,
+                  enum: Option[Set[String]] = None,
                   required: Boolean = true,
                   items: Option[Map[String,String]] = None,
-                  allowableValues: Option[AllowableValues] = None)
-                  
-object AllowableValue {
-  def buildList(values: Seq[String]) = AllowableValues("LIST", values = Some(values))
-}
-case class AllowableValues(
-  valueType: String,
-  values: Option[Seq[String]] = None,
-  min: Option[Int] = None,
-  max: Option[Int] = None
+                  maximum: Option[Int] = None,
+                  minimum: Option[Int] = None
 )
-
+                  
 case class Operation(httpMethod: String,
                      summary: String,
                      nickname: String,
@@ -66,19 +58,20 @@ case class Operation(httpMethod: String,
                      notes: Option[String] = None,
                      deprecated: Boolean = false,
                      parameters: List[Parameter] = Nil,
-                     errorResponses: List[Error] = Nil)
+                     responseMessages: List[Response] = Nil)
 
 case class Endpoint(path: String,
                     description: String,
                     secured: Boolean = false,
                     operations: List[Operation] = Nil)
 
-case class Error(code: Int,
-                 reason: String)
+case class Response(code: Int,
+                 message: String,
+                 responseModel: Option[String] = None)
 
 case class Parameter(name: String,
                  description: String,
-                 dataType: String,
+                 `type`: String,
                  paramType: String,
                  notes: Option[String] = None,
                  defaultValue: Option[String] = None,                     

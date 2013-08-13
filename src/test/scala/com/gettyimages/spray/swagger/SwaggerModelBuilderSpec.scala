@@ -56,12 +56,11 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         checkProperty[Date]("startDate", StartDateDescription)
         checkProperty[Date]("endDate", EndDateDescription)
         
-        model.properties("enum").allowableValues should be ('defined) 
-        val allowableValues = model.properties("enum").allowableValues.get
-        allowableValues.valueType should equal ("LIST")
-        allowableValues.values should be ('defined)
-        allowableValues.values.get should contain ("a")
-        allowableValues.values.get should contain ("b")
+        model.properties("enum").enum should be ('defined) 
+        val enumValues = model.properties("enum").enum.get
+        enumValues should have size (2)
+        enumValues should contain ("a")
+        enumValues should contain ("b")
         
         model.`extends` should be ('defined)
         model.`extends`.get should be ("TestModelParent")

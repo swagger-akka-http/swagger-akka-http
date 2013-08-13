@@ -46,13 +46,12 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
       val optionType = extractOptionType(symbol)
       val required = getBooleanJavaAnnotation("required", annotation).getOrElse(optionType.isEmpty)
       val typeInfo = getModelTypeName(optionType.getOrElse(symbol.typeSignature))
-      val allowableValues = getAllowableValues(typeInfo)
       (propertyName, ModelProperty(
           description = description, 
           required = required, 
           `type` = typeInfo.typeName,
           items = typeInfo.collectionType.map(ti => Map(ti.typeLabel -> ti.typeName)),
-          allowableValues = allowableValues
+          enum = getEnumValues(typeInfo)
       ))
     }).toMap
     
@@ -68,7 +67,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
     (name, build(name).get)
   }).toMap
   
-  private def getAllowableValues(typeInfo: PropertyTypeInfo): Option[AllowableValues] = {
+  private def getEnumValues(typeInfo: PropertyTypeInfo): Option[Set[String]] = {
     if(typeInfo.isEnum) {
       val enumType = getOuterType(typeInfo.`type`)
       val enumObj = getCompanionObject(enumType)
@@ -81,7 +80,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
         
         toStringMethodMirror().asInstanceOf[String]
       }).toList
-      Some(AllowableValue.buildList(values)) 
+      Some(values.toSet) 
     } else {
       None 
     }
