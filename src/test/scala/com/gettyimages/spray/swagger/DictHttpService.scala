@@ -22,6 +22,9 @@ import com.wordnik.swagger.annotations.ApiOperation
 import com.wordnik.swagger.annotations.ApiImplicitParams
 import com.wordnik.swagger.annotations.ApiImplicitParam
 import spray.httpx.Json4sSupport
+import com.wordnik.swagger.annotations.ApiResponses
+import com.wordnik.swagger.annotations.ApiResponse
+import com.wordnik.swagger.annotations.ApiModel
 
 @Api(value = "/dict", description = "This is a dictionary api.")
 trait DictHttpService extends HttpService with Json4sSupport {
@@ -41,12 +44,16 @@ trait DictHttpService extends HttpService with Json4sSupport {
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "key", value = "Keyword for the dictionary entry.", required = true, dataType = "String", paramType = "path")
   ))
+  @ApiResponses(Array(
+    new ApiResponse(code = 404, message = "Dictionary does not exist.")
+  ))
   def readRoute = get { path("/dict" / Segment) { key =>
     complete(dict(key))  
   }}
 
 }
-  
+ 
+@ApiModel(description = "an entry in the dictionary")
 case class DictEntry(
   val key: String,
   val value: String,

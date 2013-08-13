@@ -58,7 +58,7 @@ case class Operation(httpMethod: String,
                      notes: Option[String] = None,
                      deprecated: Boolean = false,
                      parameters: List[Parameter] = Nil,
-                     responseMessages: List[Response] = Nil)
+                     responseMessages: Option[List[Response]] = None)
 
 case class Endpoint(path: String,
                     description: String,

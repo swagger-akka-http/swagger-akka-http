@@ -22,6 +22,7 @@ import com.wordnik.swagger.annotations.Api
 import com.wordnik.swagger.annotations.ApiImplicitParams
 import com.wordnik.swagger.annotations.ApiOperation
 import spray.routing.HttpService
+import com.wordnik.swagger.annotations.ApiResponses
 
 class SwaggerApiBuilder(
   swaggerVersion: String,
@@ -63,6 +64,20 @@ class SwaggerApiBuilder(
     (ListApi(apiPath, Some(description), None), classType)
   }
   
+  private def getApiResponses(classType: Type, termSymbol: TermSymbol): Option[List[Response]] = {
+    for { 
+      responsesAnnotation <- getMethodAnnotation[ApiResponses](classType, termSymbol)
+      responseAnnotations <- getArrayJavaAnnotation("value", responsesAnnotation).map(_.toList)
+    } yield { responseAnnotations.map(responseAnnotation => {
+      val code = getIntJavaAnnotation("code", responseAnnotation)
+      val message = getStringJavaAnnotation("message", responseAnnotation)
+      
+      new Response(code = code.get, message = message.get)
+    })}
+    
+    None
+  }
+  
   private def buildApiListing(listApi: ListApi, classType: Type): ApiListing = {
      var apis = Map[String, ListApi]()
      var models = Map[String, Model]()
@@ -75,12 +90,14 @@ class SwaggerApiBuilder(
        //Extract fullpath with and path params and list of optional params
        val (fullPath, params) = getPathAndParams(listApi.path, classType, termSymbol)
        val methodName = termSymbol.name.decoded
+       val apiResponses = getApiResponses(classType, termSymbol)
        val currentApiOperation = Operation(
            httpMethod = httpMethod,
            summary = summary,
            nickname = getStringJavaAnnotation("nickname", apiOperationAnnotation).getOrElse(methodName),
            responseClass = getClassJavaAnnotation[AnyRef]("response", apiOperationAnnotation).map(_.getSimpleName).getOrElse("void"),
-           parameters = params
+           parameters = params,
+           responseMessages = apiResponses
        )
        //This indicates a new operation for a prexisting api listing, just add it
        if(apis.contains(fullPath)) {
@@ -147,7 +164,7 @@ class SwaggerApiBuilder(
   }
     
   private def getPathAndParams(path: String, classType: Type, termSymbol: Symbol): (String, List[Parameter]) = {
-    getMethodAnnotation[ApiImplicitParams](classType)(termSymbol.name.decoded) match {
+    getMethodAnnotation[ApiImplicitParams](classType, termSymbol.asTerm) match {
       case Some(apiParamAnnotation) => 
         getArrayJavaAnnotation("value", apiParamAnnotation) match {
           case Some(annotationParams) =>
