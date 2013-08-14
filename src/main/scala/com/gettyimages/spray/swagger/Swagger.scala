@@ -30,14 +30,35 @@ case class ApiListing(swaggerVersion: String,
 					
 case class ResourceListing(swaggerVersion: String,
                              apiVersion: String,
-                             apis: List[ListApi]
+                             apis: List[ListApi],
+                             info: Option[ApiInfo] = None,
+                             authorizations: Option[Map[String, Authorization]] = None
+)
+
+abstract class Authorization(
+    val `type`: String
+)
+
+case class ApiKeyAuthorization(
+    val passAs: String
+) extends Authorization("apiKey")
+
+case class ApiInfo(
+    title: String,
+    description: String,
+    contact: Option[String] = None,
+    termsOfServiceUrl: Option[String] = None,
+    license: Option[String] = None,
+    licenseUrl: Option[String] = None 
 )
  
 case class Model(id: String,
-                 description: Option[String] = None,
-                 `extends`: Option[String] = None,
-                 discriminator: Option[String] = None,
-                 properties: Map[String, ModelProperty]) {
+                properties: Map[String, ModelProperty],
+                description: Option[String] = None,
+                `extends`: Option[String] = None,
+                discriminator: Option[String] = None,
+                subTypes: Option[List[String]] = None
+) {
 }
 
 case class ModelProperty(
@@ -58,7 +79,9 @@ case class Operation(httpMethod: String,
                      notes: Option[String] = None,
                      deprecated: Boolean = false,
                      parameters: List[Parameter] = Nil,
-                     responseMessages: Option[List[Response]] = None)
+                     responseMessages: Option[List[Response]] = None,
+                     produces: Option[List[String]] = None,
+                     consumes: Option[List[String]] = None)
 
 case class Endpoint(path: String,
                     description: String,

@@ -91,6 +91,28 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         allModels should contain key ("TestModelNode")
       } 
     }
+    "passed a model with subtypes" should {
+      "have subtypes available" in {
+        val builder = new SwaggerModelBuilder(Seq(typeOf[TestModelParent]))
+        val parentModel = builder.build("TestModelParent")
+        parentModel should be ('defined)
+        parentModel.get.subTypes should be ('defined)
+        parentModel.get.subTypes.get should have size (1)
+        parentModel.get.subTypes.get should contain ("TestModel")
+      } 
+    }
+    "passed a model with subtypes specified in the annotation" should {
+      "have natural subtypes overriden by annotation specification" in {
+         val builder = new SwaggerModelBuilder(Seq(typeOf[Letter]))
+         val parentModel = builder.build("Letter")
+         println(parentModel)
+         parentModel should be ('defined)
+         parentModel.get.subTypes should be ('defined)
+         parentModel.get.subTypes.get should have size (2)
+         parentModel.get.subTypes.get should contain ("String")
+         parentModel.get.subTypes.get should contain ("B")
+      }
+    }
   }
   
   private def checkProperty[T: TypeTag](modelKey: String, description: String)(implicit model: Model) {
@@ -132,7 +154,7 @@ case class TestModelWithWrongAnnotation
 case class TestModelEmptyAnnotation
 
 @ApiModel
-trait TestModelParent {
+sealed trait TestModelParent {
   
 }
 
@@ -169,3 +191,11 @@ object TestEnum extends Enumeration {
 case class TestModelNode(
   val value: Option[String]
 )
+
+case class A extends Letter
+case class B extends Letter
+
+@ApiModel(
+  subTypes = Array(classOf[String], classOf[B]) 
+)
+abstract class Letter

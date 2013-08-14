@@ -37,9 +37,9 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
   }}).toMap
   
   def build(name: String): Option[Model] = modelAnnotationTypesMap.get(name).map(modelAnnotationType => {
-    val (classAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
-    val extendedName = modelType.baseClasses.filter(sym => sym != modelType.typeSymbol && 
-      getSymbolAnnotation[ApiModel](sym).isDefined).headOption.map(_.name.decoded.trim)
+    val (modelAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
+    val extendedName = getExtendedClassName(modelType, modelAnnotation) 
+    val subTypes = getSubTypes(modelType, modelAnnotation)
     val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
       val propertyName = symbol.name.decoded.trim
@@ -57,8 +57,9 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
     
     Model(
       id = name, 
-      description = getStringJavaAnnotation("description", classAnnotation),
+      description = getStringJavaAnnotation("description", modelAnnotation),
       `extends` = extendedName,
+      subTypes = subTypes,
       properties = modelProperties
     )
   }) 
@@ -66,6 +67,23 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
   def buildAll: Map[String, Model] = modelAnnotationTypesMap.keys.map(name => {
     (name, build(name).get)
   }).toMap
+  
+  private def getSubTypes(modelType: Type, modelAnnotation: Annotation): Option[List[String]] = {
+    getArrayClassJavaAnnotation("subTypes", modelAnnotation) match {
+      case Some(subTypeClasses) => 
+        Some(subTypeClasses.map(_.getSimpleName).toList)
+      case None =>
+        val subTypes = modelType.typeSymbol.asClass.knownDirectSubclasses.map(_.name.decoded.trim).toList
+        if(subTypes.size > 0) Some(subTypes) else None
+    }
+  }
+  
+  private def getExtendedClassName(modelType: Type, modelAnnotation: Annotation): Option[String] = {
+    getStringJavaAnnotation("extends", modelAnnotation) orElse {
+      modelType.baseClasses.filter(sym => sym != modelType.typeSymbol && 
+        getSymbolAnnotation[ApiModel](sym).isDefined).headOption.map(_.name.decoded.trim)
+    }
+  }
   
   private def getEnumValues(typeInfo: PropertyTypeInfo): Option[Set[String]] = {
     if(typeInfo.isEnum) {

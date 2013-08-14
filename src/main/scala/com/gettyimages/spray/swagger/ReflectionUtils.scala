@@ -88,11 +88,12 @@ object ReflectionUtils {
   
   private def getArrayJavaAnnotation(
     name: String, annotationValues: ListMap[Name, JavaArgument]
-  ): Option[Array[Annotation]] = annotationValues(name: TermName) match {
-    case (ArrayArgument(arr)) => Some(arr.map( _ match {
-      case NestedArgument(ann) => ann
+  ): Option[Array[Annotation]] = annotationValues.get(name: TermName) match {
+    case Some(ArrayArgument(arr)) => Some(arr.flatMap( _ match {
+      case NestedArgument(ann) => Some(ann)
+      case x => None
     }))
-    case x 					  => None	
+    case x => None	
   }
   
   def getStringJavaAnnotation(name: String, annotation: Annotation): Option[String] = {
@@ -113,6 +114,16 @@ object ReflectionUtils {
     
   def getArrayJavaAnnotation(name: String, annotation: Annotation): Option[Array[Annotation]] =
     getArrayJavaAnnotation(name, annotation.javaArgs)
+    
+  def getArrayClassJavaAnnotation(name: String, annotation: Annotation)(implicit mirror: Mirror): Option[Seq[Class[Any]]] = {
+    annotation.javaArgs.get(name: TermName) match {
+      case Some(ArrayArgument(arr)) => Some(arr flatMap { _ match {
+        case LiteralArgument(Constant(x: Type)) => Some(mirror.runtimeClass(x.typeSymbol.asClass).asInstanceOf[Class[Any]])
+        case x => None
+      }})
+      case x => None
+    }
+  }
     
   def valueSymbols[E <: Enumeration: TypeTag] = {
     val valueType = typeOf[E#Value]

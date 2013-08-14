@@ -41,10 +41,16 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   def specPath: String
   def resourcePath: String
   
+  def apiInfo: Option[ApiInfo] = None
+  def authorizations: Option[Map[String, Authorization]] = None
+  
   implicit def json4sFormats: Formats = DefaultFormats
  
   private val (resourceListing, apiListingMap) = 
-    (new SwaggerApiBuilder(swaggerVersion, apiVersion, baseUrl, apiTypes, modelTypes)).buildAll
+    (new SwaggerApiBuilder(
+        swaggerVersion, apiVersion, baseUrl, apiTypes, modelTypes,
+        apiInfo = SwaggerHttpService.this.apiInfo, authorizations = SwaggerHttpService.this.authorizations
+    )).buildAll
   
   final def routes: Route = get { pathPrefix(specPath) {
     path(resourcePath) {

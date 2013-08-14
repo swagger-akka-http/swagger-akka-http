@@ -29,7 +29,9 @@ class SwaggerApiBuilder(
   apiVersion: String,
   basePath: String,
   apiTypes: Seq[Type],
-  modelTypes: Seq[Type]
+  modelTypes: Seq[Type],
+  apiInfo: Option[ApiInfo] = None,
+  authorizations: Option[Map[String, Authorization]]  = None
 ) {
   
   implicit val mirror = runtimeMirror(getClass.getClassLoader)
@@ -45,7 +47,7 @@ class SwaggerApiBuilder(
   
   def buildAll: (ResourceListing, Map[String, ApiListing]) = {
     val listApis = buildResourceListApis(swaggerApiAnnotations)
-    val resourceListing = ResourceListing(swaggerVersion, apiVersion, listApis.map(_._1).toList)
+    val resourceListing = ResourceListing(swaggerVersion, apiVersion, listApis.map(_._1).toList, apiInfo, authorizations)
     
     val apiListings: Map[String, ApiListing] = (for((listApi, classType) <- listApis) yield {
       (listApi.path, buildApiListing(listApi, classType))
