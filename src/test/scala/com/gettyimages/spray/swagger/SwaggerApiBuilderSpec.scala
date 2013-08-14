@@ -43,9 +43,26 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
            swaggerApi(List(typeOf[TestApiDoesNotExtendHttpService]), List[Type]())
         }
       }
-      "handles a properly annotated HttpService" in {
+      "handle a properly annotated HttpService" in {
         val (resourceListing, apiListings) = swaggerApi(List(typeOf[DictHttpService]), List[Type](typeOf[DictEntry])).buildAll
         apiListings should have size (1)
+        val (apiListingName, apiListing) = apiListings.head
+        apiListingName should equal ("/dict")
+        apiListing.apis should have size (2)
+        val apiPaths = apiListing.apis.map(_.path)
+        apiPaths should contain ("/dict") 
+        apiPaths should contain ("/dict/{key}")
+        val dictKeyApi = apiListing.apis.find(_.path == "/dict/{key}").get
+        dictKeyApi.operations should be ('defined) 
+        val operations = dictKeyApi.operations.get
+        operations should have size (1)
+        val operation = operations.head
+        operation.responseMessages should be ('defined)
+        val responseMessages = operation.responseMessages.get
+        responseMessages should have size (1)
+        val responseMessage = responseMessages.head
+        responseMessage.code should be (404)
+        responseMessage.message should be ("Dictionary does not exist.")
       }
     }
   }

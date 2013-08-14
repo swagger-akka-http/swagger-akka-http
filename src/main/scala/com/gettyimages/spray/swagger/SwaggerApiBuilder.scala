@@ -74,8 +74,6 @@ class SwaggerApiBuilder(
       
       new Response(code = code.get, message = message.get)
     })}
-    
-    None
   }
   
   private def buildApiListing(listApi: ListApi, classType: Type): ApiListing = {
