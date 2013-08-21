@@ -95,7 +95,14 @@ class SwaggerApiBuilder(
        }
     
        models ++= findDependentModels(currentApiOperation.responseClass)
-       models ++= currentApiOperation.parameters.flatMap(p => findDependentModels(p.dataType))
+       models ++= currentApiOperation.parameters.flatMap(p => {
+         if(modelJsonMap.contains(p.dataType)) {
+           findDependentModels(p.dataType)
+         } else {
+           Map[String, Model]()
+         }
+             
+       })
      }
      ApiListing(
        swaggerVersion = swaggerVersion,

@@ -23,7 +23,7 @@ import java.util.Date
 import com.wordnik.swagger.annotations.ApiProperty
 import org.joda.time.DateTime
 
-class SwaggerModelBuilder(modelTypes: Seq[Type]) {
+class SwaggerModelBuilder(val modelTypes: Seq[Type]) {
   
   implicit val mirror = runtimeMirror(getClass.getClassLoader)
  
