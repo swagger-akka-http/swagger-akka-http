@@ -39,6 +39,7 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         val (_, apiListings) = api.buildAll
         apiListings should contain key ("/test")
         val apiListing = apiListings("/test")
+        println(apiListing)
         apiListing.models should be ('defined)
         apiListing.models.get should contain key ("TestModel")
       }
@@ -56,7 +57,7 @@ abstract class TestApiDoesNotExtendHttpService
 
 @Api(value = "/test")
 abstract class TestApiWithOnlyDataType extends HttpService {
-  @ApiOperation(value = "testApiOperation")
-  @ApiParamsImplicit(Array(new ApiParamImplicit(name = "test", value = "test param", dataType = "TestModel")))
+  @ApiOperation(value = "testApiOperation", httpMethod = "GET")
+  @ApiParamsImplicit(Array(new ApiParamImplicit(name = "test", value = "test param", dataType = "TestModel", paramType = "query")))
   def testOperation 
 }

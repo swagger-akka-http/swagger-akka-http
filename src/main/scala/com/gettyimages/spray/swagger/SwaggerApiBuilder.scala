@@ -23,6 +23,9 @@ import com.wordnik.swagger.annotations.ApiParamsImplicit
 import com.wordnik.swagger.annotations.ApiOperation
 import spray.routing.HttpService
 
+case class ApiOperationMissingPropertyException(msg: String) extends Exception(msg)
+case class ApiParameterMissingPropertyException(msg: String) extends Exception(msg)
+
 class SwaggerApiBuilder(
   swaggerVersion: String,
   apiVersion: String,
@@ -56,9 +59,8 @@ class SwaggerApiBuilder(
   ): Seq[(ListApi, Type)] = for {
     (apiAnnotation, classType) <- swaggerApiAnnotations 
     apiPath <- getStringJavaAnnotation("value", apiAnnotation)
-    description <- getStringJavaAnnotation("description", apiAnnotation)
   } yield {
-    (ListApi(apiPath, Some(description), None), classType)
+    (ListApi(apiPath, getStringJavaAnnotation("description", apiAnnotation), None), classType)
   }
   
   private def buildApiListing(listApi: ListApi, classType: Type): ApiListing = {
@@ -67,8 +69,10 @@ class SwaggerApiBuilder(
      //Get all methods with an ApiOperation and iterate.
      for {
        (apiOperationAnnotation, termSymbol) <- getAllMethodAnnotations[ApiOperation](classType)
-       summary <- getStringJavaAnnotation("value", apiOperationAnnotation)
-       httpMethod <- getStringJavaAnnotation("httpMethod", apiOperationAnnotation)
+       summary <- getStringJavaAnnotation("value", apiOperationAnnotation).orElse(
+         throw new ApiOperationMissingPropertyException(s"value must be defined for $apiOperationAnnotation"))
+       httpMethod <- getStringJavaAnnotation("httpMethod", apiOperationAnnotation).orElse(
+         throw new ApiOperationMissingPropertyException(s"httpMethod must be defined for $apiOperationAnnotation"))
      } {
        //Extract fullpath with and path params and list of optional params
        val (fullPath, params) = getPathAndParams(listApi.path, classType, termSymbol)
@@ -144,11 +148,15 @@ class SwaggerApiBuilder(
         getArrayJavaAnnotation("value", apiParamAnnotation) match {
           case Some(annotationParams) =>
             val params = annotationParams.map(annotationParam => Parameter(
-  		        name        = getStringJavaAnnotation("name", annotationParam).get, 
-    		      description = getStringJavaAnnotation("value", annotationParam).get, 
-    		      dataType    = getStringJavaAnnotation("dataType", annotationParam).get,
-    		      paramType   = getStringJavaAnnotation("paramType", annotationParam).get,
-    		      required    = getBooleanJavaAnnotation("required", annotationParam).getOrElse(true),
+  		        name = getStringJavaAnnotation("name", annotationParam).getOrElse(
+  		           throw new ApiParameterMissingPropertyException(s"Missing name, $annotationParam")), 
+    		      description = getStringJavaAnnotation("value", annotationParam).getOrElse( 
+  		           throw new ApiParameterMissingPropertyException(s"Missing value, $annotationParam")), 
+    		      dataType = getStringJavaAnnotation("dataType", annotationParam).getOrElse(
+  		           throw new ApiParameterMissingPropertyException(s"Missing dataType, $annotationParam")), 
+    		      paramType = getStringJavaAnnotation("paramType", annotationParam).getOrElse(
+  		           throw new ApiParameterMissingPropertyException(s"Missing paramType, $annotationParam")), 
+    		      required = getBooleanJavaAnnotation("required", annotationParam).getOrElse(true),
     		      defaultValue = getStringJavaAnnotation("defaultValue", annotationParam)
     		      //allowMultiple = annotationParam.allowMultiple,
     		    ))
