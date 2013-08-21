@@ -21,6 +21,9 @@ import spray.routing.HttpService
 import akka.actor.Actor
 import scala.reflect.runtime.universe._
 import com.wordnik.swagger.annotations.Api
+import com.wordnik.swagger.annotations.ApiOperation
+import com.wordnik.swagger.annotations.ApiImplicitParams
+import com.wordnik.swagger.annotations.ApiImplicitParam
 
 class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
   
@@ -65,8 +68,17 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         responseMessage.message should be ("Dictionary does not exist.")
       }
     }
-  }
-
+    "passed a test api with data only" should {
+       "output that data model" in {
+         val api = swaggerApi(List(typeOf[TestApiWithOnlyDataType]), List(typeOf[TestModel], typeOf[TestModelNode]))
+         val (_, apiListings) = api.buildAll
+         apiListings should contain key ("/test")
+         val apiListing = apiListings("/test")
+         apiListing.models should be ('defined)
+         apiListing.models.get should contain key ("TestModel")
+        }
+      }  
+    }
 }
 
 abstract class TestApiWithNoAnnotation extends HttpService
@@ -76,3 +88,10 @@ abstract class TestApiWithWrongAnnotation extends HttpService
 
 @Api(value = "/test")
 abstract class TestApiDoesNotExtendHttpService
+
+@Api(value = "/test")
+abstract class TestApiWithOnlyDataType extends HttpService {
+  @ApiOperation(value = "testApiOperation", httpMethod = "GET")
+  @ApiImplicitParams(Array(new ApiImplicitParam(name = "test", value = "test param", dataType = "TestModel", paramType = "query")))
+  def testOperation 
+}

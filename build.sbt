@@ -12,10 +12,12 @@ libraryDependencies ++= Seq(
   "com.typesafe" %% "scalalogging-slf4j" % "1.0.1",
   "com.typesafe.akka" %% "akka-actor" % "2.1.4",
   "org.json4s" %% "json4s-jackson" % "3.2.4",
-  "io.spray" % "spray-routing" % "1.1-M8",
+  "io.spray" % "spray-routing" % "1.2-20130801",
   "joda-time" % "joda-time" % "2.2",
   "org.joda" % "joda-convert" % "1.3.1"
 )
+
+resolvers += "spray nightlies" at "http://nightlies.spray.io" 
 
 releaseSettings
 
@@ -36,6 +38,8 @@ publishTo <<= version { (v: String) =>
 publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
+
+parallelExecution in Test := false 
 
 usePgpKeyHex("4B3A4DF39903AA31")
 

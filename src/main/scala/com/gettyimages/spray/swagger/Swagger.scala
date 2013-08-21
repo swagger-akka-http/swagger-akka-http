@@ -100,9 +100,11 @@ case class Parameter(name: String,
                  defaultValue: Option[String] = None,                     
                  required: Boolean = true,
                  allowMultiple: Boolean = false) {
+  
+  private val ValidParamTypes = Set("path", "query", "body", "header", "form") 
+  
   require(
-    paramType == "path" || paramType == "query" || paramType == "body" || 
-    paramType == "header" || paramType == "form",
-    s"Invalid ParamType: ${paramType}"
+    ValidParamTypes.contains(paramType.toLowerCase),
+    s"Invalid ParamType: ${paramType} ValidParamTypes: $ValidParamTypes" 
   )
 }
