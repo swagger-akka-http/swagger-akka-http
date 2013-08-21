@@ -23,6 +23,8 @@ releaseSettings
 
 testOptions in Test += Tests.Argument("-oDF")
 
+parallelExecution in Test := false
+
 publishMavenStyle := true
 
 publishTo <<= version { (v: String) =>

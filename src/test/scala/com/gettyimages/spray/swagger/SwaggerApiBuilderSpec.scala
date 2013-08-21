@@ -39,7 +39,6 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         val (_, apiListings) = api.buildAll
         apiListings should contain key ("/test")
         val apiListing = apiListings("/test")
-        println(apiListing)
         apiListing.models should be ('defined)
         apiListing.models.get should contain key ("TestModel")
       }
