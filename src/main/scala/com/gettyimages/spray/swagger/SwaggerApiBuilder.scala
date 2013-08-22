@@ -21,6 +21,7 @@ import ReflectionUtils._
 import com.wordnik.swagger.annotations.Api
 import com.wordnik.swagger.annotations.ApiParamsImplicit
 import com.wordnik.swagger.annotations.ApiOperation
+import com.wordnik.swagger.annotations.ApiErrors
 import spray.routing.HttpService
 
 case class ApiOperationMissingPropertyException(msg: String) extends Exception(msg)
@@ -77,12 +78,14 @@ class SwaggerApiBuilder(
        //Extract fullpath with and path params and list of optional params
        val (fullPath, params) = getPathAndParams(listApi.path, classType, termSymbol)
        val methodName = termSymbol.name.decoded
+       val apiErrors = getApiErrors(classType, termSymbol)
        val currentApiOperation = Operation(
            httpMethod = httpMethod,
            summary = summary,
            nickname = getStringJavaAnnotation("nickname", apiOperationAnnotation).getOrElse(methodName),
            responseClass = getStringJavaAnnotation("responseClass", apiOperationAnnotation).getOrElse("void"),
-           parameters = params
+           parameters = params,
+           errorResponses = apiErrors
        )
        //This indicates a new operation for a prexisting api listing, just add it
        if(apis.contains(fullPath)) {
@@ -148,9 +151,24 @@ class SwaggerApiBuilder(
     })
     updatedModels
   }
+  
+  private def getApiErrors(classType: Type, termSymbol: TermSymbol): Option[List[Error]] = {
+    for {
+      responsesAnnotation <- getMethodAnnotation[ApiErrors](classType, termSymbol)
+      responseAnnotations <- getArrayJavaAnnotation("value", responsesAnnotation).map(_.toList).orElse(
+        throw new Exception(s"Missing value, $responsesAnnotation"))
+    } yield { responseAnnotations.map(responseAnnotation => {
+      val code = getIntJavaAnnotation("code", responseAnnotation).getOrElse(
+          throw new Exception(s"Missing code, $responseAnnotation"))
+      val reason = getStringJavaAnnotation("reason", responseAnnotation).getOrElse(
+          throw new Exception(s"Missing reason, $responseAnnotation"))
+      
+      new Error(code = code, reason = reason)
+    })}
+  }
     
   private def getPathAndParams(path: String, classType: Type, termSymbol: Symbol): (String, List[Parameter]) = {
-    getMethodAnnotation[ApiParamsImplicit](classType)(termSymbol.name.decoded) match {
+    getMethodAnnotation[ApiParamsImplicit](classType, termSymbol.name.decoded) match {
       case Some(apiParamAnnotation) => 
         getArrayJavaAnnotation("value", apiParamAnnotation) match {
           case Some(annotationParams) =>

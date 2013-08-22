@@ -55,8 +55,12 @@ object ReflectionUtils {
     }).toSeq
   }
   
-  def getMethodAnnotation[K: TypeTag](objectType: Type)(name: String): Option[Annotation] = {
+  def getMethodAnnotation[K: TypeTag](objectType: Type, name: String): Option[Annotation] = {
     getSymbolAnnotation[K](objectType.declaration(name: TermName).asTerm)
+  }
+  
+  def getMethodAnnotation[K: TypeTag](objectType: Type, symbol: TermSymbol): Option[Annotation] = {
+    getSymbolAnnotation[K](objectType.declaration(symbol.name).asTerm)
   }
   
   def getFieldAnnotation[T: TypeTag, K: TypeTag](name: String): Option[Annotation] = {
