@@ -23,6 +23,7 @@ import com.wordnik.swagger.annotations.ApiImplicitParams
 import com.wordnik.swagger.annotations.ApiOperation
 import spray.routing.HttpService
 import com.wordnik.swagger.annotations.ApiResponses
+import com.typesafe.scalalogging.slf4j.Logging
 
 case class ApiMissingPropertyException(msg: String) extends Exception(msg)
 class SwaggerApiBuilder(
@@ -33,12 +34,14 @@ class SwaggerApiBuilder(
   modelTypes: Seq[Type],
   apiInfo: Option[ApiInfo] = None,
   authorizations: Option[Map[String, Authorization]]  = None
-) {
+) extends Logging {
   
   
   implicit val mirror = runtimeMirror(getClass.getClassLoader)
   
   private val modelJsonMap = (new SwaggerModelBuilder(modelTypes)).buildAll
+  
+  logger.debug(s"ModelJsonMap: $modelJsonMap")
   
   val swaggerApiAnnotations = apiTypes.map(apiType => getClassAnnotation[Api](apiType) match {
     case Some(annotation) if !(apiType  <:< typeOf[HttpService]) => 
@@ -47,6 +50,8 @@ class SwaggerApiBuilder(
     case None => throw new IllegalArgumentException(s"Class must have Api annotation: $apiType")
   })
   
+  logger.debug(s"SwaggerApiAnnotations: $swaggerApiAnnotations")
+  
   def buildAll: (ResourceListing, Map[String, ApiListing]) = {
     val listApis = buildResourceListApis(swaggerApiAnnotations)
     val resourceListing = ResourceListing(swaggerVersion, apiVersion, listApis.map(_._1).toList, apiInfo, authorizations)
@@ -54,6 +59,8 @@ class SwaggerApiBuilder(
     val apiListings: Map[String, ApiListing] = (for((listApi, classType) <- listApis) yield {
       (listApi.path, buildApiListing(listApi, classType))
     }).toMap
+    
+    logger.debug(s"BuildResourceAndApiListings ResourceListing: $resourceListing ApiListings: $apiListings")
     
     (resourceListing, apiListings)
   }

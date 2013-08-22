@@ -22,8 +22,9 @@ import com.wordnik.swagger.annotations.ApiModel
 import java.util.Date
 import com.wordnik.swagger.annotations.ApiModelProperty
 import org.joda.time.DateTime
+import com.typesafe.scalalogging.slf4j.Logging
 
-class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
+class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extends Logging {
   
   //validate models
   val modelAnnotationTypesMap = modelTypes.map(tpe => { getClassAnnotation[ApiModel](tpe) match {
@@ -35,6 +36,8 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
       throw new IllegalArgumentException(
         s"Model does not have ApiClass Annotation $tpe")
   }}).toMap
+  
+  logger.debug(s"ModelAnnotationTypesMap: $modelAnnotationTypesMap")
   
   def build(name: String): Option[Model] = modelAnnotationTypesMap.get(name).map(modelAnnotationType => {
     val (modelAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
@@ -62,7 +65,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) {
       subTypes = subTypes,
       properties = modelProperties
     )
-  }) 
+  })
   
   def buildAll: Map[String, Model] = modelAnnotationTypesMap.keys.map(name => {
     (name, build(name).get)
