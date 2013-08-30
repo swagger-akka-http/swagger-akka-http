@@ -23,6 +23,7 @@ import com.wordnik.swagger.annotations.ApiParamsImplicit
 import com.wordnik.swagger.annotations.ApiOperation
 import com.wordnik.swagger.annotations.ApiErrors
 import spray.routing.HttpService
+import javax.ws.rs.Path
 
 case class ApiOperationMissingPropertyException(msg: String) extends Exception(msg)
 case class ApiParameterMissingPropertyException(msg: String) extends Exception(msg)
@@ -168,6 +169,7 @@ class SwaggerApiBuilder(
   }
     
   private def getPathAndParams(path: String, classType: Type, termSymbol: Symbol): (String, List[Parameter]) = {
+    val pathAnnotation = getMethodAnnotation[Path](classType, termSymbol.name.decoded)
     getMethodAnnotation[ApiParamsImplicit](classType, termSymbol.name.decoded) match {
       case Some(apiParamAnnotation) => 
         getArrayJavaAnnotation("value", apiParamAnnotation) match {
@@ -183,10 +185,11 @@ class SwaggerApiBuilder(
   		           throw new ApiParameterMissingPropertyException(s"Missing paramType, $annotationParam")), 
     		      required = getBooleanJavaAnnotation("required", annotationParam).getOrElse(true),
     		      defaultValue = getStringJavaAnnotation("defaultValue", annotationParam)
-    		      //allowMultiple = annotationParam.allowMultiple,
     		    ))
-            val pathParams = params.filter(_.paramType == "path").map(_.name)
-            (pathParams.foldLeft(path)(_ + "/{" + _ + "}"), params.toList)
+    		    //TODO: should check user provided path matches up with path parameters
+    		    val fullPath = pathAnnotation.flatMap(p => getStringJavaAnnotation("value", p)).getOrElse(
+    		      params.filter(_.paramType == "path").map(_.name).foldLeft(path)(_ + "/{" + _ + "}"))
+            (fullPath, params.toList)
           case None =>
             (path, List[Parameter]())
          }

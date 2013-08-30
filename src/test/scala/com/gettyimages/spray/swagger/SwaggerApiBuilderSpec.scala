@@ -9,6 +9,7 @@ import com.wordnik.swagger.annotations.Api
 import com.wordnik.swagger.annotations.ApiOperation
 import com.wordnik.swagger.annotations.ApiParamsImplicit
 import com.wordnik.swagger.annotations.ApiParamImplicit
+import javax.ws.rs.Path
 
 class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
   
@@ -42,7 +43,19 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         apiListing.models should be ('defined)
         apiListing.models.get should contain key ("TestModel")
       }
-    } 
+    }
+    "passed a test api with a sub path with path parameters" should {
+      "output api on that sub path and test parameters identified" in {
+        val api = swaggerApi(List(typeOf[TestApiWithPathOperation]), List(typeOf[TestModel], typeOf[TestModelNode]))
+        val (_, apiListings) = api.buildAll
+        apiListings should contain key ("/test")
+        val apiListing = apiListings("/test")
+        val operations = apiListing.apis
+        operations should have size (1)
+        val pathOperation = operations.head
+        pathOperation.path should be ("/sub/{someParam}/path/{anotherParam}")
+      }
+    }
   }
 }
 
@@ -59,4 +72,15 @@ abstract class TestApiWithOnlyDataType extends HttpService {
   @ApiOperation(value = "testApiOperation", httpMethod = "GET")
   @ApiParamsImplicit(Array(new ApiParamImplicit(name = "test", value = "test param", dataType = "TestModel", paramType = "query")))
   def testOperation 
+}
+
+@Api(value = "/test")
+abstract class TestApiWithPathOperation extends HttpService {
+  @Path("/sub/{someParam}/path/{anotherParam}")
+  @ApiOperation(value = "subPathApiOperation", httpMethod = "GET")
+  @ApiParamsImplicit(Array(
+    new ApiParamImplicit(name = "someParam", value = "some param", dataType = "TestModel", paramType = "path"),
+    new ApiParamImplicit(name = "anotherParam", value = "another param", dataType = "TestModel", paramType = "path")
+  ))
+  def subPathOperation
 }
