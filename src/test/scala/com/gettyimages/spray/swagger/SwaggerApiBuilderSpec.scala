@@ -51,9 +51,9 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         apiListings should contain key ("/test")
         val apiListing = apiListings("/test")
         val operations = apiListing.apis
-        operations should have size (1)
-        val pathOperation = operations.head
-        pathOperation.path should be ("/sub/{someParam}/path/{anotherParam}")
+        operations should have size (2)
+        operations(0).path should be ("/test/sub/{someParam}/path/{anotherParam}")
+        operations(1).path should be ("/test/other/sub/{someParam}/path/{anotherParam}")
       }
     }
   }
@@ -83,4 +83,8 @@ abstract class TestApiWithPathOperation extends HttpService {
     new ApiParamImplicit(name = "anotherParam", value = "another param", dataType = "TestModel", paramType = "path")
   ))
   def subPathOperation
+  
+  @Path("/other/sub/{someParam}/path/{anotherParam}")
+  @ApiOperation(value = "otherSubPathApiOperation", httpMethod = "GET")
+  def otherSubPathOperation
 }

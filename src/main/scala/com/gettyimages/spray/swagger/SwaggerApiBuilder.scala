@@ -187,13 +187,23 @@ class SwaggerApiBuilder(
     		      defaultValue = getStringJavaAnnotation("defaultValue", annotationParam)
     		    ))
     		    //TODO: should check user provided path matches up with path parameters
-    		    val fullPath = pathAnnotation.flatMap(p => getStringJavaAnnotation("value", p)).getOrElse(
+    		    val fullPath = getPath(pathAnnotation, path, 
     		      params.filter(_.paramType == "path").map(_.name).foldLeft(path)(_ + "/{" + _ + "}"))
             (fullPath, params.toList)
           case None =>
-            (path, List[Parameter]())
+            val fullPath = getPath(pathAnnotation, path, path)
+            (fullPath, List[Parameter]())
          }
-      case None => (path, List[Parameter]())
+      case None => 
+        val fullPath = getPath(pathAnnotation, path, path)
+        (fullPath, List[Parameter]())
     }
+  }
+  
+  private def getPath(
+    pathAnnotation: Option[Annotation], originalPath: String, alternativePath: String
+  ) = pathAnnotation.flatMap(p => getStringJavaAnnotation("value", p)) match {
+    case Some(subPath) => originalPath + subPath
+    case None          => alternativePath
   }
 }
