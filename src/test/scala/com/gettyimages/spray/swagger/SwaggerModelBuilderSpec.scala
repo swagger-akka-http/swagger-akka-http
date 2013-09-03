@@ -105,7 +105,6 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       "have natural subtypes overriden by annotation specification" in {
          val builder = new SwaggerModelBuilder(Seq(typeOf[Letter]))
          val parentModel = builder.build("Letter")
-         println(parentModel)
          parentModel should be ('defined)
          parentModel.get.subTypes should be ('defined)
          parentModel.get.subTypes.get should have size (2)

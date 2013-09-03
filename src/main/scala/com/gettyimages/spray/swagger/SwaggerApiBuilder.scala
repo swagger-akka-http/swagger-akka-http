@@ -24,6 +24,7 @@ import com.wordnik.swagger.annotations.ApiOperation
 import spray.routing.HttpService
 import com.wordnik.swagger.annotations.ApiResponses
 import com.typesafe.scalalogging.slf4j.Logging
+import javax.ws.rs.Path
 
 case class ApiMissingPropertyException(msg: String) extends Exception(msg)
 class SwaggerApiBuilder(
@@ -184,6 +185,7 @@ class SwaggerApiBuilder(
   }
     
   private def getPathAndParams(path: String, classType: Type, termSymbol: Symbol): (String, List[Parameter]) = {
+    val pathAnnotation = getMethodAnnotation[Path](classType, termSymbol.name.decoded)
     getMethodAnnotation[ApiImplicitParams](classType, termSymbol.asTerm) match {
       case Some(apiParamAnnotation) => 
         getArrayJavaAnnotation("value", apiParamAnnotation) match {
@@ -201,12 +203,23 @@ class SwaggerApiBuilder(
     		      defaultValue = getStringJavaAnnotation("defaultValue", annotationParam)
     		      //allowMultiple = annotationParam.allowMultiple,
     		    ))
-            val pathParams = params.filter(_.paramType == "path").map(_.name)
-            (pathParams.foldLeft(path)(_ + "/{" + _ + "}"), params.toList)
+    		    val fullPath = getPath(pathAnnotation, path,
+              params.filter(_.paramType == "path").map(_.name).foldLeft(path)(_ + "/{" + _ + "}"))
+            (fullPath, params.toList)
           case None =>
-            (path, List[Parameter]())
+            val fullPath = getPath(pathAnnotation, path, path)
+            (fullPath, List[Parameter]())
          }
-      case None => (path, List[Parameter]())
+      case None => 
+        val fullPath = getPath(pathAnnotation, path, path)
+        (fullPath, List[Parameter]())
     }
+  }
+  
+  private def getPath(
+    pathAnnotation: Option[Annotation], originalPath: String, alternativePath: String
+  ) = pathAnnotation.flatMap(p => getStringJavaAnnotation("value", p)) match {
+    case Some(subPath) => originalPath + subPath
+    case None => alternativePath
   }
 }

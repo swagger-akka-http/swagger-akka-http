@@ -24,6 +24,7 @@ import com.wordnik.swagger.annotations.Api
 import com.wordnik.swagger.annotations.ApiOperation
 import com.wordnik.swagger.annotations.ApiImplicitParams
 import com.wordnik.swagger.annotations.ApiImplicitParam
+import javax.ws.rs.Path
 
 class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
   
@@ -79,6 +80,18 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         }
       }  
     }
+    "passed a test api with a sub path with path parameters" should {
+      "output api on that sub path and test parameters identified" in {
+        val api = swaggerApi(List(typeOf[TestApiWithPathOperation]), List(typeOf[TestModel], typeOf[TestModelNode]))
+        val (_, apiListings) = api.buildAll
+        apiListings should contain key ("/test")
+        val apiListing = apiListings("/test")
+        val operations = apiListing.apis
+        operations should have size (2)
+        operations(0).path should be ("/test/sub/{someParam}/path/{anotherParam}")
+        operations(1).path should be ("/test/other/sub/{someParam}/path/{anotherParam}")
+      }
+    }
 }
 
 abstract class TestApiWithNoAnnotation extends HttpService
@@ -94,4 +107,19 @@ abstract class TestApiWithOnlyDataType extends HttpService {
   @ApiOperation(value = "testApiOperation", httpMethod = "GET")
   @ApiImplicitParams(Array(new ApiImplicitParam(name = "test", value = "test param", dataType = "TestModel", paramType = "query")))
   def testOperation 
+}
+
+@Api(value = "/test")
+abstract class TestApiWithPathOperation extends HttpService {
+  @Path("/sub/{someParam}/path/{anotherParam}")
+  @ApiOperation(value = "subPathApiOperation", httpMethod = "GET")
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "someParam", value = "some param", dataType = "TestModel", paramType = "path"),
+    new ApiImplicitParam(name = "anotherParam", value = "another param", dataType = "TestModel", paramType = "path")
+  ))
+  def subPathOperation
+  
+  @Path("/other/sub/{someParam}/path/{anotherParam}")
+  @ApiOperation(value = "otherSubPathApiOperation", httpMethod = "GET")
+  def otherSubPathOperation
 }
