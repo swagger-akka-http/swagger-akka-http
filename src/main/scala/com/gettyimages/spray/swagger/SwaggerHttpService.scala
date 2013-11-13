@@ -27,7 +27,6 @@ import spray.httpx.Json4sSupport
 import spray.routing.Directive.pimpApply
 import spray.routing.HttpService
 import spray.routing.Route
-import spray.routing.directives.CompletionMagnet.fromObject
 
 trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   

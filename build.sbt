@@ -4,21 +4,21 @@ organization := "com.gettyimages"
 
 name := "spray-swagger"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.0.M5b" % "test",
   "com.wordnik" %% "swagger-core" % "1.3.0",
   "com.typesafe" %% "scalalogging-slf4j" % "1.0.1",
-  "com.typesafe.akka" %% "akka-actor" % "2.1.4",
+  "com.typesafe.akka" %% "akka-actor" % "2.2.3",
   "org.json4s" %% "json4s-jackson" % "3.2.4",
-  "io.spray" % "spray-routing" % "1.2-20130801",
+  "io.spray" % "spray-routing" % "1.2-RC2",
   "joda-time" % "joda-time" % "2.2",
   "org.joda" % "joda-convert" % "1.3.1",
   "com.typesafe" %% "scalalogging-slf4j" % "1.0.1"
 )
 
-resolvers += "spray nightlies" at "http://nightlies.spray.io" 
+resolvers += "spray repo" at "http://repo.spray.io" 
 
 releaseSettings
 
