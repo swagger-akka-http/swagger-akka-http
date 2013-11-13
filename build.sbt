@@ -18,6 +18,8 @@ libraryDependencies ++= Seq(
   "com.typesafe" %% "scalalogging-slf4j" % "1.0.1"
 )
 
+resolvers += "spray repo" at "http://repo.spray.io" 
+
 releaseSettings
 
 testOptions in Test += Tests.Argument("-oDF")
