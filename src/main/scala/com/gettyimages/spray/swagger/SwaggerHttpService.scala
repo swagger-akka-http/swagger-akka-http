@@ -55,7 +55,7 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
     path(resourcePath) {
       complete(resourceListing)
     } ~ (for((apiPath, apiListing) <- apiListingMap) yield {
-      path(resourcePath / apiPath.drop(1)) { complete(apiListing) }
+      path(resourcePath / apiPath.drop(1).replace("/", "-")) { complete(apiListing) }
     }).reduceLeft(_ ~ _)
   }}
 }
