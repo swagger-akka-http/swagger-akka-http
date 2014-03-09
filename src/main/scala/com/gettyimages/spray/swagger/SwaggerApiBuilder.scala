@@ -163,7 +163,7 @@ class SwaggerApiBuilder(
     var updatedModels = models
     //Get property based models
     model.properties.values.filter(
-      prop => !SwaggerTypes.contains(prop.`type`) && !models.contains(prop.`type`)
+      prop => !SwaggerTypes.contains(prop.`type`) && !models.contains(prop.`type`) && modelJsonMap.contains(prop.`type`)
     ).foreach(complexProp =>{
       updatedModels += complexProp.`type` -> modelJsonMap(complexProp.`type`)
       updatedModels ++= findDependentModelsRecursively(modelJsonMap(complexProp.`type`), updatedModels)

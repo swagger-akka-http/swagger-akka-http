@@ -45,6 +45,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     val subTypes = getSubTypes(modelType, modelAnnotation)
     val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
+      val dataType = getStringJavaAnnotation("dataType", annotation)
       val propertyName = symbol.name.decoded.trim
       val optionType = extractOptionType(symbol)
       val required = getBooleanJavaAnnotation("required", annotation).getOrElse(optionType.isEmpty)
@@ -52,7 +53,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
       (propertyName, ModelProperty(
           description = description, 
           required = required, 
-          `type` = typeInfo.typeName,
+          `type` = dataType.getOrElse(typeInfo.typeName),
           items = typeInfo.collectionType.map(ti => Map(ti.typeLabel -> ti.typeName)),
           enum = getEnumValues(typeInfo)
       ))
@@ -109,7 +110,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
   
   private def getModelTypeName(propertyType: Type): PropertyTypeInfo = {
     //Container type
-    if(propertyType <:< typeOf[Seq[_]] || propertyType <:< typeOf[Set[_]] || propertyType <:< typeOf[Array[_]]) {
+    if(propertyType <:< typeOf[Iterable[_]] || propertyType <:< typeOf[Array[_]]) {
       //Doesn't handle nesting
       val typeName = if(propertyType <:< typeOf[Seq[_]]) "List" else propertyType.typeSymbol.name.decoded
       PropertyTypeInfo(propertyType, "type", typeName, 
@@ -148,7 +149,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
       PropertyTypeInfo(propertyType, "$ref", typeName)
     //Unknown type
     } else {
-      throw new UnsupportedTypeSignature(s"$propertyType ${propertyType.typeSymbol.fullName}") 
+      PropertyTypeInfo(propertyType, "type", propertyType.typeSymbol.fullName)
     }
   }
   
