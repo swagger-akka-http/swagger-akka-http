@@ -80,6 +80,14 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         model.`extends` should be ('defined)
         model.`extends`.get should be ("TestModelParent")
       }
+      "correctly process dataType in ApiModelProperty annotations" in {
+        implicit val model = buildAndGetModel("ModelWithCustomPropertyDatatypes", typeOf[ModelWithCustomPropertyDatatypes])
+        model.properties should have size (4)
+        checkProperty("count", CountDescription, "long")
+        checkProperty("isStale", IsStaleDescription, "boolean")
+        checkProperty("offset", OffsetDescription, "array")
+        checkProperty("endDate", EndDateDescription, "date")
+      }
     }
     "passed multiple test models" should {
       "build all of them" in {
@@ -179,6 +187,18 @@ case class TestModel(
     val noAnnotationProperty: String,
     val secondNoAnnotationProperty: String
 ) extends TestModelParent
+
+@ApiModel(description = TestModelDescription)
+case class ModelWithCustomPropertyDatatypes(
+  @(ApiModelProperty @field)(value = CountDescription, dataType = "long")
+  val count: BigInt,
+  @(ApiModelProperty @field)(value = IsStaleDescription, dataType = "boolean")
+  val isStale: Any,
+  @(ApiModelProperty @field)(value = OffsetDescription, dataType = "array[int]")
+  val offset: Iterable[(Int, Boolean)],
+  @(ApiModelProperty @field)(value = EndDateDescription, dataType = "date", required = false)
+  val endDate: Option[String]
+)
 
 object TestEnum extends Enumeration {
   type TestEnum = Value
