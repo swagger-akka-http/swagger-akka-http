@@ -55,6 +55,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
           required = required, 
           `type` = typeInfo.typeName,
           items = typeInfo.itemType.map(ti => Map(ti.typeLabel -> ti.typeName)),
+          uniqueItems = if (typeInfo.isUnique) Some(true) else None,
           enum = getEnumValues(typeInfo)
       ))
     }).toMap
@@ -122,7 +123,8 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
         dataType match {
           case ComplexTypeMatcher(containerType, itemType) =>
             PropertyTypeInfo(propertyType, "type", containerType,
-              itemType = Some(PropertyTypeInfo(propertyType, linkType(itemType), itemType)))
+              itemType = Some(PropertyTypeInfo(propertyType, linkType(itemType), itemType)),
+              isUnique = containerType == "set")
           case _ =>
             PropertyTypeInfo(propertyType, linkType(dataType), dataType)
         }
@@ -130,10 +132,10 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
       case None =>
         //Container type
         if(propertyType <:< typeOf[Iterable[_]] || propertyType <:< typeOf[Array[_]]) {
-          val containerType = if (propertyType <:< typeOf[Seq[_]]) "List" else propertyType.typeSymbol.name.decoded
           //Doesn't handle nesting
-          PropertyTypeInfo(propertyType, "type", containerType,
-            itemType = Some(getLiteralOrComplexTypeName(propertyType.asInstanceOf[TypeRefApi].args.head)))
+          PropertyTypeInfo(propertyType, "type", "array",
+            itemType = Some(getLiteralOrComplexTypeName(propertyType.asInstanceOf[TypeRefApi].args.head)),
+            isUnique = propertyType <:< typeOf[Set[_]])
           //Literal/Complex Type
         } else {
           getLiteralOrComplexTypeName(propertyType)
@@ -146,7 +148,8 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     val typeLabel: String, 
     val typeName: String, 
     val itemType: Option[PropertyTypeInfo] = None,
-    val isEnum: Boolean = false
+    val isEnum: Boolean = false,
+    val isUnique: Boolean = false
   )
   
   private def getLiteralOrComplexTypeName(propertyType: Type): PropertyTypeInfo = {
