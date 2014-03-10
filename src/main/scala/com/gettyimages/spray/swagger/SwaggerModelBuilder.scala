@@ -136,12 +136,15 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
         //Container type
         if(propertyType <:< typeOf[Iterable[_]] || propertyType <:< typeOf[Array[_]]) {
           //Doesn't handle nesting
+          val item = propertyType.asInstanceOf[TypeRefApi].args.head
           PropertyTypeInfo(propertyType, "type", "array",
-            itemType = Some(getLiteralOrComplexTypeName(propertyType.asInstanceOf[TypeRefApi].args.head)),
+            itemType = getLiteralOrComplexTypeName(item).
+              orElse(Some(PropertyTypeInfo(propertyType, "type", item.typeSymbol.fullName))),
             isUnique = propertyType <:< typeOf[Set[_]])
           //Literal/Complex Type
         } else {
-          getModelTypeName(propertyType, Some(propertyType.toString))
+          getLiteralOrComplexTypeName(propertyType).getOrElse(
+            getModelTypeName(propertyType, Some(propertyType.toString)))
         }
     }
   }
@@ -155,27 +158,27 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     val isUnique: Boolean = false
   )
   
-  private def getLiteralOrComplexTypeName(propertyType: Type): PropertyTypeInfo = {
+  private def getLiteralOrComplexTypeName(propertyType: Type): Option[PropertyTypeInfo] = {
     val typeName = propertyType.typeSymbol.name.decoded 
     //Literal type
     if (
       propertyType =:= typeOf[Byte]   || propertyType =:= typeOf[Boolean] || propertyType =:= typeOf[Int] ||
       propertyType =:= typeOf[Long]   || propertyType =:= typeOf[Float]   || propertyType =:= typeOf[Double] || 
-      propertyType =:= typeOf[String] || propertyType =:= typeOf[Date]
+      propertyType =:= typeOf[String]
     ) {
-      PropertyTypeInfo(propertyType, "type", typeName.toLowerCase)
-    } else if(propertyType =:= typeOf[DateTime]) {
-      PropertyTypeInfo(propertyType, "type", "date-time")
+      Some(PropertyTypeInfo(propertyType, "type", typeName.toLowerCase))
+    } else if(propertyType =:= typeOf[DateTime] || propertyType =:= typeOf[Date]) {
+      Some(PropertyTypeInfo(propertyType, "type", "date-time"))
     //Handle enums
     } else if(propertyType.typeSymbol.fullName == "scala.Enumeration.Value") { 
     //} else if(modelType <:< typeOf[Enumeration.Value]) {
-      PropertyTypeInfo(propertyType, "type", "string", isEnum = true)
+      Some(PropertyTypeInfo(propertyType, "type", "string", isEnum = true))
     //Reference to complex model type
     } else if(modelAnnotationTypesMap.contains(typeName)) {
-      PropertyTypeInfo(propertyType, "$ref", typeName)
+      Some(PropertyTypeInfo(propertyType, "$ref", typeName))
     //Unknown type
     } else {
-      PropertyTypeInfo(propertyType, "type", propertyType.typeSymbol.fullName)
+      None
     }
   }
   

@@ -62,14 +62,14 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       "has the correct ApiProperty annotations" in {
         implicit val model = buildAndGetModel("TestModel", typeOf[TestModel], typeOf[TestModelNode])
         model.properties should have size (8)
-        checkProperty[String]("name", NameDescription)
-        checkProperty[Int]("count", CountDescription)
-        checkProperty[Boolean]("isStale", IsStaleDescription)
-        checkProperty[Int]("offset", OffsetDescription)
-        checkProperty[List[_]]("nodes", NodesDescription)
-        checkProperty[String]("enum", EnumDescription)
-        checkProperty[Date]("startDate", StartDateDescription)
-        checkProperty[Date]("endDate", EndDateDescription)
+        checkProperty("name", NameDescription, "string")
+        checkProperty("count", CountDescription, "int")
+        checkProperty("isStale", IsStaleDescription, "boolean")
+        checkProperty("offset", OffsetDescription, "int")
+        checkProperty("nodes", NodesDescription, "array")
+        checkProperty("enum", EnumDescription, "string")
+        checkProperty("startDate", StartDateDescription, "date-time")
+        checkProperty("endDate", EndDateDescription, "date-time")
         
         model.properties("enum").enum should be ('defined) 
         val enumValues = model.properties("enum").enum.get
@@ -114,11 +114,11 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
     }
   }
   
-  private def checkProperty[T: TypeTag](modelKey: String, description: String)(implicit model: Model) {
+  private def checkProperty(modelKey: String, description: String, `type`: String)(implicit model: Model) {
     model.properties should contain key (modelKey)
     val prop = model.properties(modelKey)
     prop.description should equal (description)
-    prop.`type` should equal (typeOf[T].typeSymbol.name.decoded.trim)
+    prop.`type` should equal (`type`)
   }
   
   private def buildAndGetModel(modelName: String, modelTypes: Type*): Model = {
