@@ -8,7 +8,8 @@ scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.0.M5b" % "test",
-  "com.wordnik" %% "swagger-core" % "1.3.0",
+  "com.wordnik" %% "swagger-annotations" % "1.3.0",
+  "javax.ws.rs" % "jsr311-api" % "1.1.1",
   "com.typesafe" %% "scalalogging-slf4j" % "1.0.1",
   "com.typesafe.akka" %% "akka-actor" % "2.2.3",
   "org.json4s" %% "json4s-jackson" % "3.2.4",
