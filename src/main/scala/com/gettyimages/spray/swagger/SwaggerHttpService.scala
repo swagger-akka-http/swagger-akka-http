@@ -45,7 +45,7 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   
   implicit def json4sFormats: Formats = DefaultFormats
  
-  private val (resourceListing, apiListingMap) = 
+  private lazy val (resourceListing, apiListingMap) =
     (new SwaggerApiBuilder(
         swaggerVersion, apiVersion, baseUrl, apiTypes, modelTypes,
         apiInfo = SwaggerHttpService.this.apiInfo, authorizations = SwaggerHttpService.this.authorizations
