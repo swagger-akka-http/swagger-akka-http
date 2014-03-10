@@ -40,7 +40,7 @@ class SwaggerApiBuilder(
   
   implicit val mirror = runtimeMirror(getClass.getClassLoader)
   
-  private val modelJsonMap = (new SwaggerModelBuilder(modelTypes)).buildAll
+  private val modelJsonMap = collection.mutable.Map(new SwaggerModelBuilder(modelTypes).buildAll.toSeq: _*)
   
   logger.debug(s"ModelJsonMap: $modelJsonMap")
   
@@ -177,8 +177,10 @@ class SwaggerApiBuilder(
     modelJsonMap.values.filter(m => {
       m.`extends`.exists(e => e == model.id) && !models.contains(m.id)
     }).foreach(m => {
-      updatedModels += m.id -> m
       updatedModels ++= findDependentModelsRecursively(m, updatedModels)
+      val updatedM = m.copy(properties = m.properties ++ updatedModels(m.`extends`.get).properties)
+      updatedModels += m.id -> updatedM
+      modelJsonMap.put(m.id, updatedM)
     })
     updatedModels
   }
@@ -208,7 +210,7 @@ class SwaggerApiBuilder(
           case None =>
             val fullPath = getPath(pathAnnotation, path, path)
             (fullPath, List[Parameter]())
-         }
+        }
       case None => 
         val fullPath = getPath(pathAnnotation, path, path)
         (fullPath, List[Parameter]())

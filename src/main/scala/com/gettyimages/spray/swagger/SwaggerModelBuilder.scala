@@ -84,9 +84,12 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
   }
   
   private def getExtendedClassName(modelType: Type, modelAnnotation: Annotation): Option[String] = {
-    getStringJavaAnnotation("extends", modelAnnotation) orElse {
-      modelType.baseClasses.filter(sym => sym != modelType.typeSymbol && 
-        getSymbolAnnotation[ApiModel](sym).isDefined).headOption.map(_.name.decoded.trim)
+    getClassJavaAnnotation("parent", modelAnnotation) match {
+      case Some(c) =>
+        Some(c.getSimpleName)
+      case _ =>
+        modelType.baseClasses.filter(sym => sym != modelType.typeSymbol &&
+          getSymbolAnnotation[ApiModel](sym).isDefined).headOption.map(_.name.decoded.trim)
     }
   }
   
