@@ -138,7 +138,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
             isUnique = propertyType <:< typeOf[Set[_]])
           //Literal/Complex Type
         } else {
-          getLiteralOrComplexTypeName(propertyType)
+          getModelTypeName(propertyType, Some(propertyType.toString))
         }
     }
   }
