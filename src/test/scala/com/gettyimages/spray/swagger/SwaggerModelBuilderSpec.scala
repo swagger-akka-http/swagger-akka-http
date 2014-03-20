@@ -82,11 +82,13 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       }
       "correctly process dataType in ApiModelProperty annotations" in {
         implicit val model = buildAndGetModel("ModelWithCustomPropertyDatatypes", typeOf[ModelWithCustomPropertyDatatypes])
-        model.properties should have size (4)
+        model.properties should have size (6)
         checkProperty("count", CountDescription, "long")
         checkProperty("isStale", IsStaleDescription, "boolean")
         checkProperty("offset", OffsetDescription, "array")
         checkProperty("endDate", EndDateDescription, "date")
+        checkProperty("nonDefaultTypeField", NameDescription, "CustomType")
+        checkProperty("nonDefaultContainerTypeField", NameDescription, "CustomContainer")
       }
     }
     "passed multiple test models" should {
@@ -197,8 +199,26 @@ case class ModelWithCustomPropertyDatatypes(
   @(ApiModelProperty @field)(value = OffsetDescription, dataType = "array[int]")
   val offset: Iterable[(Int, Boolean)],
   @(ApiModelProperty @field)(value = EndDateDescription, dataType = "date", required = false)
-  val endDate: Option[String]
+  val endDate: Option[String],
+  @(ApiModelProperty @field)(value = NameDescription, dataType = "CustomType", required = false)
+  val nonDefaultTypeField: Option[String],
+  @(ApiModelProperty @field)(value = NameDescription, dataType = "CustomContainer[string]", required = false)
+  val nonDefaultContainerTypeField: Option[String]
 )
+
+
+@ApiModel(description = "ModelBase")
+class ModelBase {
+  @(ApiModelProperty @field)(value = NameDescription)
+  val name: String = ""
+}
+
+@ApiModel(description = "ModelExtension", parent = classOf[ModelBase])
+class ModelExtension extends ModelBase {
+  @(ApiModelProperty @field)(value = EndDateDescription)
+  val date: Date = DateTime.now().toDate
+}
+
 
 object TestEnum extends Enumeration {
   type TestEnum = Value

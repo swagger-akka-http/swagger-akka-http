@@ -92,6 +92,20 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         operations(1).path should be ("/test/other/sub/{someParam}/path/{anotherParam}")
       }
     }
+    "passed a test api with a method returning complex entity" should {
+      "respect model class hierarchy" in {
+        val api = swaggerApi(List(typeOf[TestApiWithParamsHierarchy]), List(typeOf[ModelBase], typeOf[ModelExtension]))
+        val (_, apiListings) = api.buildAll
+        apiListings should contain key ("/test")
+        val apiListing = apiListings("/test")
+        val operations = apiListing.apis
+        operations should have size (1)
+        operations(0).path should be ("/test/paramHierarchyOperation")
+        val model = apiListing.models.get("ModelExtension")
+        model.properties("date").`type` should be ("date-time")
+        model.properties("name").`type` should be ("string")
+      }
+    }
 }
 
 abstract class TestApiWithNoAnnotation extends HttpService
@@ -122,4 +136,11 @@ abstract class TestApiWithPathOperation extends HttpService {
   @Path("/other/sub/{someParam}/path/{anotherParam}")
   @ApiOperation(value = "otherSubPathApiOperation", httpMethod = "GET")
   def otherSubPathOperation
+}
+
+@Api(value = "/test")
+abstract class TestApiWithParamsHierarchy extends HttpService {
+  @Path("/paramHierarchyOperation")
+  @ApiOperation(value = "paramHierarchyOperation", httpMethod = "GET", response = classOf[ModelBase])
+  def paramHierarchyOperation
 }
