@@ -121,11 +121,11 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
   }
   
   case class PropertyTypeInfo(
-    val `type`: Type,
-    val typeLabel: String, 
-    val typeName: String, 
-    val collectionType: Option[PropertyTypeInfo] = None, 
-    val isEnum: Boolean = false
+    `type`: Type,
+    typeLabel: String,
+    typeName: String,
+    collectionType: Option[PropertyTypeInfo] = None,
+    isEnum: Boolean = false
   )
   
   private def getLiteralOrComplexTypeName(propertyType: Type): PropertyTypeInfo = {
@@ -134,7 +134,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     if (
       propertyType =:= typeOf[Byte]   || propertyType =:= typeOf[Boolean] || propertyType =:= typeOf[Int] ||
       propertyType =:= typeOf[Long]   || propertyType =:= typeOf[Float]   || propertyType =:= typeOf[Double] || 
-      propertyType =:= typeOf[String] || propertyType =:= typeOf[Date]
+      propertyType =:= typeOf[String] || propertyType =:= typeOf[Date]    || propertyType =:= typeOf[BigDecimal]
     ) {
       PropertyTypeInfo(propertyType, "type", typeName)
     } else if(propertyType =:= typeOf[DateTime]) {

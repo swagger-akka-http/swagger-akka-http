@@ -61,7 +61,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       }
       "has the correct ApiProperty annotations" in {
         implicit val model = buildAndGetModel("TestModel", typeOf[TestModel], typeOf[TestModelNode])
-        model.properties should have size (8)
+        model.properties should have size (9)
         checkProperty[String]("name", NameDescription)
         checkProperty[Int]("count", CountDescription)
         checkProperty[Boolean]("isStale", IsStaleDescription)
@@ -70,10 +70,11 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         checkProperty[String]("enum", EnumDescription)
         checkProperty[Date]("startDate", StartDateDescription)
         checkProperty[Date]("endDate", EndDateDescription)
+        checkProperty[BigDecimal]("amount", AmountDescription)
         
         model.properties("enum").enum should be ('defined) 
         val enumValues = model.properties("enum").enum.get
-        enumValues should have size (2)
+        enumValues should have size 2
         enumValues should contain ("a")
         enumValues should contain ("b")
         
@@ -85,10 +86,10 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       "build all of them" in {
         val builder = new SwaggerModelBuilder(Seq(typeOf[TestModelEmptyAnnotation], typeOf[TestModel], typeOf[TestModelNode]))
         val allModels = builder.buildAll
-        allModels should have size (3)
-        allModels should contain key ("TestModelEmptyAnnotation")
-        allModels should contain key ("TestModel")
-        allModels should contain key ("TestModelNode")
+        allModels should have size 3
+        allModels should contain key "TestModelEmptyAnnotation"
+        allModels should contain key "TestModel"
+        allModels should contain key "TestModelNode"
       } 
     }
     "passed a model with subtypes" should {
@@ -97,7 +98,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         val parentModel = builder.build("TestModelParent")
         parentModel should be ('defined)
         parentModel.get.subTypes should be ('defined)
-        parentModel.get.subTypes.get should have size (1)
+        parentModel.get.subTypes.get should have size 1
         parentModel.get.subTypes.get should contain ("TestModel")
       } 
     }
@@ -107,7 +108,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
          val parentModel = builder.build("Letter")
          parentModel should be ('defined)
          parentModel.get.subTypes should be ('defined)
-         parentModel.get.subTypes.get should have size (2)
+         parentModel.get.subTypes.get should have size 2
          parentModel.get.subTypes.get should contain ("String")
          parentModel.get.subTypes.get should contain ("B")
       }
@@ -115,7 +116,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
   }
   
   private def checkProperty[T: TypeTag](modelKey: String, description: String)(implicit model: Model) {
-    model.properties should contain key (modelKey)
+    model.properties should contain key modelKey
     val prop = model.properties(modelKey)
     prop.description should equal (description)
     prop.`type` should equal (typeOf[T].typeSymbol.name.decoded.trim)
@@ -142,6 +143,7 @@ object SwaggerModelBuilderSpecValues {
   final val EnumDescription = "enumDescription2135432"
   final val StartDateDescription = "startDateDescription294290"
   final val EndDateDescription = "endDateDescription294290"
+  final val AmountDescription = "amountDescription222"
 }
 
 case class TestModelWithNoAnnotation
@@ -160,24 +162,26 @@ sealed trait TestModelParent {
 @ApiModel(description = TestModelDescription)
 case class TestModel(
     @(ApiModelProperty @field)(value = NameDescription)
-    val name: String,
+    name: String,
     @(ApiModelProperty @field)(value = CountDescription)
-    val count: Int,
+    count: Int,
     @(ApiModelProperty @field)(value = IsStaleDescription)
-    val isStale: Boolean,
+    isStale: Boolean,
     @(ApiModelProperty @field)(value = OffsetDescription)
-    val offset: Option[Int] = None,
+    offset: Option[Int] = None,
     @(ApiModelProperty @field)(value = NodesDescription)
-    val nodes: List[TestModelNode] = List[TestModelNode](),
+    nodes: List[TestModelNode] = List[TestModelNode](),
     @(ApiModelProperty @field)(value = EnumDescription)
-    val enum: TestEnum.TestEnum = TestEnum.AEnum,
+    enum: TestEnum.TestEnum = TestEnum.AEnum,
     @(ApiModelProperty @field)(value = StartDateDescription)
-    val startDate: Date,
+    startDate: Date,
     @(ApiModelProperty @field)(value = EndDateDescription)
-    val endDate: DateTime,
+    endDate: DateTime,
+    @(ApiModelProperty @field)(value = AmountDescription)
+    amount: BigDecimal,
     
-    val noAnnotationProperty: String,
-    val secondNoAnnotationProperty: String
+    noAnnotationProperty: String,
+    secondNoAnnotationProperty: String
 ) extends TestModelParent
 
 object TestEnum extends Enumeration {
@@ -188,7 +192,7 @@ object TestEnum extends Enumeration {
 
 @ApiModel
 case class TestModelNode(
-  val value: Option[String]
+  value: Option[String]
 )
 
 case class A extends Letter

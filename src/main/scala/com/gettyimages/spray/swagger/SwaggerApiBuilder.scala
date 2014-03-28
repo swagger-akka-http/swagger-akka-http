@@ -144,7 +144,7 @@ class SwaggerApiBuilder(
   
   val SwaggerTypes = List(
       "Byte", "Boolean", "Int", "Long", "Float", "Double", "String", "Date",
-      "List", "Set", "Array")
+      "List", "Set", "Array", "BigDecimal")
   
   private def findDependentModels(responseClass: String): Map[String, Model] = {
     var models = Map[String, Model]()
