@@ -45,15 +45,17 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     val subTypes = getSubTypes(modelType, modelAnnotation)
     val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
+      val dataType = getStringJavaAnnotation("dataType", annotation)
       val propertyName = symbol.name.decoded.trim
       val optionType = extractOptionType(symbol)
       val required = getBooleanJavaAnnotation("required", annotation).getOrElse(optionType.isEmpty)
-      val typeInfo = getModelTypeName(optionType.getOrElse(symbol.typeSignature))
+      val typeInfo = getModelTypeName(optionType.getOrElse(symbol.typeSignature), dataType)
       (propertyName, ModelProperty(
           description = description, 
           required = required, 
           `type` = typeInfo.typeName,
-          items = typeInfo.collectionType.map(ti => Map(ti.typeLabel -> ti.typeName)),
+          items = typeInfo.itemType.map(ti => Map(ti.typeLabel -> ti.typeName)),
+          uniqueItems = if (typeInfo.isUnique) Some(true) else None,
           enum = getEnumValues(typeInfo)
       ))
     }).toMap
@@ -82,9 +84,12 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
   }
   
   private def getExtendedClassName(modelType: Type, modelAnnotation: Annotation): Option[String] = {
-    getStringJavaAnnotation("extends", modelAnnotation) orElse {
-      modelType.baseClasses.filter(sym => sym != modelType.typeSymbol && 
-        getSymbolAnnotation[ApiModel](sym).isDefined).headOption.map(_.name.decoded.trim)
+    getClassJavaAnnotation("parent", modelAnnotation) match {
+      case Some(c) =>
+        Some(c.getSimpleName)
+      case _ =>
+        modelType.baseClasses.filter(sym => sym != modelType.typeSymbol &&
+          getSymbolAnnotation[ApiModel](sym).isDefined).headOption.map(_.name.decoded.trim)
     }
   }
   
@@ -107,16 +112,40 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     }
   }
   
-  private def getModelTypeName(propertyType: Type): PropertyTypeInfo = {
-    //Container type
-    if(propertyType <:< typeOf[Seq[_]] || propertyType <:< typeOf[Set[_]] || propertyType <:< typeOf[Array[_]]) {
-      //Doesn't handle nesting
-      val typeName = if(propertyType <:< typeOf[Seq[_]]) "List" else propertyType.typeSymbol.name.decoded
-      PropertyTypeInfo(propertyType, "type", typeName, 
-          collectionType = Some(getLiteralOrComplexTypeName(propertyType.asInstanceOf[TypeRefApi].args.head)))
-    //Literal/Complex Type
-    } else {
-      getLiteralOrComplexTypeName(propertyType)
+  private def getModelTypeName(propertyType: Type, dataTypeOverride: Option[String]): PropertyTypeInfo = {
+    dataTypeOverride match {
+      // data type was overridden using annotation
+      case Some(dataType) =>
+        // checks if type is custom and we should ref to it
+        def linkType(typeName: String): String =
+          if(modelAnnotationTypesMap.contains(typeName)) "$ref" else "type"
+
+        // things like container[something]
+        val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
+
+        dataType match {
+          case ComplexTypeMatcher(containerType, itemType) =>
+            PropertyTypeInfo(propertyType, "type", containerType,
+              itemType = Some(PropertyTypeInfo(propertyType, linkType(itemType), itemType)),
+              isUnique = containerType == "set")
+          case _ =>
+            PropertyTypeInfo(propertyType, linkType(dataType), dataType)
+        }
+
+      case None =>
+        //Container type
+        if(propertyType <:< typeOf[Iterable[_]] || propertyType <:< typeOf[Array[_]]) {
+          //Doesn't handle nesting
+          val item = propertyType.asInstanceOf[TypeRefApi].args.head
+          PropertyTypeInfo(propertyType, "type", "array",
+            itemType = getLiteralOrComplexTypeName(item).
+              orElse(Some(PropertyTypeInfo(propertyType, "type", item.typeSymbol.fullName))),
+            isUnique = propertyType <:< typeOf[Set[_]])
+          //Literal/Complex Type
+        } else {
+          getLiteralOrComplexTypeName(propertyType).getOrElse(
+            getModelTypeName(propertyType, Some(propertyType.toString)))
+        }
     }
   }
   
@@ -124,31 +153,32 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     `type`: Type,
     typeLabel: String,
     typeName: String,
-    collectionType: Option[PropertyTypeInfo] = None,
-    isEnum: Boolean = false
+    itemType: Option[PropertyTypeInfo] = None,
+    isEnum: Boolean = false,
+    isUnique: Boolean = false
   )
   
-  private def getLiteralOrComplexTypeName(propertyType: Type): PropertyTypeInfo = {
+  private def getLiteralOrComplexTypeName(propertyType: Type): Option[PropertyTypeInfo] = {
     val typeName = propertyType.typeSymbol.name.decoded 
     //Literal type
     if (
       propertyType =:= typeOf[Byte]   || propertyType =:= typeOf[Boolean] || propertyType =:= typeOf[Int] ||
       propertyType =:= typeOf[Long]   || propertyType =:= typeOf[Float]   || propertyType =:= typeOf[Double] || 
-      propertyType =:= typeOf[String] || propertyType =:= typeOf[Date]    || propertyType =:= typeOf[BigDecimal]
+      propertyType =:= typeOf[String] || propertyType =:= typeOf[BigDecimal]
     ) {
-      PropertyTypeInfo(propertyType, "type", typeName)
-    } else if(propertyType =:= typeOf[DateTime]) {
-      PropertyTypeInfo(propertyType, "type", "Date")
+      Some(PropertyTypeInfo(propertyType, "type", typeName.toLowerCase))
+    } else if(propertyType =:= typeOf[DateTime] || propertyType =:= typeOf[Date]) {
+      Some(PropertyTypeInfo(propertyType, "type", "date-time"))
     //Handle enums
     } else if(propertyType.typeSymbol.fullName == "scala.Enumeration.Value") { 
     //} else if(modelType <:< typeOf[Enumeration.Value]) {
-      PropertyTypeInfo(propertyType, "type", "String", isEnum = true)
+      Some(PropertyTypeInfo(propertyType, "type", "string", isEnum = true))
     //Reference to complex model type
     } else if(modelAnnotationTypesMap.contains(typeName)) {
-      PropertyTypeInfo(propertyType, "$ref", typeName)
+      Some(PropertyTypeInfo(propertyType, "$ref", typeName))
     //Unknown type
     } else {
-      throw new UnsupportedTypeSignature(s"$propertyType ${propertyType.typeSymbol.fullName}") 
+      None
     }
   }
   

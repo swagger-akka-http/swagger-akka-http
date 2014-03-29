@@ -25,8 +25,7 @@ import com.typesafe.scalalogging.slf4j.Logging
 
 import spray.httpx.Json4sSupport
 import spray.routing.Directive.pimpApply
-import spray.routing.HttpService
-import spray.routing.Route
+import spray.routing.{PathMatcher, HttpService, Route}
 
 trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
   
@@ -55,7 +54,7 @@ trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
     path(resourcePath) {
       complete(resourceListing)
     } ~ (for((apiPath, apiListing) <- apiListingMap) yield {
-      path(resourcePath / apiPath.drop(1)) { complete(apiListing) }
+      path(apiPath.drop(1).split('/').foldLeft(PathMatcher(resourcePath))(_ / _)) { complete(apiListing) }
     }).reduceLeft(_ ~ _)
   }}
 }

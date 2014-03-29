@@ -68,6 +68,7 @@ case class ModelProperty(
                   enum: Option[Set[String]] = None,
                   required: Boolean = true,
                   items: Option[Map[String,String]] = None,
+                  uniqueItems: Option[Boolean] = None,
                   maximum: Option[Int] = None,
                   minimum: Option[Int] = None
 )

@@ -61,17 +61,19 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       }
       "has the correct ApiProperty annotations" in {
         implicit val model = buildAndGetModel("TestModel", typeOf[TestModel], typeOf[TestModelNode])
-        model.properties should have size (9)
-        checkProperty[String]("name", NameDescription)
-        checkProperty[Int]("count", CountDescription)
-        checkProperty[Boolean]("isStale", IsStaleDescription)
-        checkProperty[Int]("offset", OffsetDescription)
-        checkProperty[List[_]]("nodes", NodesDescription)
-        checkProperty[String]("enum", EnumDescription)
-        checkProperty[Date]("startDate", StartDateDescription)
-        checkProperty[Date]("endDate", EndDateDescription)
-        checkProperty[BigDecimal]("amount", AmountDescription)
         
+        model.properties should have size (8)
+        checkProperty("name", NameDescription, "string")
+        checkProperty("count", CountDescription, "int")
+        checkProperty("isStale", IsStaleDescription, "boolean")
+        checkProperty("offset", OffsetDescription, "int")
+        checkProperty("nodes", NodesDescription, "array")
+        checkProperty("enum", EnumDescription, "string")
+        checkProperty("startDate", StartDateDescription, "date-time")
+        checkProperty("endDate", EndDateDescription, "date-time")
+        checkProperty[BigDecimal]("amount", AmountDescription)
+       //mlh
+
         model.properties("enum").enum should be ('defined) 
         val enumValues = model.properties("enum").enum.get
         enumValues should have size 2
@@ -80,6 +82,16 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         
         model.`extends` should be ('defined)
         model.`extends`.get should be ("TestModelParent")
+      }
+      "correctly process dataType in ApiModelProperty annotations" in {
+        implicit val model = buildAndGetModel("ModelWithCustomPropertyDatatypes", typeOf[ModelWithCustomPropertyDatatypes])
+        model.properties should have size (6)
+        checkProperty("count", CountDescription, "long")
+        checkProperty("isStale", IsStaleDescription, "boolean")
+        checkProperty("offset", OffsetDescription, "array")
+        checkProperty("endDate", EndDateDescription, "date")
+        checkProperty("nonDefaultTypeField", NameDescription, "CustomType")
+        checkProperty("nonDefaultContainerTypeField", NameDescription, "CustomContainer")
       }
     }
     "passed multiple test models" should {
@@ -119,7 +131,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
     model.properties should contain key modelKey
     val prop = model.properties(modelKey)
     prop.description should equal (description)
-    prop.`type` should equal (typeOf[T].typeSymbol.name.decoded.trim)
+    prop.`type` should equal (`type`)
   }
   
   private def buildAndGetModel(modelName: String, modelTypes: Type*): Model = {
@@ -183,6 +195,36 @@ case class TestModel(
     noAnnotationProperty: String,
     secondNoAnnotationProperty: String
 ) extends TestModelParent
+
+@ApiModel(description = TestModelDescription)
+case class ModelWithCustomPropertyDatatypes(
+  @(ApiModelProperty @field)(value = CountDescription, dataType = "long")
+  val count: BigInt,
+  @(ApiModelProperty @field)(value = IsStaleDescription, dataType = "boolean")
+  val isStale: Any,
+  @(ApiModelProperty @field)(value = OffsetDescription, dataType = "array[int]")
+  val offset: Iterable[(Int, Boolean)],
+  @(ApiModelProperty @field)(value = EndDateDescription, dataType = "date", required = false)
+  val endDate: Option[String],
+  @(ApiModelProperty @field)(value = NameDescription, dataType = "CustomType", required = false)
+  val nonDefaultTypeField: Option[String],
+  @(ApiModelProperty @field)(value = NameDescription, dataType = "CustomContainer[string]", required = false)
+  val nonDefaultContainerTypeField: Option[String]
+)
+
+
+@ApiModel(description = "ModelBase")
+class ModelBase {
+  @(ApiModelProperty @field)(value = NameDescription)
+  val name: String = ""
+}
+
+@ApiModel(description = "ModelExtension", parent = classOf[ModelBase])
+class ModelExtension extends ModelBase {
+  @(ApiModelProperty @field)(value = EndDateDescription)
+  val date: Date = DateTime.now().toDate
+}
+
 
 object TestEnum extends Enumeration {
   type TestEnum = Value
