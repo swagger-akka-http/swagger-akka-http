@@ -25,7 +25,7 @@ import org.joda.time.DateTime
 import com.typesafe.scalalogging.slf4j.Logging
 
 class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extends Logging {
-  
+
   //validate models
   val modelAnnotationTypesMap = modelTypes.map(tpe => { getClassAnnotation[ApiModel](tpe) match {
     case Some(annotation) =>
@@ -36,12 +36,12 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
       throw new IllegalArgumentException(
         s"Model does not have ApiClass Annotation $tpe")
   }}).toMap
-  
+
   logger.debug(s"ModelAnnotationTypesMap: $modelAnnotationTypesMap")
-  
+
   def build(name: String): Option[Model] = modelAnnotationTypesMap.get(name).map(modelAnnotationType => {
     val (modelAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
-    val extendedName = getExtendedClassName(modelType, modelAnnotation) 
+    val extendedName = getExtendedClassName(modelType, modelAnnotation)
     val subTypes = getSubTypes(modelType, modelAnnotation)
     val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
@@ -51,38 +51,38 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
       val required = getBooleanJavaAnnotation("required", annotation).getOrElse(optionType.isEmpty)
       val typeInfo = getModelTypeName(optionType.getOrElse(symbol.typeSignature), dataType)
       (propertyName, ModelProperty(
-          description = description, 
-          required = required, 
+          description = description,
+          required = required,
           `type` = typeInfo.typeName,
           items = typeInfo.itemType.map(ti => Map(ti.typeLabel -> ti.typeName)),
           uniqueItems = if (typeInfo.isUnique) Some(true) else None,
           enum = getEnumValues(typeInfo)
       ))
     }).toMap
-    
+
     Model(
-      id = name, 
+      id = name,
       description = getStringJavaAnnotation("description", modelAnnotation),
       `extends` = extendedName,
       subTypes = subTypes,
       properties = modelProperties
     )
   })
-  
+
   def buildAll: Map[String, Model] = modelAnnotationTypesMap.keys.map(name => {
     (name, build(name).get)
   }).toMap
-  
+
   private def getSubTypes(modelType: Type, modelAnnotation: Annotation): Option[List[String]] = {
     getArrayClassJavaAnnotation("subTypes", modelAnnotation) match {
-      case Some(subTypeClasses) => 
+      case Some(subTypeClasses) =>
         Some(subTypeClasses.map(_.getSimpleName).toList)
       case None =>
         val subTypes = modelType.typeSymbol.asClass.knownDirectSubclasses.map(_.name.decoded.trim).toList
         if(subTypes.size > 0) Some(subTypes) else None
     }
   }
-  
+
   private def getExtendedClassName(modelType: Type, modelAnnotation: Annotation): Option[String] = {
     getClassJavaAnnotation("parent", modelAnnotation) match {
       case Some(c) =>
@@ -92,7 +92,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
           getSymbolAnnotation[ApiModel](sym).isDefined).headOption.map(_.name.decoded.trim)
     }
   }
-  
+
   private def getEnumValues(typeInfo: PropertyTypeInfo): Option[Set[String]] = {
     if(typeInfo.isEnum) {
       val enumType = getOuterType(typeInfo.`type`)
@@ -103,15 +103,15 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
         val valueMirror = mirror.reflect(valueObj)
         val toStringMethodSymbol = valueSymbol.typeSignature.member("toString": TermName).asMethod
         val toStringMethodMirror = valueMirror.reflectMethod(toStringMethodSymbol)
-        
+
         toStringMethodMirror().asInstanceOf[String]
       }).toList
-      Some(values.toSet) 
+      Some(values.toSet)
     } else {
-      None 
+      None
     }
   }
-  
+
   private def getModelTypeName(propertyType: Type, dataTypeOverride: Option[String]): PropertyTypeInfo = {
     dataTypeOverride match {
       // data type was overridden using annotation
@@ -148,7 +148,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
         }
     }
   }
-  
+
   case class PropertyTypeInfo(
     `type`: Type,
     typeLabel: String,
@@ -157,23 +157,26 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     isEnum: Boolean = false,
     isUnique: Boolean = false
   )
-  
+
   private def getLiteralOrComplexTypeName(propertyType: Type): Option[PropertyTypeInfo] = {
-    val typeName = propertyType.typeSymbol.name.decoded 
+    val typeName = propertyType.typeSymbol.name.decoded
     //Literal type
     if (
       propertyType =:= typeOf[Byte]   || propertyType =:= typeOf[Boolean] || propertyType =:= typeOf[Int] ||
-      propertyType =:= typeOf[Long]   || propertyType =:= typeOf[Float]   || propertyType =:= typeOf[Double] || 
-      propertyType =:= typeOf[String] || propertyType =:= typeOf[BigDecimal]
+      propertyType =:= typeOf[Long]   || propertyType =:= typeOf[Float]   || propertyType =:= typeOf[Double] ||
+      propertyType =:= typeOf[String]
     ) {
       Some(PropertyTypeInfo(propertyType, "type", typeName.toLowerCase))
     } else if(propertyType =:= typeOf[DateTime] || propertyType =:= typeOf[Date]) {
-      Some(PropertyTypeInfo(propertyType, "type", "date-time"))
+      Some(PropertyTypeInfo(propertyType, "type", "dateTime"))
     //Handle enums
-    } else if(propertyType.typeSymbol.fullName == "scala.Enumeration.Value") { 
+    } else if(propertyType.typeSymbol.fullName == "scala.Enumeration.Value") {
     //} else if(modelType <:< typeOf[Enumeration.Value]) {
       Some(PropertyTypeInfo(propertyType, "type", "string", isEnum = true))
     //Reference to complex model type
+    } else if(propertyType =:= typeOf[BigDecimal]) {
+      Some(PropertyTypeInfo(propertyType, "type", typeName))
+    //Unknown type
     } else if(modelAnnotationTypesMap.contains(typeName)) {
       Some(PropertyTypeInfo(propertyType, "$ref", typeName))
     //Unknown type
@@ -181,7 +184,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
       None
     }
   }
-  
+
   private def extractOptionType(symbol: TermSymbol): Option[Type] = symbol.typeSignature match {
     case TypeRef(_, tpe, args) =>
       if(tpe == typeOf[Option[_]].asInstanceOf[ExistentialTypeApi].typeSymbol) {

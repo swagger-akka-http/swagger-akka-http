@@ -27,15 +27,15 @@ import com.wordnik.swagger.annotations.ApiImplicitParam
 import javax.ws.rs.Path
 
 class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
-  
+
   val swaggerApi = new SwaggerApiBuilder("1.2", "1.0", "swagger-specs", _: Seq[Type], _: Seq[Type])
-  
+
   "A SwaggerApiBuilder" when {
     "passed a test api" should {
       "throw an IllegalArgumentException if it has no annotation" in {
          intercept[IllegalArgumentException] {
            swaggerApi(List(typeOf[TestApiWithNoAnnotation]), List[Type]())
-         } 
+         }
       }
       "throw an IllegalArgumentException if it has the wrong annotation" in {
         intercept[IllegalArgumentException] {
@@ -54,10 +54,10 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         apiListingName should equal ("/dict")
         apiListing.apis should have size (2)
         val apiPaths = apiListing.apis.map(_.path)
-        apiPaths should contain ("/dict") 
+        apiPaths should contain ("/dict")
         apiPaths should contain ("/dict/{key}")
         val dictKeyApi = apiListing.apis.find(_.path == "/dict/{key}").get
-        dictKeyApi.operations should be ('defined) 
+        dictKeyApi.operations should be ('defined)
         val operations = dictKeyApi.operations.get
         operations should have size (1)
         val operation = operations.head
@@ -78,7 +78,7 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
          apiListing.models should be ('defined)
          apiListing.models.get should contain key ("TestModel")
         }
-      }  
+      }
     }
     "passed a test api with a sub path with path parameters" should {
       "output api on that sub path and test parameters identified" in {
@@ -102,7 +102,7 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         operations should have size (1)
         operations(0).path should be ("/test/paramHierarchyOperation")
         val model = apiListing.models.get("ModelExtension")
-        model.properties("date").`type` should be ("date-time")
+        model.properties("date").`type` should be ("dateTime")
         model.properties("name").`type` should be ("string")
       }
     }
@@ -120,7 +120,7 @@ abstract class TestApiDoesNotExtendHttpService
 abstract class TestApiWithOnlyDataType extends HttpService {
   @ApiOperation(value = "testApiOperation", httpMethod = "GET")
   @ApiImplicitParams(Array(new ApiImplicitParam(name = "test", value = "test param", dataType = "TestModel", paramType = "query")))
-  def testOperation 
+  def testOperation
 }
 
 @Api(value = "/test")
@@ -132,7 +132,7 @@ abstract class TestApiWithPathOperation extends HttpService {
     new ApiImplicitParam(name = "anotherParam", value = "another param", dataType = "TestModel", paramType = "path")
   ))
   def subPathOperation
-  
+
   @Path("/other/sub/{someParam}/path/{anotherParam}")
   @ApiOperation(value = "otherSubPathApiOperation", httpMethod = "GET")
   def otherSubPathOperation

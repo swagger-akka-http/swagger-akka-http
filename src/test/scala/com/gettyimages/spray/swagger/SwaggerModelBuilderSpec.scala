@@ -29,15 +29,15 @@ import java.util.Date
 
 
 class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
-  
+
   implicit val mirror = runtimeMirror(getClass.getClassLoader)
-  
+
   "A SwaggerModelBuilder " when {
     "passed a test model" should {
       "throw an IllegalArgumentException if it has no annotation" in {
          intercept[IllegalArgumentException] {
            new SwaggerModelBuilder(List(typeOf[TestModelWithNoAnnotation]))
-         } 
+         }
       }
       "throw an IllegalArgumentException if it has the wrong annotation" in {
         intercept[IllegalArgumentException] {
@@ -47,7 +47,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       "be buildable if it has an empty ApiClass annotation" in {
         val builder = new SwaggerModelBuilder(Seq(typeOf[TestModelEmptyAnnotation]))
         builder.build("abcdef") should be ('empty)
-        val modelOpt = builder.build("TestModelEmptyAnnotation") 
+        val modelOpt = builder.build("TestModelEmptyAnnotation")
         modelOpt should be ('defined)
         val model = modelOpt.get
         model.id should equal ("TestModelEmptyAnnotation")
@@ -61,25 +61,25 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       }
       "has the correct ApiProperty annotations" in {
         implicit val model = buildAndGetModel("TestModel", typeOf[TestModel], typeOf[TestModelNode])
-        
-        model.properties should have size (8)
+
+        model.properties should have size 9
         checkProperty("name", NameDescription, "string")
         checkProperty("count", CountDescription, "int")
         checkProperty("isStale", IsStaleDescription, "boolean")
         checkProperty("offset", OffsetDescription, "int")
         checkProperty("nodes", NodesDescription, "array")
         checkProperty("enum", EnumDescription, "string")
-        checkProperty("startDate", StartDateDescription, "date-time")
-        checkProperty("endDate", EndDateDescription, "date-time")
-        checkProperty[BigDecimal]("amount", AmountDescription)
+        checkProperty("startDate", StartDateDescription, "dateTime")
+        checkProperty("endDate", EndDateDescription, "dateTime")
+        checkProperty("amount", AmountDescription, "BigDecimal")
        //mlh
 
-        model.properties("enum").enum should be ('defined) 
+        model.properties("enum").enum should be ('defined)
         val enumValues = model.properties("enum").enum.get
         enumValues should have size 2
         enumValues should contain ("a")
         enumValues should contain ("b")
-        
+
         model.`extends` should be ('defined)
         model.`extends`.get should be ("TestModelParent")
       }
@@ -102,7 +102,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         allModels should contain key "TestModelEmptyAnnotation"
         allModels should contain key "TestModel"
         allModels should contain key "TestModelNode"
-      } 
+      }
     }
     "passed a model with subtypes" should {
       "have subtypes available" in {
@@ -112,7 +112,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         parentModel.get.subTypes should be ('defined)
         parentModel.get.subTypes.get should have size 1
         parentModel.get.subTypes.get should contain ("TestModel")
-      } 
+      }
     }
     "passed a model with subtypes specified in the annotation" should {
       "have natural subtypes overriden by annotation specification" in {
@@ -126,19 +126,20 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       }
     }
   }
-  
-  private def checkProperty[T: TypeTag](modelKey: String, description: String)(implicit model: Model) {
+
+  private def checkProperty(modelKey: String, description: String, `type`: String)(implicit model: Model) {
     model.properties should contain key modelKey
     val prop = model.properties(modelKey)
     prop.description should equal (description)
+    println("proptype: " + prop.`type`)
     prop.`type` should equal (`type`)
   }
-  
+
   private def buildAndGetModel(modelName: String, modelTypes: Type*): Model = {
     val builder = new SwaggerModelBuilder(modelTypes.toSeq)
-    val modelOpt = builder.build(modelName) 
+    val modelOpt = builder.build(modelName)
     assert(modelOpt.isDefined)
-        
+
     val model = modelOpt.get
     assert(model.id === modelName)
     model
@@ -168,7 +169,7 @@ case class TestModelEmptyAnnotation
 
 @ApiModel
 sealed trait TestModelParent {
-  
+
 }
 
 @ApiModel(description = TestModelDescription)
@@ -191,7 +192,7 @@ case class TestModel(
     endDate: DateTime,
     @(ApiModelProperty @field)(value = AmountDescription)
     amount: BigDecimal,
-    
+
     noAnnotationProperty: String,
     secondNoAnnotationProperty: String
 ) extends TestModelParent
@@ -241,6 +242,6 @@ case class A extends Letter
 case class B extends Letter
 
 @ApiModel(
-  subTypes = Array(classOf[String], classOf[B]) 
+  subTypes = Array(classOf[String], classOf[B])
 )
 abstract class Letter
