@@ -28,33 +28,33 @@ import spray.routing.Directive.pimpApply
 import spray.routing.{PathMatcher, HttpService, Route}
 
 trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
-  
+
   def apiTypes: Seq[Type]
   def modelTypes: Seq[Type]
-  
+
   def apiVersion: String
   def swaggerVersion: String
-  
-  def baseUrl: String 
+
+  def baseUrl: String
   def specPath: String
   def resourcePath: String
-  
+
   def apiInfo: Option[ApiInfo] = None
   def authorizations: Option[Map[String, Authorization]] = None
-  
+
   implicit def json4sFormats: Formats = DefaultFormats
- 
+
   private lazy val (resourceListing, apiListingMap) =
     (new SwaggerApiBuilder(
         swaggerVersion, apiVersion, baseUrl, apiTypes, modelTypes,
         apiInfo = SwaggerHttpService.this.apiInfo, authorizations = SwaggerHttpService.this.authorizations
     )).buildAll
-  
+
   final def routes: Route = get { pathPrefix(specPath) {
     path(resourcePath) {
       complete(resourceListing)
     } ~ (for((apiPath, apiListing) <- apiListingMap) yield {
-      path(apiPath.drop(1).split('/').foldLeft(PathMatcher(resourcePath))(_ / _)) { complete(apiListing) }
+      path(resourcePath / apiPath.drop(1).split('/').map(segmentStringToPathMatcher(_)).reduceLeft(_ / _)) { complete(apiListing) }
     }).reduceLeft(_ ~ _)
   }}
 }
