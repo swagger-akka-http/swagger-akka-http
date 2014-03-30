@@ -110,7 +110,8 @@ class SwaggerApiBuilder(
            nickname = getStringJavaAnnotation("nickname", apiOperationAnnotation).getOrElse(methodName),
            responseClass = getClassJavaAnnotation[AnyRef]("response", apiOperationAnnotation).map(_.getSimpleName).getOrElse("void"),
            parameters = params,
-           responseMessages = apiResponses
+           responseMessages = apiResponses,
+           notes = getStringJavaAnnotation("notes", apiOperationAnnotation)
        )
        //This indicates a new operation for a prexisting api listing, just add it
        if(apis.contains(fullPath)) {

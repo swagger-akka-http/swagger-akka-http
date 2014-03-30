@@ -67,6 +67,8 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         val responseMessage = responseMessages.head
         responseMessage.code should be (404)
         responseMessage.message should be ("Dictionary does not exist.")
+        val notes = operation.notes.get
+        notes should equal ("Will look up the dictionary entry for the provided key.")
       }
     }
     "passed a test api with data only" should {
@@ -126,7 +128,7 @@ abstract class TestApiWithOnlyDataType extends HttpService {
 @Api(value = "/test")
 abstract class TestApiWithPathOperation extends HttpService {
   @Path("/sub/{someParam}/path/{anotherParam}")
-  @ApiOperation(value = "subPathApiOperation", httpMethod = "GET")
+  @ApiOperation(value = "subPathApiOperation", httpMethod = "GET", notes = "some notes")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "someParam", value = "some param", dataType = "TestModel", paramType = "path"),
     new ApiImplicitParam(name = "anotherParam", value = "another param", dataType = "TestModel", paramType = "path")
