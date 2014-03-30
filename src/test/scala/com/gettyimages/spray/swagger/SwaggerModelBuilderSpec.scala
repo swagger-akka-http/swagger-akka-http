@@ -62,7 +62,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       "has the correct ApiProperty annotations" in {
         implicit val model = buildAndGetModel("TestModel", typeOf[TestModel], typeOf[TestModelNode])
 
-        model.properties should have size 9
+        model.properties should have size 8
         checkProperty("name", NameDescription, "string")
         checkProperty("count", CountDescription, "int")
         checkProperty("isStale", IsStaleDescription, "boolean")
@@ -71,8 +71,6 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         checkProperty("enum", EnumDescription, "string")
         checkProperty("startDate", StartDateDescription, "dateTime")
         checkProperty("endDate", EndDateDescription, "dateTime")
-        checkProperty("amount", AmountDescription, "BigDecimal")
-       //mlh
 
         model.properties("enum").enum should be ('defined)
         val enumValues = model.properties("enum").enum.get
@@ -85,13 +83,14 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       }
       "correctly process dataType in ApiModelProperty annotations" in {
         implicit val model = buildAndGetModel("ModelWithCustomPropertyDatatypes", typeOf[ModelWithCustomPropertyDatatypes])
-        model.properties should have size (6)
+        model.properties should have size (7)
         checkProperty("count", CountDescription, "long")
         checkProperty("isStale", IsStaleDescription, "boolean")
         checkProperty("offset", OffsetDescription, "array")
         checkProperty("endDate", EndDateDescription, "date")
         checkProperty("nonDefaultTypeField", NameDescription, "CustomType")
         checkProperty("nonDefaultContainerTypeField", NameDescription, "CustomContainer")
+        checkProperty("amount", AmountDescription, "BigDecimal")
       }
     }
     "passed multiple test models" should {
@@ -131,7 +130,6 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
     model.properties should contain key modelKey
     val prop = model.properties(modelKey)
     prop.description should equal (description)
-    println("proptype: " + prop.`type`)
     prop.`type` should equal (`type`)
   }
 
@@ -190,9 +188,6 @@ case class TestModel(
     startDate: Date,
     @(ApiModelProperty @field)(value = EndDateDescription)
     endDate: DateTime,
-    @(ApiModelProperty @field)(value = AmountDescription)
-    amount: BigDecimal,
-
     noAnnotationProperty: String,
     secondNoAnnotationProperty: String
 ) extends TestModelParent
@@ -200,17 +195,19 @@ case class TestModel(
 @ApiModel(description = TestModelDescription)
 case class ModelWithCustomPropertyDatatypes(
   @(ApiModelProperty @field)(value = CountDescription, dataType = "long")
-  val count: BigInt,
+  count: BigInt,
   @(ApiModelProperty @field)(value = IsStaleDescription, dataType = "boolean")
-  val isStale: Any,
+  isStale: Any,
   @(ApiModelProperty @field)(value = OffsetDescription, dataType = "array[int]")
-  val offset: Iterable[(Int, Boolean)],
+  offset: Iterable[(Int, Boolean)],
   @(ApiModelProperty @field)(value = EndDateDescription, dataType = "date", required = false)
-  val endDate: Option[String],
+  endDate: Option[String],
   @(ApiModelProperty @field)(value = NameDescription, dataType = "CustomType", required = false)
-  val nonDefaultTypeField: Option[String],
+  nonDefaultTypeField: Option[String],
   @(ApiModelProperty @field)(value = NameDescription, dataType = "CustomContainer[string]", required = false)
-  val nonDefaultContainerTypeField: Option[String]
+  nonDefaultContainerTypeField: Option[String],
+  @(ApiModelProperty @field)(value = AmountDescription, dataType="BigDecimal")
+  amount: BigDecimal
 )
 
 

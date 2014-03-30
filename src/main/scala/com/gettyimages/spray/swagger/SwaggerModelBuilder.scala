@@ -171,12 +171,8 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
       Some(PropertyTypeInfo(propertyType, "type", "dateTime"))
     //Handle enums
     } else if(propertyType.typeSymbol.fullName == "scala.Enumeration.Value") {
-    //} else if(modelType <:< typeOf[Enumeration.Value]) {
       Some(PropertyTypeInfo(propertyType, "type", "string", isEnum = true))
     //Reference to complex model type
-    } else if(propertyType =:= typeOf[BigDecimal]) {
-      Some(PropertyTypeInfo(propertyType, "type", typeName))
-    //Unknown type
     } else if(modelAnnotationTypesMap.contains(typeName)) {
       Some(PropertyTypeInfo(propertyType, "$ref", typeName))
     //Unknown type
