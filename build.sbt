@@ -43,8 +43,6 @@ pomIncludeRepository := { _ => false }
 
 parallelExecution in Test := false
 
-usePgpKeyHex("4B3A4DF39903AA31")
-
 homepage := Some(url("https://github.com/gettyimages/spray-swagger"))
 
 licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
@@ -55,6 +53,11 @@ pomExtra := (
     <connection>scm:git:git@github.com:gettyimages/spray-swagger.git</connection>
   </scm>
   <developers>
+    <developer>
+      <id>mhamrah</id>
+      <name>Michael Hamrah</name>
+      <url>http://michaelhamrah.com</url>
+    </developer>
     <developer>
       <id>efuquen</id>
       <name>Edwin Fuquen</name>
