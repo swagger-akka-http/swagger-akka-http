@@ -11,7 +11,7 @@ The swagger spec [swagger spec](https://github.com/wordnik/swagger-spec/blob/mas
 The jars are hosted on [sonatype](https://oss.sonatype.org). Using Sbt:
 
 ```
-libraryDependencies += "com.gettyimages" % "spray-swagger_2.10" % "0.3.0"
+libraryDependencies += "com.gettyimages" % "spray-swagger_2.10" % "0.3.1"
 ```
 
 ## SwaggerHttpService
