@@ -1,6 +1,6 @@
 # spray-swagger
 
-Spray-Swagger brings [Swagger](wordnik/swagger-core) support for [Spray](spray.io) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](wordnik/swagger-ui).
+Spray-Swagger brings [Swagger](wordnik/swagger-core) support for [Spray](spray.io) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](https://github.com/wordnik/swagger-ui).
 
 The swagger spec [swagger spec](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
 
