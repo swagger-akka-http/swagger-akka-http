@@ -131,6 +131,14 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
          parentModel.get.subTypes.get should contain ("B")
       }
     }
+    "passed a model with explicit property positions" should {
+      "output the properties in position order" in {
+        implicit val model = buildAndGetModel("TestModelPositions", typeOf[TestModelPositions])
+        model.properties.values.zip(model.properties.values.drop(1)) foreach { p =>
+          p._1.position should be <= p._2.position
+        }
+      }
+    }
   }
 
   private def checkProperty(modelKey: String, description: String, `type`: String)(implicit model: Model) {
@@ -251,3 +259,11 @@ case class B extends Letter
   subTypes = Array(classOf[String], classOf[B])
 )
 abstract class Letter
+
+@ApiModel
+case class TestModelPositions(
+  @(ApiModelProperty @field)(position = 0, value = "") arg0: String,
+  @(ApiModelProperty @field)(position = 1, value = "") arg1: String,
+  @(ApiModelProperty @field)(position = 2, value = "") arg2: String,
+  @(ApiModelProperty @field)(position = 3, value = "") arg3: String
+)

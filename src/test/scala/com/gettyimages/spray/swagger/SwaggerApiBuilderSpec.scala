@@ -108,6 +108,21 @@ class SwaggerApiBuilderSpec extends WordSpec with ShouldMatchers {
         model.properties("name").`type` should be ("string")
       }
     }
+    "passed a test api with explicit operation positions" should {
+      "output the operations in position order" in {
+        val api = swaggerApi(List(typeOf[TestApiWithOperationPositions]), List(typeOf[ModelBase], typeOf[ModelExtension]))
+        val (_, apiListings) = api.buildAll
+        apiListings should contain key ("/test")
+        val apiListing = apiListings("/test")
+        val operations = apiListing.apis
+        operations should have size 3
+        operations(0).operations.get.apply(0).summary should be ("order0")
+        operations(0).operations.get.apply(1).summary should be ("order1")
+        operations(1).operations.get.apply(0).summary should be ("order2")
+        operations(1).operations.get.apply(1).summary should be ("order3")
+        operations(2).operations.get.apply(0).summary should be ("order4")
+      }
+    }
 }
 
 abstract class TestApiWithNoAnnotation extends HttpService
@@ -145,4 +160,27 @@ abstract class TestApiWithParamsHierarchy extends HttpService {
   @Path("/paramHierarchyOperation")
   @ApiOperation(value = "paramHierarchyOperation", httpMethod = "GET", response = classOf[ModelBase])
   def paramHierarchyOperation
+}
+
+// because the swagger output format has the operations listed under paths, the most sensible
+// option for ordering seems to be to order them correctly within a particular path, and then
+// order the paths by the lowest position of an operation they contain, hence why the expected
+// order here (as indicated by `value`) doesn't match the position attributes
+@Api(value = "/test")
+abstract class TestApiWithOperationPositions extends HttpService {
+  @Path("/path1")
+  @ApiOperation(position = 3, value = "order3", httpMethod = "GET", response = classOf[ModelBase])
+  def operation4
+  @Path("/path0")
+  @ApiOperation(position = 0, value = "order0", httpMethod = "GET", response = classOf[ModelBase])
+  def operation0
+  @Path("/path1")
+  @ApiOperation(position = 1, value = "order2", httpMethod = "GET", response = classOf[ModelBase])
+  def operation1
+  @Path("/path0")
+  @ApiOperation(position = 2, value = "order1", httpMethod = "GET", response = classOf[ModelBase])
+  def operation3
+  @Path("/path2")
+  @ApiOperation(position = 4, value = "order4", httpMethod = "GET", response = classOf[ModelBase])
+  def operation2
 }

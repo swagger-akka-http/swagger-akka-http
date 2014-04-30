@@ -111,13 +111,14 @@ class SwaggerApiBuilder(
            responseClass = getClassJavaAnnotation[AnyRef]("response", apiOperationAnnotation).map(_.getSimpleName).getOrElse("void"),
            parameters = params,
            responseMessages = apiResponses,
-           notes = getStringJavaAnnotation("notes", apiOperationAnnotation)
+           notes = getStringJavaAnnotation("notes", apiOperationAnnotation),
+           position = getIntJavaAnnotation("position", apiOperationAnnotation).getOrElse(0)
        )
        //This indicates a new operation for a prexisting api listing, just add it
        if(apis.contains(fullPath)) {
          val prevApi = apis(fullPath)
          val newOperations = currentApiOperation :: prevApi.operations.get
-         apis += fullPath -> prevApi.copy(operations = Some(newOperations))
+         apis += fullPath -> prevApi.copy(operations = Some(newOperations.sortBy(_.position)))
        //First operation for this type of api listing, create it.
        } else {
   	     apis += fullPath -> ListApi(fullPath, None, Some(List(currentApiOperation)))
@@ -138,7 +139,7 @@ class SwaggerApiBuilder(
        apiVersion = apiVersion,
        basePath = basePath,
        resourcePath = listApi.path,
-       apis = apis.values.toList,
+       apis = apis.values.toList.sortBy(api => api.operations.fold(0)(_.head.position)),
        models = if(models.size > 0) Some(models) else None
      )
   }

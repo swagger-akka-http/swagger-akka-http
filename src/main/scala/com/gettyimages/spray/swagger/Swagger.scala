@@ -70,7 +70,8 @@ case class ModelProperty(
                   items: Option[Map[String,String]] = None,
                   uniqueItems: Option[Boolean] = None,
                   maximum: Option[Int] = None,
-                  minimum: Option[Int] = None
+                  minimum: Option[Int] = None,
+                  position: Int = 0
 )
                   
 case class Operation(httpMethod: String,
@@ -82,7 +83,8 @@ case class Operation(httpMethod: String,
                      parameters: List[Parameter] = Nil,
                      responseMessages: Option[List[Response]] = None,
                      produces: Option[List[String]] = None,
-                     consumes: Option[List[String]] = None)
+                     consumes: Option[List[String]] = None,
+                     position: Int = 0)
 
 case class Endpoint(path: String,
                     description: String,
