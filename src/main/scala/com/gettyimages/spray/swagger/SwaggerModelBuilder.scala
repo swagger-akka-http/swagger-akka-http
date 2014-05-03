@@ -56,7 +56,7 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
           `type` = typeInfo.typeName,
           items = typeInfo.itemType.map(ti => Map(ti.typeLabel -> ti.typeName)),
           uniqueItems = if (typeInfo.isUnique) Some(true) else None,
-          enum = getEnumValues(typeInfo)
+          enum = getEnumValues(getStringJavaAnnotation("allowableValues", annotation), typeInfo)
       ))
     }).toMap
 
@@ -93,23 +93,27 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     }
   }
 
-  private def getEnumValues(typeInfo: PropertyTypeInfo): Option[Set[String]] = {
-    if(typeInfo.isEnum) {
-      val enumType = getOuterType(typeInfo.`type`)
-      val enumObj = getCompanionObject(enumType)
-      val enumMirror = mirror.reflect(enumObj)
-      val values = valueSymbols(typeInfo.`type`).map(valueSymbol => {
-        val valueObj = enumMirror.reflectField(valueSymbol.asTerm).get
-        val valueMirror = mirror.reflect(valueObj)
-        val toStringMethodSymbol = valueSymbol.typeSignature.member("toString": TermName).asMethod
-        val toStringMethodMirror = valueMirror.reflectMethod(toStringMethodSymbol)
-
-        toStringMethodMirror().asInstanceOf[String]
-      }).toList
-      Some(values.toSet)
-    } else {
-      None
+  private def getEnumValues(allowableValuesStr:Option[String], typeInfo: PropertyTypeInfo): Option[Set[String]] = {
+    allowableValuesStr match {
+      case Some(allowableValues) => Some(allowableValues.split(",").map(_.trim).toSet)
+      case None => {
+        if(typeInfo.isEnum) {
+          val enumType = getOuterType(typeInfo.`type`)
+          val enumObj = getCompanionObject(enumType)
+          val enumMirror = mirror.reflect(enumObj)
+          val values = valueSymbols(typeInfo.`type`).map(valueSymbol => {
+            val valueObj = enumMirror.reflectField(valueSymbol.asTerm).get
+            val valueMirror = mirror.reflect(valueObj)
+            val toStringMethodSymbol = valueSymbol.typeSignature.member("toString": TermName).asMethod
+            val toStringMethodMirror = valueMirror.reflectMethod(toStringMethodSymbol)
+            toStringMethodMirror().asInstanceOf[String]
+          }).toList
+        Some(values.toSet)
+      } else {
+        None
+      }
     }
+  }
   }
 
   private def getModelTypeName(propertyType: Type, dataTypeOverride: Option[String]): PropertyTypeInfo = {

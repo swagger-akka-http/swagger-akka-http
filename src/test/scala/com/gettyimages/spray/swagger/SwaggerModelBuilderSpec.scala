@@ -62,7 +62,7 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
       "has the correct ApiProperty annotations" in {
         implicit val model = buildAndGetModel("TestModel", typeOf[TestModel], typeOf[TestModelNode])
 
-        model.properties should have size 8
+        model.properties should have size 9
         checkProperty("name", NameDescription, "string")
         checkProperty("count", CountDescription, "int")
         checkProperty("isStale", IsStaleDescription, "boolean")
@@ -77,6 +77,13 @@ class SwaggerModelBuilderSpec extends WordSpec with ShouldMatchers {
         enumValues should have size 2
         enumValues should contain ("a")
         enumValues should contain ("b")
+        
+        model.properties("allowable").enum should be ('defined)
+        val allowableValues = model.properties("allowable").enum.get
+        allowableValues should have size 2
+        allowableValues should contain ("first")
+        allowableValues should contain ("second")
+        
 
         model.`extends` should be ('defined)
         model.`extends`.get should be ("TestModelParent")
@@ -155,6 +162,7 @@ object SwaggerModelBuilderSpecValues {
   final val StartDateDescription = "startDateDescription294290"
   final val EndDateDescription = "endDateDescription294290"
   final val AmountDescription = "amountDescription222"
+  final val AllowableDescription = "allowableDesciption"
 }
 
 case class TestModelWithNoAnnotation
@@ -189,7 +197,8 @@ case class TestModel(
     @(ApiModelProperty @field)(value = EndDateDescription)
     endDate: DateTime,
     noAnnotationProperty: String,
-    secondNoAnnotationProperty: String
+    secondNoAnnotationProperty: String,
+    @(ApiModelProperty @field)(value = AllowableDescription, allowableValues="first, second") allowable: String
 ) extends TestModelParent
 
 @ApiModel(description = TestModelDescription)
