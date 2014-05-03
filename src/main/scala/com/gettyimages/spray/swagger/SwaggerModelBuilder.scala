@@ -23,6 +23,7 @@ import java.util.Date
 import com.wordnik.swagger.annotations.ApiModelProperty
 import org.joda.time.DateTime
 import com.typesafe.scalalogging.slf4j.Logging
+import scala.collection.immutable.ListMap
 
 class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extends Logging {
 
@@ -43,12 +44,13 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
     val (modelAnnotation, fieldAnnotationSymbols, modelType) = modelAnnotationType
     val extendedName = getExtendedClassName(modelType, modelAnnotation)
     val subTypes = getSubTypes(modelType, modelAnnotation)
-    val modelProperties = (for((annotation, symbol) <- fieldAnnotationSymbols) yield {
+    val modelPropertiesSeq = for((annotation, symbol) <- fieldAnnotationSymbols) yield {
       val description = getStringJavaAnnotation("value", annotation).get
       val dataType = getStringJavaAnnotation("dataType", annotation)
       val propertyName = symbol.name.decoded.trim
       val optionType = extractOptionType(symbol)
       val required = getBooleanJavaAnnotation("required", annotation).getOrElse(optionType.isEmpty)
+      val position = getIntJavaAnnotation("position", annotation).getOrElse(0)
       val typeInfo = getModelTypeName(optionType.getOrElse(symbol.typeSignature), dataType)
       (propertyName, ModelProperty(
           description = description,
@@ -56,9 +58,11 @@ class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extend
           `type` = typeInfo.typeName,
           items = typeInfo.itemType.map(ti => Map(ti.typeLabel -> ti.typeName)),
           uniqueItems = if (typeInfo.isUnique) Some(true) else None,
-          enum = getEnumValues(getStringJavaAnnotation("allowableValues", annotation), typeInfo)
+          enum = getEnumValues(getStringJavaAnnotation("allowableValues", annotation), typeInfo),
+          position = position
       ))
-    }).toMap
+    }
+    val modelProperties = ListMap(modelPropertiesSeq.sortBy(_._2.position): _*)
 
     Model(
       id = name,
