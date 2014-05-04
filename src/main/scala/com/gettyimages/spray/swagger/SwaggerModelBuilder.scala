@@ -22,10 +22,10 @@ import com.wordnik.swagger.annotations.ApiModel
 import java.util.Date
 import com.wordnik.swagger.annotations.ApiModelProperty
 import org.joda.time.DateTime
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import scala.collection.immutable.ListMap
 
-class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extends Logging {
+class SwaggerModelBuilder(modelTypes: Seq[Type])(implicit mirror: Mirror) extends StrictLogging {
 
   //validate models
   val modelAnnotationTypesMap = modelTypes.map(tpe => { getClassAnnotation[ApiModel](tpe) match {
