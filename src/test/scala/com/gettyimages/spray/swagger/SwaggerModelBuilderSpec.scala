@@ -173,13 +173,13 @@ object SwaggerModelBuilderSpecValues {
   final val AllowableDescription = "allowableDesciption"
 }
 
-case class TestModelWithNoAnnotation
+case class TestModelWithNoAnnotation()
 
 @Deprecated
-case class TestModelWithWrongAnnotation
+case class TestModelWithWrongAnnotation()
 
 @ApiModel
-case class TestModelEmptyAnnotation
+case class TestModelEmptyAnnotation()
 
 @ApiModel
 sealed trait TestModelParent {
@@ -252,8 +252,8 @@ case class TestModelNode(
   value: Option[String]
 )
 
-case class A extends Letter
-case class B extends Letter
+case class A() extends Letter
+case class B() extends Letter
 
 @ApiModel(
   subTypes = Array(classOf[String], classOf[B])

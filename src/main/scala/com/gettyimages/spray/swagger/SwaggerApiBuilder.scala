@@ -23,7 +23,7 @@ import com.wordnik.swagger.annotations.ApiImplicitParams
 import com.wordnik.swagger.annotations.ApiOperation
 import spray.routing.HttpService
 import com.wordnik.swagger.annotations.ApiResponses
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import javax.ws.rs.Path
 
 case class ApiMissingPropertyException(msg: String) extends Exception(msg)
@@ -35,13 +35,13 @@ class SwaggerApiBuilder(
   modelTypes: Seq[Type],
   apiInfo: Option[ApiInfo] = None,
   authorizations: Option[Map[String, Authorization]]  = None
-) extends Logging {
+) extends StrictLogging {
 
 
   implicit val mirror = runtimeMirror(getClass.getClassLoader)
 
   private val modelJsonMap = new SwaggerModelBuilder(modelTypes).buildAll
-
+  
   logger.debug(s"ModelJsonMap: $modelJsonMap")
 
   val swaggerApiAnnotations = apiTypes.map(apiType => getClassAnnotation[Api](apiType) match {

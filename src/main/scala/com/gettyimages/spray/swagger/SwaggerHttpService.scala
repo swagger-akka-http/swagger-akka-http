@@ -21,13 +21,13 @@ import scala.reflect.runtime.universe.Type
 import org.json4s.DefaultFormats
 import org.json4s.Formats
 
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import spray.httpx.Json4sSupport
 import spray.routing.Directive.pimpApply
 import spray.routing.{PathMatcher, HttpService, Route}
 
-trait SwaggerHttpService extends HttpService with Logging with Json4sSupport {
+trait SwaggerHttpService extends HttpService with StrictLogging with Json4sSupport {
 
   def apiTypes: Seq[Type]
   def modelTypes: Seq[Type]
