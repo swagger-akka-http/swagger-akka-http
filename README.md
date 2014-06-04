@@ -1,6 +1,6 @@
 # spray-swagger
 
-Spray-Swagger brings [Swagger](wordnik/swagger-core) support for [Spray](spray.io) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](https://github.com/wordnik/swagger-ui).
+Spray-Swagger brings [Swagger](https://github.com/wordnik/swagger-core) support for [Spray](http://spray.io) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](https://github.com/wordnik/swagger-ui).
 
 The swagger spec [swagger spec](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
 
@@ -104,7 +104,7 @@ case class Pet(
 
 ## Swagger UI
 
-This library does not include [Swagger's UI](wordnik/swagger-ui) only the api support for powering a UI. Adding such a UI to your Spray app is easy with Spray's ```getFromResource``` and ```getFromResourceDirectory``` support.
+This library does not include [Swagger's UI](https://github.com/wordnik/swagger-ui) only the api support for powering a UI. Adding such a UI to your Spray app is easy with Spray's ```getFromResource``` and ```getFromResourceDirectory``` support.
 
 To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a ```swagger``` route hosting files from the ```resources/swagger/`` directory: 
 
