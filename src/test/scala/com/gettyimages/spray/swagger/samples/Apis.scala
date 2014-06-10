@@ -29,6 +29,9 @@ trait DictHttpService extends HttpService with Json4sSupport {
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "entry", value = "Key/Value pair of dictionary entry, with optional expiration time.", required = true, dataType = "DictEntry", paramType = "body")
   ))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Client Error")
+  ))
   def createRoute = post { path("/dict") { entity(as[DictEntry]) { e =>
     dict += e.key -> e.value
     complete("ok")
@@ -48,9 +51,6 @@ trait DictHttpService extends HttpService with Json4sSupport {
  }
 
 abstract class TestApiWithNoAnnotation extends HttpService
-
-@Deprecated
-abstract class TestApiWithWrongAnnotation extends HttpService
 
 @Api(value = "/test")
 abstract class TestApiDoesNotExtendHttpService
@@ -80,7 +80,7 @@ abstract class TestApiWithPathOperation extends HttpService {
 @Api(value = "/test")
 abstract class TestApiWithParamsHierarchy extends HttpService {
   @Path("/paramHierarchyOperation")
-  @ApiOperation(value = "paramHierarchyOperation", httpMethod = "GET", response = classOf[ModelBase])
+  @ApiOperation(value = "paramHierarchyOperation", httpMethod = "GET", response = classOf[ModelExtension])
   def paramHierarchyOperation
 }
 

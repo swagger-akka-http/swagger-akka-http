@@ -22,6 +22,8 @@ import com.wordnik.swagger.core.util.ReaderUtil
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.wordnik.swagger.model._
 import scala.reflect.runtime.universe._
+import com.wordnik.swagger.converter.ModelConverters
+import com.wordnik.swagger.core.SwaggerContext
 
 class SwaggerApiBuilder(
   config: SwaggerConfig,
@@ -32,6 +34,10 @@ class SwaggerApiBuilder(
 
   val scanner = new SprayApiScanner(apiTypes)
   val reader = new SprayApiReader()
+  val models = {
+    modelTypes.map(m => ModelConverters.read(SwaggerContext.loadClass(m.toString)))
+  }
+
   val listings: Map[String, ApiListing] = {
         logger.info("loading api metadata")
         val classes = scanner match {

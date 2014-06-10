@@ -71,4 +71,4 @@ trait PetHttpService extends HttpService with Json4sSupport {
   def searchRoute = get { complete("") }
 }
 
-case class Pet(id: Int, name: String)
+case class Pet(id: Int, name: String, birthDate: java.util.Date)

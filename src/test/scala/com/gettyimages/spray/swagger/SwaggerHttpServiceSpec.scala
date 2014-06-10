@@ -58,6 +58,15 @@ class SwaggerHttpServiceSpec
           (apis(1) \ "path").extract[String] shouldEqual "/pet/{petId}"
           val ops = (apis(1) \ "operations").extract[Array[JValue]]
           ops.size shouldEqual 3
+          val models = (response \ "models").extract[JObject]
+          val pet = (models \ "Pet").extract[JObject]
+          (pet \ "id").extract[String] shouldEqual "Pet"
+          (pet \ "properties" \ "id" \ "type").extract[String] shouldEqual "integer"
+          (pet \ "properties" \ "id" \ "format").extract[String] shouldEqual "int32"
+          (pet \ "properties" \ "name" \ "type").extract[String] shouldEqual "string"
+          (pet \ "properties" \ "birthDate" \ "type").extract[String] shouldEqual "string"
+          (pet \ "properties" \ "birthDate" \ "format").extract[String] shouldEqual "date-time"
+
         }
       }
     }

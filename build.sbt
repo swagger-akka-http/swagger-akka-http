@@ -11,17 +11,15 @@ crossScalaVersions := Seq("2.10.4", "2.11.1")
 libraryDependencies ++= { scalaBinaryVersion.value match {
  	case "2.10" => Seq(
     "io.spray"  % "spray-routing" % "1.3.1",
-    "io.spray"  % "spray-testkit" % "1.3.1")
+    "io.spray"  % "spray-testkit" % "1.3.1" % "test")
 	case "2.11" => Seq(
     "io.spray" %% "spray-routing" % "1.3.1-20140423",
-    "io.spray" %% "spray-testkit" % "1.3.1-20140423")
+    "io.spray" %% "spray-testkit" % "1.3.1-20140423" % "test")
   }
  }
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.1.5" % "test",
-  //"com.wordnik" % "swagger-annotations_2.10" % "1.3.0",
-  //"com.wordnik" % "swagger-core_2.10" % "1.3.0",
   "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.5",
   "javax.ws.rs" % "jsr311-api" % "1.1.1",
   "com.typesafe.akka" %% "akka-actor" % "2.3.3",
