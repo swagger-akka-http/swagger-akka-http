@@ -75,10 +75,10 @@ class SwaggerApiBuilderSpec
           val apiListings = swaggerApi(List(typeOf[TestApiWithPathOperation])).listings
           apiListings should contain key ("/test")
           val apiListing = apiListings("/test")
-          val operations = apiListing.apis
+          val operations = apiListing.apis.sortBy(_.path.length)
           operations should have size (2)
-          operations(0).path should be ("/test/other/sub/{someParam}/path/{anotherParam}")
-          operations(1).path should be ("/test/sub/{someParam}/path/{anotherParam}")
+          operations(0).path should be ("/test/sub/{someParam}/path/{anotherParam}")
+          operations(1).path should be ("/test/other/sub/{someParam}/path/{anotherParam}")
           }
         }
       "passed a test api with a method returning complex entity" should {
