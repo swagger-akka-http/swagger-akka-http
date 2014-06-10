@@ -4,26 +4,16 @@ Spray-Swagger brings [Swagger](https://github.com/wordnik/swagger-core) support 
 
 The swagger spec [swagger spec](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
 
-> This is an early work in progress. Not all Swagger annotations are fully supported. 
-
 ## Getting Spray-Swagger
 
 ### Release Version
 
-The jars are hosted on [sonatype](https://oss.sonatype.org). Using Sbt:
+The jars are hosted on [sonatype](https://oss.sonatype.org). Starting with 0.4.0-SNAPSHOT 
+spray-swagger is cross-compiled with scala 2.10.4 and 2.11.1. Snapshot releases are also hosted on sonatype. 
 
 ```
-libraryDependencies += "com.gettyimages" % "spray-swagger_2.10" % "0.3.3" 
+libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.1"
 ```
-
-### 2.11 Support
-
-Starting with 0.4.0-SNAPSHOT spray-swagger is cross-compiled with scala 2.10.4 and 2.11.1. Snapshot releases are also hosted on sonatype. 
-
-```
-libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.0-SNAPSHOT"
-```
-
 
 ## SwaggerHttpService
 
@@ -39,12 +29,10 @@ Here's an example ```SwaggerHttpService``` snippet which exposes [Wordnik's PetS
 new SwaggerHttpService {
        def actorRefFactory = context
        def apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
-       def modelTypes = Seq(typeOf[Pet], typeOf[Tag], typeOf[Category])
        def apiVersion = "1.0"
-       def swaggerVersion = "1.2"
-       def baseUrl = "http://localhost:8080"
-       def specPath = "api"
-       def resourcePath = "api-docs"
+       def swaggerVersion = "1.2" // you can omit, defaults to 1.2
+       def baseUrl = "http://localhost:8080" //the url of your api
+       def docsPath = "/api-docs" //where you want the swagger-json endpoint exposed
      }.routes
 ```
 
@@ -117,3 +105,7 @@ trait Site extends HttpService {
 ```
 
 You can then mix this trait with a new or existing Spray class with an ``actorRefFactory``` and concatenate the ```site``` route value to your existing route definitions.
+
+## Examples
+
+The ```/test``` directory includes an ```HttpSwaggerServiceSpec``` which leverages ```spray.testkit``` to test the API. It uses a ```PetHttpService``` and ```UserHttpService``` declared in the ```/samples``` folder. 
