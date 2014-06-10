@@ -27,16 +27,12 @@ import com.wordnik.swagger.core.SwaggerContext
 
 class SwaggerApiBuilder(
   config: SwaggerConfig,
-  apiTypes: Seq[Type],
-  modelTypes: Seq[Type]
+  apiTypes: Seq[Type]
 ) extends ReaderUtil
   with LazyLogging {
 
   val scanner = new SprayApiScanner(apiTypes)
   val reader = new SprayApiReader()
-  val models = {
-    modelTypes.map(m => ModelConverters.read(SwaggerContext.loadClass(m.toString)))
-  }
 
   val listings: Map[String, ApiListing] = {
         logger.info("loading api metadata")

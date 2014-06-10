@@ -36,7 +36,6 @@ extends HttpService
 with LazyLogging {
 
   def apiTypes: Seq[Type]
-  def modelTypes: Seq[Type]
 
   def apiVersion: String
   def swaggerVersion: String = SwaggerSpec.version
@@ -55,7 +54,7 @@ with LazyLogging {
             basePath,
             "", //api path, not used
             List(), //authorizations
-            apiInfo), apiTypes, modelTypes)
+            apiInfo), apiTypes)
 
 
   final def routes: Route =

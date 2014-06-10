@@ -16,7 +16,6 @@ class SwaggerHttpServiceSpec
 
    val swaggerService = new SwaggerHttpService {
       override def apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
-      override def modelTypes = Seq()
       override def apiVersion = "2.0"
       override def basePath = "http://some.domain.com/api"
       override def docsPath = "docs-are-here"
@@ -55,9 +54,9 @@ class SwaggerHttpServiceSpec
           (response \ "resourcePath").extract[String] shouldEqual "/pet"
           val apis = (response \ "apis").extract[Array[JValue]]
           apis.size shouldEqual 2
-          (apis(1) \ "path").extract[String] shouldEqual "/pet/{petId}"
+          (apis(0) \ "path").extract[String] shouldEqual "/pet/{petId}"
           val ops = (apis(1) \ "operations").extract[Array[JValue]]
-          ops.size shouldEqual 3
+          ops.size shouldEqual 2
           val models = (response \ "models").extract[JObject]
           val pet = (models \ "Pet").extract[JObject]
           (pet \ "id").extract[String] shouldEqual "Pet"

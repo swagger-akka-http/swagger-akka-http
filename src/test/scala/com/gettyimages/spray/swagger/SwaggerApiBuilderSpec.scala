@@ -25,19 +25,15 @@ class SwaggerApiBuilderSpec
   extends WordSpec
   with ShouldMatchers {
 
-  /*
-}
-   */
-
   val apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
   val config = new SwaggerConfig("myVersion", SwaggerSpec.version, "http://example.com", "")
 
-    val swaggerApi = new SwaggerApiBuilder(config, _: Seq[Type], _: Seq[Type])
+    val swaggerApi = new SwaggerApiBuilder(config, _: Seq[Type])
 
     "The SwaggerApiBuilder class" when {
       "passed an annoted service" should {
         "list all API specs" in {
-          val listingMap = swaggerApi(apiTypes, Seq()).listings
+          val listingMap = swaggerApi(apiTypes).listings
 
           listingMap.size shouldBe 2
           listingMap.get("/user") shouldBe 'defined
@@ -47,8 +43,8 @@ class SwaggerApiBuilderSpec
 
           petListing.apis.length shouldEqual 2
           petListing.apis.head.description shouldBe None
-          petListing.apis.head.path shouldBe "/pet"
-          petListing.apis.head.operations.length shouldEqual 2
+          petListing.apis.head.path shouldBe "/pet/{petId}"
+          petListing.apis.head.operations.length shouldEqual 3
 
           petListing.apiVersion shouldBe "myVersion"
           petListing.basePath shouldBe "http://example.com"
@@ -68,7 +64,7 @@ class SwaggerApiBuilderSpec
       }
       "passed a test api with data only" should {
         "output that data model" in {
-          val listingsMap = swaggerApi(List(typeOf[TestApiWithOnlyDataType]), List(typeOf[TestModel], typeOf[TestModelNode])).listings
+          val listingsMap = swaggerApi(List(typeOf[TestApiWithOnlyDataType])).listings
           listingsMap should contain key ("/test")
           val apiListing = listingsMap("/test")
           apiListing.apis(0).operations(0).parameters(0).dataType shouldEqual "TestModel"
@@ -76,18 +72,18 @@ class SwaggerApiBuilderSpec
       }
       "passed a test api with a sub path with path parameters" should {
         "output api on that sub path and test parameters identified" in {
-          val apiListings = swaggerApi(List(typeOf[TestApiWithPathOperation]), List(typeOf[TestModel], typeOf[TestModelNode])).listings
+          val apiListings = swaggerApi(List(typeOf[TestApiWithPathOperation])).listings
           apiListings should contain key ("/test")
           val apiListing = apiListings("/test")
           val operations = apiListing.apis
           operations should have size (2)
-          operations(0).path should be ("/test/sub/{someParam}/path/{anotherParam}")
-          operations(1).path should be ("/test/other/sub/{someParam}/path/{anotherParam}")
+          operations(0).path should be ("/test/other/sub/{someParam}/path/{anotherParam}")
+          operations(1).path should be ("/test/sub/{someParam}/path/{anotherParam}")
           }
         }
       "passed a test api with a method returning complex entity" should {
         "respect model class hierarchy" in {
-          val apiListings = swaggerApi(List(typeOf[TestApiWithParamsHierarchy]), List(typeOf[ModelBase], typeOf[ModelExtension])).listings
+          val apiListings = swaggerApi(List(typeOf[TestApiWithParamsHierarchy])).listings
           apiListings should contain key ("/test")
           val apiListing = apiListings("/test")
           val operations = apiListing.apis
@@ -101,7 +97,7 @@ class SwaggerApiBuilderSpec
 
       "passed a test api with explicit operation positions" should {
         "output the operations in position order" in {
-          val apiListings = swaggerApi(List(typeOf[TestApiWithOperationPositions]), List(typeOf[ModelBase], typeOf[ModelExtension])).listings
+          val apiListings = swaggerApi(List(typeOf[TestApiWithOperationPositions])).listings
           apiListings should contain key ("/test")
           val apiListing = apiListings("/test")
           val apis = apiListing.apis
