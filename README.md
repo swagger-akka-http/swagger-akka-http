@@ -37,7 +37,7 @@ new SwaggerHttpService {
        def apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
        def apiVersion = "1.0"
        def swaggerVersion = "1.2" // you can omit, defaults to 1.2
-       def baseUrl = "http://localhost:8080" //the url of your api
+       def basePath = "http://localhost:8080" //the url of your api, not swagger's json endpoint
        def docsPath = "/api-docs" //where you want the swagger-json endpoint exposed
      }.routes
 ```
