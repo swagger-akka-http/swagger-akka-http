@@ -15,6 +15,12 @@ spray-swagger is cross-compiled with scala 2.10.4 and 2.11.1. Snapshot releases 
 libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.2"
 ```
 
+For 2.11 support you may need to exclude the json4s libraries. Swagger-core is built with 2.10 and pulls in the 2.10 build of json4s:
+
+```
+libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.2" excludeAll( ExclusionRule(organization = "org.json4s") )
+```
+
 ## SwaggerHttpService
 
 The ```SwaggerHttpService``` is a trait extending Spray's ```HttpService```. It will generate the appropriate Swagger json schema based on a set of inputs declaring your Api and the types you want to exposed.
