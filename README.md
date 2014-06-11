@@ -12,7 +12,7 @@ The jars are hosted on [sonatype](https://oss.sonatype.org). Starting with 0.4.0
 spray-swagger is cross-compiled with scala 2.10.4 and 2.11.1. Snapshot releases are also hosted on sonatype. 
 
 ```
-libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.1"
+libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.2"
 ```
 
 ## SwaggerHttpService
