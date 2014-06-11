@@ -4,7 +4,7 @@ organization := "com.gettyimages"
 
 name := "spray-swagger"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.1"
 
 crossScalaVersions := Seq("2.10.4", "2.11.1")
 
@@ -19,10 +19,11 @@ libraryDependencies ++= { scalaBinaryVersion.value match {
  }
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.1.5" % "test",
-  "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.5",
-  "javax.ws.rs" % "jsr311-api" % "1.1.1",
+  "org.scalatest" %% "scalatest" % "2.1.5" % "test" ,
+  "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.5" excludeAll( ExclusionRule(organization = "org.json4s") ),
   "com.typesafe.akka" %% "akka-actor" % "2.3.3",
+  "org.json4s" %% "json4s-jackson" % "3.2.9",
+  "org.json4s" %% "json4s-native" % "3.2.9",
   "joda-time" % "joda-time" % "2.2",
   "org.joda" % "joda-convert" % "1.3.1",
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2"

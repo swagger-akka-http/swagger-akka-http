@@ -66,7 +66,7 @@ class SprayApiReaderSpec
           apiPaths should contain ("/dict")
           apiPaths should contain ("/dict/{key}")
 
-          val api = apiListing.apis(0)
+          val api = apiListing.apis.filter(_.path == "/dict").head
           val operations = api.operations
           operations should have size (1)
           val operation = operations.head
