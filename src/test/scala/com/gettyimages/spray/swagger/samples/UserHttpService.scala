@@ -38,7 +38,7 @@ trait UserHttpService extends HttpService with Json4sSupport {
 
   @ApiOperation(value = "Get user by name", notes = "", response=classOf[User], nickname = "getUserByName", httpMethod = "GET")
   @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "petId", value = "ID of pet that needs to be updated", required = true, dataType = "string", paramType = "path"),
+    new ApiImplicitParam(name = "userId", value = "ID of pet that needs to be updated", required = true, dataType = "string", paramType = "path"),
     new ApiImplicitParam(name = "name", value = "Updated name of the pet.", required = false, dataType = "string", paramType = "form"),
     new ApiImplicitParam(name = "status", value = "Updated status of the pet.", required = false, dataType = "string", paramType = "form")
   ))

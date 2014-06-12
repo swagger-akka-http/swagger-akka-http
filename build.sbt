@@ -20,7 +20,7 @@ libraryDependencies ++= { scalaBinaryVersion.value match {
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.1.5" % "test" ,
-  "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.5" excludeAll( ExclusionRule(organization = "org.json4s") ),
+  "com.wordnik" % "swagger-core_2.10" % "1.3.5" excludeAll( ExclusionRule(organization = "org.json4s"),  ExclusionRule(organization="org.fasterxml*") ),
   "com.typesafe.akka" %% "akka-actor" % "2.3.3",
   "org.json4s" %% "json4s-jackson" % "3.2.9",
   "org.json4s" %% "json4s-native" % "3.2.9",

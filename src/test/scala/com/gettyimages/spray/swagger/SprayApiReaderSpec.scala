@@ -77,6 +77,11 @@ class SprayApiReaderSpec
           responseMessage.message should be ("Client Error")
           val notes = operation.notes
           notes should equal ("Will a new entry to the dictionary, indexed by key, with an optional expiration value.")
+          operation.nickname should equal ("createRoute")
+
+          val readPath = apiListing.apis.filter(_.path == "/dict/{key}").head
+          readPath.operations.head.nickname shouldEqual "someothername"
+
           }
         }
       }

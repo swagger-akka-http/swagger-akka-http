@@ -48,7 +48,8 @@ class SwaggerApiBuilderSpec
 
           petListing.apiVersion shouldBe "myVersion"
           petListing.basePath shouldBe "http://example.com"
-          petListing.consumes shouldBe List()
+          petListing.consumes shouldBe List("application/json", "application/vnd.test.pet")
+          petListing.produces shouldBe List("application/json", "application/vnd.test.pet")
           petListing.description shouldBe Some("Operations about pets.")
           //petListing.models shouldBe 'defined
           petListing.swaggerVersion shouldBe "1.2"
@@ -68,6 +69,7 @@ class SwaggerApiBuilderSpec
           listingsMap should contain key ("/test")
           val apiListing = listingsMap("/test")
           apiListing.apis(0).operations(0).parameters(0).dataType shouldEqual "TestModel"
+          apiListing.apis(0).operations(0).nickname shouldEqual "testOperation"
         }
       }
       "passed a test api with a sub path with path parameters" should {

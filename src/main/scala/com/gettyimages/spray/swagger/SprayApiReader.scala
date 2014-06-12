@@ -15,7 +15,6 @@
  */
 package com.gettyimages.spray.swagger
 
-import com.wordnik.swagger.jaxrs.{MutableParameter, JaxrsApiReader}
 import com.wordnik.swagger.config._
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.annotations._
@@ -26,13 +25,15 @@ import java.lang.annotation.Annotation
 import scala.reflect.runtime.universe.Type
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.core.util._
+import com.wordnik.swagger.core._
 import javax.ws.rs._
+import com.wordnik.swagger.reader._
 
 class SprayApiReader
-  extends JaxrsApiReader
+  extends ClassReader
+  with ClassReaderUtils
   with LazyLogging {
 
-  override
   def readRecursive(
     docRoot: String,
     parentPath: String,
@@ -76,10 +77,14 @@ class SprayApiReader
                       case e: Path => e.value()
                       case _ => op.parameters.filter(_.paramType == "path").map(_.name).foldLeft("")(_ + "/{" + _ + "}")
                     }
-                    appendOperation(addLeadingSlash(api.value) + path, "", op, operations)
+                    val opWithName = op.nickname match {
+                      case "" => op.copy(nickname = method.getName)
+                      case other => op
+                    }
+                    appendOperation(addLeadingSlash(api.value) + path, "", opWithName, operations)
                   }
                   case None =>
-                }
+     }
               }
           }
 
@@ -118,6 +123,31 @@ class SprayApiReader
             position = api.position))
 
         }
+  }
+  //mlh probably refactor this away
+  def readString(value: String, defaultValue: String = null, ignoreValue: String = null): String = {
+    if (defaultValue != null && defaultValue.trim.length > 0) defaultValue
+    else if (value == null) null
+    else if (value.trim.length == 0) null
+    else if (ignoreValue != null && value.equals(ignoreValue)) null
+    else value.trim
+  }
+
+  def appendOperation(endpoint: String, path: String, op: Operation, operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]) = {
+    operations.filter(op => op._1 == endpoint) match {
+      case e: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]] if(e.size > 0) => e.head._3 += op
+      case _ => operations += Tuple3(endpoint, path, new ListBuffer[Operation]() ++= List(op))
+    }
+  }
+
+   def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
+    val parentPath = {
+      Option(cls.getAnnotation(classOf[Path])) match {
+        case Some(e) => e.value()
+        case _ => ""
+      }
+    }
+    readRecursive(docRoot, parentPath.replace("//","/"), cls, config, new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]], new ListBuffer[Method])
   }
 
   def processResponsesAnnotation(responseAnnotations: ApiResponses) = {
@@ -199,6 +229,10 @@ class SprayApiReader
         (for (param <- e.value) yield {
           logger.debug("processing " + param)
           val allowableValues = toAllowableValues(param.allowableValues)
+          if(param.dataType == "" || param.dataType == null) {
+            logger.error("An implicit parameter was set without a dataType. You must explicitly set the dataType")
+          }
+
           Parameter(
             param.name,
             Option(readString(param.value)),
@@ -241,11 +275,91 @@ class SprayApiReader
     List()
   }
 
-  @Deprecated
-  override def readMethod(method: Method, parentParams : List[Parameter], parentMethods : ListBuffer[Method]) : Option[Operation] = {
-   // don't use this - it is specific to Jax-RS models.
-    throw new RuntimeException("method not in use..")
-    None
+  def addLeadingSlash(e: String): String = {
+    e.startsWith("/") match {
+      case true => e
+      case false => "/" + e
+    }
+  }
+  val GenericTypeMapper = "([a-zA-Z\\.]*)<([a-zA-Z0-9\\.\\,\\s]*)>".r
+
+  def processDataType(paramType: Class[_], genericParamType: java.lang.reflect.Type) = {
+      paramType.getName match {
+        case "[I" => "Array[int]"
+        case "[Z" => "Array[boolean]"
+        case "[D" => "Array[double]"
+        case "[F" => "Array[float]"
+        case "[J" => "Array[long]"
+        case _ => {
+          if(paramType.isArray) {
+            "Array[%s]".format(paramType.getComponentType.getName)
+          }
+          else {
+            genericParamType.toString match {
+              case GenericTypeMapper(container, base) => {
+                val qt = SwaggerTypes(base.split("\\.").last) match {
+                  case "object" => base
+                  case e: String => e
+                }
+                val b = ModelUtil.modelFromString(qt) match {
+                  case Some(e) => e._2.qualifiedType
+                  case None => qt
+                }
+                "%s[%s]".format(normalizeContainer(container), b)
+              }
+              case _ => paramType.getName
+            }
+          }
+        }
+      }
+    }
+
+  //mlh fugly, but necessary for now
+  class MutableParameter(param: Parameter) {
+
+    var name: String = _
+    var description: Option[String] = None
+    var defaultValue: Option[String] = None
+    var required: Boolean = _
+    var allowMultiple: Boolean = false
+    var dataType: String = _
+    var allowableValues: AllowableValues = AnyAllowableValues
+    var paramType: String = _
+    var paramAccess: Option[String] = None
+
+    if(param != null) {
+      this.name = param.name
+      this.description = param.description
+      this.defaultValue = param.defaultValue
+      this.required = param.required
+      this.allowMultiple = param.allowMultiple
+      this.dataType = param.dataType
+      this.allowableValues = param.allowableValues
+      this.paramType = param.paramType
+      this.paramAccess = param.paramAccess
+    }
+
+    def this() = this(null)
+
+    def asParameter() = {
+      Parameter(name,
+        description,
+        defaultValue,
+        required,
+        allowMultiple,
+        dataType,
+        allowableValues,
+        paramType,
+        paramAccess)
+    }
+  }
+  def normalizeContainer(str: String) = {
+    if(str.indexOf(".List") >= 0) "List"
+    else if(str.indexOf(".Set") >= 0) "Set"
+    else {
+      println("UNKNOWN TYPE: " + str)
+      "UNKNOWN"
+    }
   }
 }
 

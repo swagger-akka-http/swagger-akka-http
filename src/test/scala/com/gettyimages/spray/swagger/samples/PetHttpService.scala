@@ -20,7 +20,7 @@ import javax.ws.rs.Path
 import spray.routing.HttpService
 import spray.httpx.Json4sSupport
 
-@Api(value = "/pet", description = "Operations about pets.")
+@Api(value = "/pet", description = "Operations about pets.", produces="application/json, application/vnd.test.pet", consumes="application/json, application/vnd.test.pet")
 trait PetHttpService extends HttpService with Json4sSupport {
 
 

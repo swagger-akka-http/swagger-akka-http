@@ -17,7 +17,7 @@ class SwaggerHttpServiceSpec
    val swaggerService = new SwaggerHttpService {
       override def apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
       override def apiVersion = "2.0"
-      override def basePath = "http://some.domain.com/api"
+      override def baseUrl = "http://some.domain.com/api"
       override def docsPath = "docs-are-here"
       override def actorRefFactory = ActorSystem("swagger-spray-test")
       //apiInfo, not used

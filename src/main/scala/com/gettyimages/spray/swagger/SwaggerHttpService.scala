@@ -40,8 +40,8 @@ with LazyLogging {
   def apiVersion: String
   def swaggerVersion: String = SwaggerSpec.version
 
-  def basePath: String //url of api
-  def docsPath: String = "/api-docs"
+  def baseUrl: String //url of api
+  def docsPath: String = "api-docs" //path to swagger's endpoint
   def apiInfo: Option[ApiInfo] = None
   //def authorizations: Option[Map[String, Authorization]] = None
 
@@ -51,7 +51,7 @@ with LazyLogging {
       new SwaggerConfig(
             apiVersion,
             swaggerVersion,
-            basePath,
+            baseUrl,
             "", //api path, not used
             List(), //authorizations
             apiInfo), apiTypes)

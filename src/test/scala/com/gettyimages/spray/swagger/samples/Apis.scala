@@ -37,7 +37,7 @@ trait DictHttpService extends HttpService with Json4sSupport {
     complete("ok")
   }}}
 
-  @ApiOperation(value = "Find entry by key.", notes = "Will look up the dictionary entry for the provided key.", response = classOf[DictEntry], httpMethod = "GET")
+  @ApiOperation(value = "Find entry by key.", notes = "Will look up the dictionary entry for the provided key.", response = classOf[DictEntry], httpMethod = "GET", nickname="someothername")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "key", value = "Keyword for the dictionary entry.", required = true, dataType = "String", paramType = "path")
   ))
