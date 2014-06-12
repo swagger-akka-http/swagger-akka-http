@@ -37,8 +37,9 @@ class SwaggerHttpServiceSpec
           (response \ "swaggerVersion").extract[String] shouldEqual "1.2"
           val apis = (response \ "apis").extract[Array[JValue]]
           apis.size shouldEqual 2
-          (apis(1) \ "description").extract[String] shouldEqual "Operations about pets."
-          (apis(1) \ "path").extract[String] shouldEqual "/pet"
+          val api = apis.filter(a => (a \ "path").extract[String] == "/pet").head
+          (api \ "description").extract[String] shouldEqual "Operations about pets."
+          (api \ "path").extract[String] shouldEqual "/pet"
           //need api info
         }
       }
@@ -54,9 +55,10 @@ class SwaggerHttpServiceSpec
           (response \ "resourcePath").extract[String] shouldEqual "/pet"
           val apis = (response \ "apis").extract[Array[JValue]]
           apis.size shouldEqual 2
-          (apis(0) \ "path").extract[String] shouldEqual "/pet/{petId}"
-          val ops = (apis(1) \ "operations").extract[Array[JValue]]
-          ops.size shouldEqual 2
+          val api = apis.filter(a => (a \ "path").extract[String] == "/pet/{petId}").head
+          (api \ "path").extract[String] shouldEqual "/pet/{petId}"
+          val ops = (api \ "operations").extract[Array[JValue]]
+          ops.size shouldEqual 3
           val models = (response \ "models").extract[JObject]
           val pet = (models \ "Pet").extract[JObject]
           (pet \ "id").extract[String] shouldEqual "Pet"
