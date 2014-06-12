@@ -37,8 +37,8 @@ class SwaggerHttpServiceSpec
           (response \ "swaggerVersion").extract[String] shouldEqual "1.2"
           val apis = (response \ "apis").extract[Array[JValue]]
           apis.size shouldEqual 2
-          (apis(0) \ "description").extract[String] shouldEqual "Operations about pets."
-          (apis(0) \ "path").extract[String] shouldEqual "/pet"
+          (apis(1) \ "description").extract[String] shouldEqual "Operations about pets."
+          (apis(1) \ "path").extract[String] shouldEqual "/pet"
           //need api info
         }
       }

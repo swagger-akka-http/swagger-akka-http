@@ -18,7 +18,7 @@ libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.3"
 For 2.11 support you may need to exclude the json4s libraries. Swagger-core is built with 2.10 and pulls in the 2.10 build of json4s:
 
 ```
-libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.2" excludeAll( ExclusionRule(organization = "org.json4s") )
+libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.3" excludeAll( ExclusionRule(organization = "org.json4s") )
 ```
 
 ## SwaggerHttpService
@@ -113,5 +113,7 @@ trait Site extends HttpService {
 You can then mix this trait with a new or existing Spray class with an ``actorRefFactory``` and concatenate the ```site``` route value to your existing route definitions.
 
 ## Examples
+
+[mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with spray-swagger support and a Swagger UI.
 
 The ```/test``` directory includes an ```HttpSwaggerServiceSpec``` which leverages ```spray.testkit``` to test the API. It uses a ```PetHttpService``` and ```UserHttpService``` declared in the ```/samples``` folder. 

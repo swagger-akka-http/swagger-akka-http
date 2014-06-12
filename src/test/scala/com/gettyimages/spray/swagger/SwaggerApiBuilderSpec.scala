@@ -42,9 +42,9 @@ class SwaggerApiBuilderSpec
           val petListing = listingMap.get("/pet").get
 
           petListing.apis.length shouldEqual 2
-          petListing.apis.head.description shouldBe None
-          petListing.apis.head.path shouldBe "/pet/{petId}"
-          petListing.apis.head.operations.length shouldEqual 3
+          petListing.apis.filter(_.path == "/pet/{petId}").head.description shouldBe None
+          petListing.apis.filter(_.path == "/pet/{petId}").head.path shouldBe "/pet/{petId}"
+          petListing.apis.filter(_.path == "/pet/{petId}").head.operations.length shouldEqual 3
 
           petListing.apiVersion shouldBe "myVersion"
           petListing.basePath shouldBe "http://example.com"
