@@ -8,18 +8,10 @@ scalaVersion := "2.11.1"
 
 crossScalaVersions := Seq("2.10.4", "2.11.1")
 
-libraryDependencies ++= { scalaBinaryVersion.value match {
- 	case "2.10" => Seq(
-    "io.spray"  % "spray-routing" % "1.3.1",
-    "io.spray"  % "spray-testkit" % "1.3.1" % "test")
-	case "2.11" => Seq(
-    "io.spray" %% "spray-routing" % "1.3.1-20140423",
-    "io.spray" %% "spray-testkit" % "1.3.1-20140423" % "test")
-  }
- }
-
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.1.5" % "test" ,
+  "io.spray" %% "spray-routing" % "1.3.1",
+  "io.spray" %% "spray-testkit" % "1.3.1" % "test",
+  "org.scalatest" %% "scalatest" % "2.2.0" % "test" ,
   "com.wordnik" % "swagger-core_2.10" % "1.3.5" excludeAll( ExclusionRule(organization = "org.json4s"),  ExclusionRule(organization="org.fasterxml*") ),
   "com.typesafe.akka" %% "akka-actor" % "2.3.3",
   "org.json4s" %% "json4s-jackson" % "3.2.9",
