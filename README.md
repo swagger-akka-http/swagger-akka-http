@@ -50,6 +50,8 @@ A simple solution is to break apart a spray-routing application into various res
 
 With this structure you can apply ```@Api``` annotations to these individual traits and ```@ApiOperation``` annotations to methods.
 
+You can also use jax-rs ```@Path``` annotations alongside ```@ApiOperation```s if you need fine-grained control over path specifications or if you want to support multiple paths per operation. The functionality is the same as swagger-core.
+
 ### Resource Definitions
 
 The general pattern for resource definitions and spray routes:
