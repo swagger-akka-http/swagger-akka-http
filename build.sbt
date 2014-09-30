@@ -12,13 +12,14 @@ libraryDependencies ++= Seq(
   "io.spray" %% "spray-routing" % "1.3.1",
   "io.spray" %% "spray-testkit" % "1.3.1" % "test",
   "org.scalatest" %% "scalatest" % "2.2.0" % "test" ,
-  "com.wordnik" % "swagger-core_2.10" % "1.3.8" excludeAll( ExclusionRule(organization = "org.json4s"),  ExclusionRule(organization="org.fasterxml*") ),
+  "com.wordnik" %% "swagger-core" % "1.3.8" excludeAll( ExclusionRule(organization = "org.json4s"),  ExclusionRule(organization="org.fasterxml*") ),
   "com.typesafe.akka" %% "akka-actor" % "2.3.3",
   "org.json4s" %% "json4s-jackson" % "3.2.9",
   "org.json4s" %% "json4s-native" % "3.2.9",
   "joda-time" % "joda-time" % "2.2",
   "org.joda" % "joda-convert" % "1.3.1",
-  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2"
+  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
+  "javax.ws.rs" % "jsr311-api" % "0.11"
 )
 
 resolvers += "spray repo" at "http://repo.spray.io"
