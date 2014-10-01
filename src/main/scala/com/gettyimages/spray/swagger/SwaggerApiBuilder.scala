@@ -65,7 +65,7 @@ class SwaggerApiBuilder(
     ResourceListing(config.getApiVersion,
                      config.getSwaggerVersion,
                      references, //apilistingreference
-                     List(), //authorizations tbd
+                     config.authorizations, //authorizations tbd
                      config.info)
   }
 
