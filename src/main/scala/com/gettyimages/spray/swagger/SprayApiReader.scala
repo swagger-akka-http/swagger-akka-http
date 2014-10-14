@@ -113,7 +113,7 @@ class SprayApiReader
             apiVersion = config.apiVersion,
             swaggerVersion = config.swaggerVersion,
             basePath = config.basePath,
-            resourcePath = addLeadingSlash(api.value),
+            resourcePath = basePath(api),
             apis = ModelUtil.stripPackages(apis),
             models = models,
             description = description,
