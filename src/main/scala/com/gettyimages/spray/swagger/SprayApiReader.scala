@@ -81,7 +81,7 @@ class SprayApiReader
                       case "" => op.copy(nickname = method.getName)
                       case other => op
                     }
-                    appendOperation(addLeadingSlash(api.value) + path, "", opWithName, operations)
+                    appendOperation(basePath(api) + path, "", opWithName, operations)
                   }
                   case None =>
      }
@@ -360,6 +360,14 @@ class SprayApiReader
       println("UNKNOWN TYPE: " + str)
       "UNKNOWN"
     }
+  }
+
+  def basePath(api: Api) = {
+    val path = if (api.basePath().nonEmpty)
+      api.basePath()
+    else
+      api.value()
+    addLeadingSlash(path)
   }
 }
 
