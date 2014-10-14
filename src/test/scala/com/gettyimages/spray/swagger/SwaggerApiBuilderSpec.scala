@@ -111,5 +111,16 @@ class SwaggerApiBuilderSpec
           apis(2).operations(0).summary should be ("order4")
         }
       }
+
+      "passed a test api with basePath annotation" should {
+        "output operation path with specified basePath" in {
+          val apiListings = swaggerApi(List(typeOf[TestApiWithBasePathAnnotation])).listings
+          apiListings should contain key ("/test-override")
+          val apiListing = apiListings("/test-override")
+          val operations = apiListing.apis
+          operations should have size (1)
+          operations(0).path should be ("/test-override/{pathParam}")
+        }
+      }
     }
   }

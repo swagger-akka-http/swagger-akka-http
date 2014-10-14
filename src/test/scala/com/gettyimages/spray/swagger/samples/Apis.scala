@@ -107,3 +107,10 @@ abstract class TestApiWithOperationPositions extends HttpService {
   def operation2
 
 }
+
+@Api(value = "/test", basePath = "/test-override")
+abstract class TestApiWithBasePathAnnotation extends HttpService {
+  @ApiOperation(value = "testApiOperation", httpMethod = "GET")
+  @ApiImplicitParams(Array(new ApiImplicitParam(name = "pathParam", value = "test param", dataType = "string", paramType = "path")))
+  def testOperation
+}
