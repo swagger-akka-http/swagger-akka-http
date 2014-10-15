@@ -11,13 +11,13 @@ The swagger spec [swagger spec](https://github.com/wordnik/swagger-spec/blob/mas
 The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Spray-swagger is cross-compiled with scala 2.10.4 and 2.11.2. Snapshot releases are also hosted on sonatype. 
 
 ```
-libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.5"
+libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.6"
 ```
 
 For 2.11 support you may need to exclude the json4s libraries. Swagger-core is built with 2.10 and pulls in the 2.10 build of json4s:
 
 ```
-libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.5" excludeAll( ExclusionRule(organization = "org.json4s") )
+libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.4.6" excludeAll( ExclusionRule(organization = "org.json4s") )
 ```
 
 ## SwaggerHttpService
