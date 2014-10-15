@@ -52,6 +52,8 @@ licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.ap
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
+publishArtifactsAction := PgpKeys.publishSigned.value
+
 pomExtra := (
   <scm>
     <url>git@github.com:gettyimages/spray-swagger.git</url>
