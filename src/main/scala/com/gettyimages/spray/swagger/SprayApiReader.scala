@@ -15,18 +15,19 @@
  */
 package com.gettyimages.spray.swagger
 
-import com.wordnik.swagger.config._
-import com.wordnik.swagger.model._
-import com.wordnik.swagger.annotations._
-import scala.collection.mutable.ListBuffer
-import java.lang.reflect.Method
-import com.typesafe.scalalogging.slf4j.LazyLogging
 import java.lang.annotation.Annotation
+import java.lang.reflect.Method
+import javax.ws.rs._
+import scala.collection.mutable.ListBuffer
 import scala.reflect.runtime.universe.Type
+
+import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.wordnik.swagger.annotations._
+import com.wordnik.swagger.config._
+import com.wordnik.swagger.core._
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.core.util._
-import com.wordnik.swagger.core._
-import javax.ws.rs._
+import com.wordnik.swagger.model._
 import com.wordnik.swagger.reader._
 
 class SprayApiReader
