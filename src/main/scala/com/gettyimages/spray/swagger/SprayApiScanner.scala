@@ -23,11 +23,11 @@ import com.typesafe.scalalogging.slf4j.LazyLogging
 import spray.routing.HttpService
 
 class SprayApiScanner(apiTypes: Seq[Type])
-extends Scanner
-with LazyLogging {
+    extends Scanner
+    with LazyLogging {
   def classes(): List[Class[_]] = {
 
-    apiTypes.map(apiType => if (!(apiType  <:< typeOf[HttpService])) logger.warn(s"ApiType $apiType does not implement HttpService"))
+    apiTypes.map(apiType => if (!(apiType <:< typeOf[HttpService])) logger.warn(s"ApiType $apiType does not implement HttpService"))
 
     apiTypes.collect {
       case api if {
@@ -36,11 +36,12 @@ with LazyLogging {
         } catch {
           case ex: Exception => {
             logger.error("Problem loading class:  %s. %s: %s".format(api.toString, ex.getMessage))
-        false}
+            false
           }
+        }
       } =>
         logger.info("Found API controller:  %s".format(api.toString))
         SwaggerContext.loadClass(api.toString)
-      }.toList
+    }.toList
   }
 }

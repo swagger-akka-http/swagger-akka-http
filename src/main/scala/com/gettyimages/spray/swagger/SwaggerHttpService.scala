@@ -23,7 +23,7 @@ import org.json4s.Formats
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
-import spray.routing.{PathMatcher, HttpService, Route}
+import spray.routing.{ PathMatcher, HttpService, Route }
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.core.util.JsonSerializer
 import com.wordnik.swagger.config.SwaggerConfig
@@ -32,8 +32,8 @@ import spray.http.MediaTypes.`application/json`
 import spray.http.StatusCodes.NotFound
 
 trait SwaggerHttpService
-extends HttpService
-with LazyLogging {
+    extends HttpService
+    with LazyLogging {
 
   def apiTypes: Seq[Type]
 
@@ -46,17 +46,17 @@ with LazyLogging {
   //def authorizations: Option[Map[String, Authorization]] = None
   def authorizations: List[AuthorizationType] = List()
 
-
   private val api =
     new SwaggerApiBuilder(
       new SwaggerConfig(
-            apiVersion,
-            swaggerVersion,
-            baseUrl,
-            "", //api path, not used
-            authorizations, //authorizations
-            apiInfo), apiTypes)
-
+        apiVersion,
+        swaggerVersion,
+        baseUrl,
+        "", //api path, not used
+        authorizations, //authorizations
+        apiInfo
+      ), apiTypes
+    )
 
   final def routes: Route =
     respondWithMediaType(`application/json`) {
@@ -64,24 +64,26 @@ with LazyLogging {
         path(docsPath) {
           complete(toJsonString(api.getResourceListing()))
         } ~ (
-            (for (
-              (subPath, apiListing) <- api.listings)
-            yield {
-              path(docsPath / subPath.drop(1).split('/').map(
-                segmentStringToPathMatcher(_))
-                  .reduceLeft(_ / _)) {
-                    complete(toJsonString(apiListing))
-                  }
-           }).reduceLeft(_ ~ _))
+          (for (
+            (subPath, apiListing) <- api.listings
+          ) yield {
+            path(docsPath / subPath.drop(1).split('/').map(
+              segmentStringToPathMatcher(_)
+            )
+              .reduceLeft(_ / _)) {
+              complete(toJsonString(apiListing))
+            }
+          }).reduceLeft(_ ~ _)
+        )
       }
     }
 
-      def toJsonString(data: Any): String = {
-        if (data.getClass.equals(classOf[String])) {
-          data.asInstanceOf[String]
-        } else {
-          JsonSerializer.asJson(data.asInstanceOf[AnyRef])
-        }
-
-      }
+  def toJsonString(data: Any): String = {
+    if (data.getClass.equals(classOf[String])) {
+      data.asInstanceOf[String]
+    } else {
+      JsonSerializer.asJson(data.asInstanceOf[AnyRef])
     }
+
+  }
+}

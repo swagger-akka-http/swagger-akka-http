@@ -29,28 +29,28 @@ class SwaggerApiBuilder(
   config: SwaggerConfig,
   apiTypes: Seq[Type]
 ) extends ReaderUtil
-  with LazyLogging {
+    with LazyLogging {
 
   val scanner = new SprayApiScanner(apiTypes)
   val reader = new SprayApiReader()
 
   val listings: Map[String, ApiListing] = {
-        logger.info("loading api metadata")
-        val classes = scanner match {
-          case scanner: Scanner => scanner.classes()
-          case _ => List()
-        }
-
-        logger.info("classes count:" + classes.length)
-
-        classes.foreach{ clazz =>
-          logger.info("class: " + clazz.getName)
-        }
-
-        val listings = (for(cls <- classes) yield reader.read("", cls, config)).flatten
-        val mergedListings = groupByResourcePath(listings)
-        mergedListings.map(m => (m.resourcePath, m)).toMap
+    logger.info("loading api metadata")
+    val classes = scanner match {
+      case scanner: Scanner => scanner.classes()
+      case _ => List()
     }
+
+    logger.info("classes count:" + classes.length)
+
+    classes.foreach { clazz =>
+      logger.info("class: " + clazz.getName)
+    }
+
+    val listings = (for (cls <- classes) yield reader.read("", cls, config)).flatten
+    val mergedListings = groupByResourcePath(listings)
+    mergedListings.map(m => (m.resourcePath, m)).toMap
+  }
 
   def getApiListing(path: String): Option[ApiListing] = {
     listings.get(path)
@@ -62,11 +62,13 @@ class SwaggerApiBuilder(
       case (path, listing) => ApiListingReference(path, listing.description)
     }.toList
 
-    ResourceListing(config.getApiVersion,
-                     config.getSwaggerVersion,
-                     references, //apilistingreference
-                     config.authorizations, //authorizations tbd
-                     config.info)
+    ResourceListing(
+      config.getApiVersion,
+      config.getSwaggerVersion,
+      references, //apilistingreference
+      config.authorizations, //authorizations tbd
+      config.info
+    )
   }
 
 }
