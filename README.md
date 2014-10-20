@@ -43,7 +43,7 @@ new SwaggerHttpService {
 
 ## Adding Swagger Annotations
 
-Spray-routing works by concatenating various routes, built up by directives, to produce an api. The [routing dsl](http://spray.io/documentation/1.2.1/spray-routing/) is an elegant way to describe an api and differs from the more common class and method approach of other frameworks. But because Swagger's annotation library requires classes, methods and fields to describe an Api, one may find it difficult to annotate a spray-routing application.
+Spray-routing works by concatenating various routes, built up by directives, to produce an api. The [routing dsl](http://spray.io/documentation/1.2.2/spray-routing/) is an elegant way to describe an api and differs from the more common class and method approach of other frameworks. But because Swagger's annotation library requires classes, methods and fields to describe an Api, one may find it difficult to annotate a spray-routing application.
 
 A simple solution is to break apart a spray-routing application into various resource traits, with methods for specific api operations, joined by route concatentation into a route property. These traits with can then be joined together by their own route properties into a complete api. Despite losing the completeness of an entire api the result is a more modular application with a succint resource list. The balance is up to the developer but for a reasonably-sized applicaiton organizing routes across various traits is probably a good idea.
 
@@ -112,6 +112,17 @@ trait Site extends HttpService {
 ```
 
 You can then mix this trait with a new or existing Spray class with an ``actorRefFactory``` and concatenate the ```site``` route value to your existing route definitions.
+
+## How Annotations are Mapped to Swagger
+
+Let's categorize [the Swagger Spec](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md) into the following levels:
+
+* [The Resource Listing](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#51-resource-listing), at the root level of documentation, which provides an overview of multiple endpoints by listing available resources as an array of [Resource Objects](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#512-resource-object) via the ```apis``` property, authorizations required for the API (via the ```authorizations``` property) and descriptive information about the API (via the ``info`` property)
+* API Declarations, at a subsequent level, providing information about a specific API endpoint exposed with an [API Declaration](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#52-api-declaration). As per the Swagger spec there should be one file per Resource described in the Api listing. An API delcaration, via its ```apis``` property, lists available operations on the resource with an array of [API Objects](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#522-api-object) each having its own unique path. In turn each API Object has an array of [Operations](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#523-operation-object) describing the available actions on that path. 
+
+The Resource Listing is based on fields set when declaring the ```HttpService```. The Swagger ```apis``` property--the list of ```Resource Objects```--are built based on the ```apiTypes``` set when declaring the ```HttpService```.
+
+The individual API Declarations are built from a combination of ```@Api``` and ```@ApiOperation``` annotations set on a specific spray service object. Anything describing a property related to an API Declaration is set via the ```@Api``` annotation and anything related to an Operation is done via ```@ApiOperation```. 
 
 ## Examples
 

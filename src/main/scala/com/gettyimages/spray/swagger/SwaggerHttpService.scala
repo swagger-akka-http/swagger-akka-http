@@ -43,7 +43,6 @@ trait SwaggerHttpService
   def baseUrl: String //url of api
   def docsPath: String = "api-docs" //path to swagger's endpoint
   def apiInfo: Option[ApiInfo] = None
-  //def authorizations: Option[Map[String, Authorization]] = None
   def authorizations: List[AuthorizationType] = List()
 
   private val api =
@@ -52,7 +51,7 @@ trait SwaggerHttpService
         apiVersion,
         swaggerVersion,
         baseUrl,
-        "", //api path, not used
+        "", //api path, baseUrl is used instead
         authorizations, //authorizations
         apiInfo
       ), apiTypes
