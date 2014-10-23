@@ -31,7 +31,7 @@ class SprayApiReaderSpec
 
   val reader = new SprayApiReader()
   def readType(t: Type) = {
-    reader.read("", SwaggerContext.loadClass(t.toString), SwaggerConfig(API_VERSION, SWAGGER_VERSION, BASE_PATH, ""))
+    reader.read("", SwaggerContext.loadClass(t.toString), new SwaggerConfig(API_VERSION, SWAGGER_VERSION, BASE_PATH, ""))
   }
 
   "The SprayApiReader object" when {

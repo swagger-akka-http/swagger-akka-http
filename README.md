@@ -120,9 +120,13 @@ Let's categorize [the Swagger Spec](https://github.com/wordnik/swagger-spec/blob
 * [The Resource Listing](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#51-resource-listing), at the root level of documentation, which provides an overview of multiple endpoints by listing available resources as an array of [Resource Objects](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#512-resource-object) via the ```apis``` property, authorizations required for the API (via the ```authorizations``` property) and descriptive information about the API (via the ``info`` property)
 * API Declarations, at a subsequent level, providing information about a specific API endpoint exposed with an [API Declaration](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#52-api-declaration). As per the Swagger spec there should be one file per Resource described in the Api listing. An API delcaration, via its ```apis``` property, lists available operations on the resource with an array of [API Objects](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#522-api-object) each having its own unique path. In turn each API Object has an array of [Operations](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#523-operation-object) describing the available actions on that path. 
 
-The Resource Listing is based on fields set when declaring the ```HttpService```. The Swagger ```apis``` property--the list of ```Resource Objects```--are built based on the ```apiTypes``` set when declaring the ```HttpService```.
-
-The individual API Declarations are built from a combination of ```@Api``` and ```@ApiOperation``` annotations set on a specific spray service object. Anything describing a property related to an API Declaration is set via the ```@Api``` annotation and anything related to an Operation is done via ```@ApiOperation```. 
+* The Resource Listing is based on fields set when declaring the ```HttpService```. 
+* The Resource Listing ```apis``` property--the list of ```Resource Objects```--are built based on the ```apiTypes``` set when declaring the ```HttpService```.
+* The ```@Api.value``` is used to specify the path in the ```Resource Objects``` list. This is relative and points to the ```API Declaration``` describing the resource.
+* An individual API Declaration is built from a combination of ```@Api``` and ```@ApiOperation``` annotations set on a specific spray service object. Anything describing a property related to an API Declaration is set via the ```@Api``` annotation and anything related to an Operation is done via ```@ApiOperation```. 
+* Spray-Swagger does not validate that annotation values conform to the spec; this is up to the developer when applying annotations. We are adding functionality to provide validation when possible.
+* ```@Path``` will override the provided default value from ```@ApiOperation```. It is only applicable with ```@ApiOperation```.
+* By default an API Declaration's ```basePath``` is set from the ```HttpService.baseUrl``` property (this should be a full url) but can be overriden by specifying a ```basePath``` in an ```@Api``` annotation (again, as per spec, should be a full url).
 
 ## Examples
 

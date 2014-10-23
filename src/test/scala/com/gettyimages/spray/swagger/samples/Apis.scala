@@ -78,7 +78,7 @@ abstract class TestApiWithOperationPositions extends HttpService {
 
 }
 
-@Api(value = "/test", basePath = "/test-override")
+@Api(value = "/test", basePath = "http://override.com/api")
 abstract class TestApiWithBasePathAnnotation extends HttpService {
   @ApiOperation(value = "testApiOperation", httpMethod = "GET")
   @ApiImplicitParams(Array(new ApiImplicitParam(name = "pathParam", value = "test param", dataType = "string", paramType = "path")))
