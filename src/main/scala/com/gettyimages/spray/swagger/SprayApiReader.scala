@@ -83,7 +83,7 @@ class SprayApiReader
                   case "" ⇒ op.copy(nickname = method.getName)
                   case other ⇒ op
                 }
-                appendOperation(basePath(api) + path, "", opWithName, operations)
+                appendOperation(api.value + path, "", opWithName, operations)
               }
               case None ⇒
             }
@@ -115,7 +115,10 @@ class SprayApiReader
         Some(ApiListing(
           apiVersion = config.apiVersion,
           swaggerVersion = config.swaggerVersion,
-          basePath = config.basePath,
+          basePath = api.basePath match {
+            case empty if empty == "" => config.basePath
+            case specified => specified
+          },
           resourcePath = addLeadingSlash(api.value),
           apis = ModelUtil.stripPackages(apis),
           models = models,
@@ -128,6 +131,7 @@ class SprayApiReader
 
     }
   }
+
   //mlh probably refactor this away
   def readString(value: String, defaultValue: String = null, ignoreValue: String = null): String = {
     if (defaultValue != null && defaultValue.trim.length > 0) defaultValue
@@ -369,12 +373,5 @@ class SprayApiReader
     }
   }
 
-  def basePath(api: Api) = {
-    val path = if (api.basePath().nonEmpty)
-      api.basePath()
-    else
-      api.value()
-    addLeadingSlash(path)
-  }
 }
 

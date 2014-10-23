@@ -117,9 +117,10 @@ class SwaggerApiBuilderSpec
           val apiListings = swaggerApi(List(typeOf[TestApiWithBasePathAnnotation])).listings
           apiListings should contain key ("/test")
           val apiListing = apiListings("/test")
+          apiListing.basePath shouldBe "http://override.com/api"
           val operations = apiListing.apis
           operations should have size (1)
-          operations(0).path should be ("/test-override/{pathParam}")
+          operations(0).path should be ("/test/{pathParam}")
         }
       }
     }
