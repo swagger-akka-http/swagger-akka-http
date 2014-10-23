@@ -14,6 +14,12 @@ The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Mave
 libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.5.0"
 ```
 
+## Examples
+
+[mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with spray-swagger support and a Swagger UI.
+
+The ```/test``` directory includes an ```HttpSwaggerServiceSpec``` which leverages ```spray.testkit``` to test the API. It uses a ```PetHttpService``` and ```UserHttpService``` declared in the ```/samples``` folder. 
+
 ## SwaggerHttpService
 
 The ```SwaggerHttpService``` is a trait extending Spray's ```HttpService```. It will generate the appropriate Swagger json schema based on a set of inputs declaring your Api and the types you want to expose.
@@ -122,8 +128,3 @@ Let's categorize [the Swagger Spec](https://github.com/wordnik/swagger-spec/blob
 * ```@Path``` will override the provided default value from ```@ApiOperation```. It is only applicable with ```@ApiOperation```.
 * By default an API Declaration's ```basePath``` is set from the ```HttpService.baseUrl``` property (this should be a full url) but can be overriden by specifying a ```basePath``` in an ```@Api``` annotation (again, as per spec, should be a full url).
 
-## Examples
-
-[mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with spray-swagger support and a Swagger UI.
-
-The ```/test``` directory includes an ```HttpSwaggerServiceSpec``` which leverages ```spray.testkit``` to test the API. It uses a ```PetHttpService``` and ```UserHttpService``` declared in the ```/samples``` folder. 
