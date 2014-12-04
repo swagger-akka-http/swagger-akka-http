@@ -56,7 +56,7 @@ trait PetHttpService extends HttpService with Json4sSupport {
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid pet value")
   ))
-  def deleteRoute = delete { path("/user" / Segment) { id => complete(id) } }
+  def deleteRoute = delete { path("/pet" / Segment) { id => complete(id) } }
 
   @ApiOperation(value = "Add a new pet to the store", nickname="addPet", httpMethod="POST", consumes="application/json, application/xml")
   @ApiImplicitParams(Array(
@@ -65,7 +65,7 @@ trait PetHttpService extends HttpService with Json4sSupport {
   @ApiResponses(Array(
     new ApiResponse(code = 405, message = "Invalid input")
   ))
-  def addRoute = post { path("/user" / Segment) { id => complete(id) } }
+  def addRoute = post { path("/pet" / Segment) { id => complete(id) } }
 
   @ApiOperation(value = "Searches for a pet", nickname="searchPet", httpMethod="GET", produces="application/json, application/xml")
   def searchRoute = get { complete("") }

@@ -25,7 +25,7 @@ trait UserHttpService extends HttpService with Json4sSupport {
 
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.", nickname = "updateUser", httpMethod = "PUT")
   @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "username", value = "ID of pet that needs to be updated", required = true, dataType = "string", paramType = "path"),
+    new ApiImplicitParam(name = "username", value = "ID of user that needs to be updated", required = true, dataType = "string", paramType = "path"),
     new ApiImplicitParam(name = "body", value = "Updated user object.", required = false, dataType = "string", paramType = "form")
   ))
   @ApiResponses(Array(
@@ -38,9 +38,9 @@ trait UserHttpService extends HttpService with Json4sSupport {
 
   @ApiOperation(value = "Get user by name", notes = "", response=classOf[User], nickname = "getUserByName", httpMethod = "GET")
   @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "userId", value = "ID of pet that needs to be updated", required = true, dataType = "string", paramType = "path"),
-    new ApiImplicitParam(name = "name", value = "Updated name of the pet.", required = false, dataType = "string", paramType = "form"),
-    new ApiImplicitParam(name = "status", value = "Updated status of the pet.", required = false, dataType = "string", paramType = "form")
+    new ApiImplicitParam(name = "userId", value = "ID of user that needs to be updated", required = true, dataType = "string", paramType = "path"),
+    new ApiImplicitParam(name = "name", value = "Updated name of the user.", required = false, dataType = "string", paramType = "form"),
+    new ApiImplicitParam(name = "status", value = "Updated status of the user.", required = false, dataType = "string", paramType = "form")
   ))
   @ApiResponses(Array(
     new ApiResponse(code = 404, message = "User does not exist.")
