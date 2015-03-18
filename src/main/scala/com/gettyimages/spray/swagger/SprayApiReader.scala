@@ -21,7 +21,7 @@ import javax.ws.rs._
 import scala.collection.mutable.ListBuffer
 import scala.reflect.runtime.universe.Type
 
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.LazyLogging
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.config._
 import com.wordnik.swagger.core._

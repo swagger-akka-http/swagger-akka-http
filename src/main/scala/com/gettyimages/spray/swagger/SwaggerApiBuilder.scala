@@ -19,7 +19,7 @@ package com.gettyimages.spray.swagger
 import com.wordnik.swagger.config._
 import com.wordnik.swagger.reader._
 import com.wordnik.swagger.core.util.ReaderUtil
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.LazyLogging
 import com.wordnik.swagger.model._
 import scala.reflect.runtime.universe._
 import com.wordnik.swagger.converter.ModelConverters
