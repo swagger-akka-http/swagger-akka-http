@@ -24,8 +24,6 @@ resolvers += "spray repo" at "http://repo.spray.io"
 
 releaseSettings
 
-crossBuild := true
-
 testOptions in Test += Tests.Argument("-oD")
 
 parallelExecution in Test := false
