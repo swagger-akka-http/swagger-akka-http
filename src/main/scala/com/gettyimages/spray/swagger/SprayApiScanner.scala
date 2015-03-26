@@ -19,7 +19,7 @@ import scala.reflect.runtime.universe._
 import com.wordnik.swagger.annotations.Api
 import com.wordnik.swagger.core.SwaggerContext
 import com.wordnik.swagger.config._
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.LazyLogging
 import spray.routing.HttpService
 
 class SprayApiScanner(apiTypes: Seq[Type])

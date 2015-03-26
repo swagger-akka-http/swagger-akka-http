@@ -18,7 +18,7 @@ libraryDependencies ++= Seq(
   "org.json4s" %% "json4s-native" % "3.2.9",
   "joda-time" % "joda-time" % "2.2",
   "org.joda" % "joda-convert" % "1.3.1",
-  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "javax.ws.rs" % "jsr311-api" % "1.1.1"
 )
 

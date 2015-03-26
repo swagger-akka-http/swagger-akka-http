@@ -21,7 +21,7 @@ import scala.reflect.runtime.universe.Type
 import org.json4s.DefaultFormats
 import org.json4s.Formats
 
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.LazyLogging
 
 import spray.routing.{ PathMatcher, HttpService, Route }
 import com.wordnik.swagger.model._
