@@ -6,8 +6,6 @@ name := "spray-swagger"
 
 scalaVersion := "2.11.6"
 
-crossScalaVersions := Seq("2.10.4", "2.11.2")
-
 libraryDependencies ++= Seq(
   "io.spray" %% "spray-routing" % "1.3.3",
   "io.spray" %% "spray-testkit" % "1.3.3" % "test",
