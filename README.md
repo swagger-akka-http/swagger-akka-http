@@ -8,10 +8,10 @@ The swagger spec [swagger spec](https://github.com/wordnik/swagger-spec/blob/mas
 
 ### Release Version
 
-The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Spray-swagger is cross-compiled with scala 2.10.4 and 2.11.2. Snapshot releases are also hosted on sonatype. 
+The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. As of version 0.5.1, spray-swagger is built against scala 2.11.6 and is no longer cross compiled. Snapshot releases are also hosted on sonatype. 
 
 ```
-libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.5.0"
+libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.5.1"
 ```
 
 ## Examples
