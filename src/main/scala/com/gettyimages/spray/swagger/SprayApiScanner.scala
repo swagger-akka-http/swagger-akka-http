@@ -35,7 +35,7 @@ class SprayApiScanner(apiTypes: Seq[Type])
           SwaggerContext.loadClass(api.toString).getAnnotation(classOf[Api]) != null
         } catch {
           case ex: Exception => {
-            logger.error("Problem loading class:  %s. %s: %s".format(api.toString, ex.getMessage))
+            logger.error("Problem loading class:  %s. Message: %s".format(api.toString, ex.getMessage))
             false
           }
         }
