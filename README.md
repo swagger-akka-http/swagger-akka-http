@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/pjfanning/spray-swagger.svg?branch=master)](https://travis-ci.org/pjfanning/spray-swagger)
-
 # spray-swagger
+
+[![Build Status](https://travis-ci.org/pjfanning/spray-swagger.svg?branch=master)](https://travis-ci.org/pjfanning/spray-swagger)
 
 Spray-Swagger brings [Swagger](https://github.com/wordnik/swagger-core) support for [Spray](http://spray.io) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](https://github.com/wordnik/swagger-ui).
 
