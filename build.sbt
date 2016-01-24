@@ -4,7 +4,7 @@ organization := "com.gettyimages"
 
 name := "spray-swagger"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
   "io.spray" %% "spray-routing" % "1.3.3",
