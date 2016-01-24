@@ -48,8 +48,6 @@ homepage := Some(url("https://github.com/gettyimages/spray-swagger"))
 
 licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
-net.virtualvoid.sbt.graph.Plugin.graphSettings
-
 publishArtifactsAction := PgpKeys.publishSigned.value
 
 pomExtra := (
