@@ -6,21 +6,35 @@ name := "spray-swagger"
 
 scalaVersion := "2.11.7"
 
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+resolvers += "Maven" at "https://repo1.maven.org/maven2/"
+
+resolvers += "spray repo" at "http://repo.spray.io"
+
+resolvers += Resolver.mavenLocal
+
+checksums in update := Nil
+
 libraryDependencies ++= Seq(
   "io.spray" %% "spray-routing" % "1.3.3",
   "io.spray" %% "spray-testkit" % "1.3.3" % "test",
+  "io.spray" %% "spray-json" % "1.3.2",
+  "io.swagger" %% "swagger-scala-module" % "1.0.0" withSources(),
+  "io.swagger" % "swagger-core" % "1.5.6" withSources(),
+  "io.swagger" % "swagger-annotations" % "1.5.6" withSources(),
+  "io.swagger" % "swagger-models" % "1.5.6" withSources(),
+  "io.swagger" % "swagger-jaxrs" % "1.5.6" withSources(),
   "org.scalatest" %% "scalatest" % "2.2.4" % "test" ,
-  "com.wordnik" %% "swagger-core" % "1.3.12" excludeAll( ExclusionRule(organization = "org.json4s"),  ExclusionRule(organization="org.fasterxml*") ),
   "com.typesafe.akka" %% "akka-actor" % "2.3.9",
   "org.json4s" %% "json4s-jackson" % "3.2.11",
   "org.json4s" %% "json4s-native" % "3.2.11",
-  "joda-time" % "joda-time" % "2.7",
+  "joda-time" % "joda-time" % "2.8",
   "org.joda" % "joda-convert" % "1.7",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+//  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "javax.ws.rs" % "jsr311-api" % "1.1.1"
 )
 
-resolvers += "spray repo" at "http://repo.spray.io"
 
 releaseSettings
 

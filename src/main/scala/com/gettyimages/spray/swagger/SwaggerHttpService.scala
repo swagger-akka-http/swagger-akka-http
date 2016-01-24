@@ -1,88 +1,83 @@
-/**
- * Copyright 2014 Getty Imges, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.gettyimages.spray.swagger
+
+import org.json4s.JObject
+import org.json4s.jackson.Serialization
+import spray.http.MediaTypes
+import spray.httpx.Json4sJacksonSupport
+import scala.collection.JavaConversions._
+import com.gettyimages.spray.swagger.model._
+
+import io.swagger.jaxrs.Reader
+import io.swagger.jaxrs.config.ReaderConfig
+import io.swagger.models.{Scheme, Swagger}
+import io.swagger.util.Json
+
+import spray.json.{JsObject, pimpString}
+import spray.routing.{ HttpService, Route }
 
 import scala.reflect.runtime.universe.Type
 
-import org.json4s.DefaultFormats
-import org.json4s.Formats
+/**
+ * @author rleibman
+ */
 
-import com.typesafe.scalalogging.LazyLogging
+trait SwaggerHttpService extends HttpService with Json4sJacksonSupport {
+  val apiTypes: Seq[Type]
+  val host: String
+  val basePath: String
+  val description = ""
+  val info: Info = Info()
+  val scheme: Scheme = Scheme.HTTP
+  val readerConfig = new ReaderConfig {
+    def getIgnoredRoutes(): java.util.Collection[String] = List()
+    def isScanAllResources(): Boolean = true
+  }
 
-import spray.routing.{ PathMatcher, HttpService, Route }
-import com.wordnik.swagger.model._
-import com.wordnik.swagger.core.util.JsonSerializer
-import com.wordnik.swagger.config.SwaggerConfig
-import com.wordnik.swagger.core.SwaggerSpec
-import spray.http.MediaTypes.`application/json`
-import spray.http.StatusCodes.NotFound
+  def swaggerConfig: Swagger = new Swagger().basePath(basePath).host(host).info(info).scheme(scheme)
 
-trait SwaggerHttpService
-    extends HttpService
-    with LazyLogging {
+  def reader: Reader = new Reader(swaggerConfig, readerConfig)
+  def swagger: Swagger = reader.read(apiTypes.map(t ⇒ {
+    Class.forName(getClassNameForType(t))
+  }).toSet)
 
-  def apiTypes: Seq[Type]
+  override def json4sJacksonFormats = org.json4s.DefaultFormats
 
-  def apiVersion: String
-  def swaggerVersion: String = SwaggerSpec.version
+  def toJsObject(s: Swagger): JsObject ={
+    val result = Json.mapper()
+      .writeValueAsString(s)
+      .parseJson
+      .asJsObject
+    result
+  }
 
-  def baseUrl: String //url of api
-  def docsPath: String = "api-docs" //path to swagger's endpoint
-  def apiInfo: Option[ApiInfo] = None
-  def authorizations: List[AuthorizationType] = List()
+  def toJObject(s: Swagger): JObject ={
+    implicit val fmts = org.json4s.DefaultFormats
+    val jString = toJsObject(s).compactPrint
+    val jObj = Serialization.read[JObject](jString)
+    jObj
+  }
 
-  private val api =
-    new SwaggerApiBuilder(
-      new SwaggerConfig(
-        apiVersion,
-        swaggerVersion,
-        baseUrl,
-        "", //api path, baseUrl is used instead
-        authorizations, //authorizations
-        apiInfo
-      ), apiTypes
-    )
+  lazy val routes: Route = get {
+    import MediaTypes._
 
-  final def routes: Route =
-    respondWithMediaType(`application/json`) {
-      get {
-        path(docsPath) {
-          complete(toJsonString(api.getResourceListing()))
-        } ~ (
-          (for (
-            (subPath, apiListing) <- api.listings
-          ) yield {
-            path(docsPath / subPath.drop(1).split('/').map(
-              segmentStringToPathMatcher(_)
-            )
-              .reduceLeft(_ / _)) {
-              complete(toJsonString(apiListing))
-            }
-          }).reduceLeft(_ ~ _)
-        )
+    pathPrefix(basePath) {
+      path("swagger.json") {
+        respondWithMediaType(`application/json`) {
+          complete(toJObject(swagger))
+        }
       }
     }
+  }
 
-  def toJsonString(data: Any): String = {
-    if (data.getClass.equals(classOf[String])) {
-      data.asInstanceOf[String]
-    } else {
-      JsonSerializer.asJson(data.asInstanceOf[AnyRef])
-    }
-
+  def getClassNameForType(t: Type): String ={
+    val typeSymbol = t.typeSymbol
+    val fullName = typeSymbol.fullName
+    if (typeSymbol.isModuleClass) {
+      val idx = fullName.lastIndexOf('.')
+      if (idx >=0) {
+        val mangledName = s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1,fullName.size)}$$"
+        mangledName
+      } else fullName
+    } else fullName
   }
 }

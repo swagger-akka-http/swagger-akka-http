@@ -15,14 +15,17 @@
  */
 package com.gettyimages.spray.swagger
 
-import com.wordnik.swagger.annotations._
-import javax.ws.rs.Path
+import io.swagger.annotations._
 import spray.routing.HttpService
 import spray.httpx.Json4sSupport
+import javax.ws.rs.Path
+
 
 @Api(value = "/user", description = "Operations about users.", produces="application/json")
+@Path(value = "/user")
 trait UserHttpService extends HttpService with Json4sSupport {
 
+  @Path(value = "{userId}")
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.", nickname = "updateUser", httpMethod = "PUT")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "username", value = "ID of user that needs to be updated", required = true, dataType = "string", paramType = "path"),
@@ -36,7 +39,11 @@ trait UserHttpService extends HttpService with Json4sSupport {
     complete(id)
   }}
 
-  @ApiOperation(value = "Get user by name", notes = "", response=classOf[User], nickname = "getUserByName", httpMethod = "GET")
+  @Path(value = "{userId}")
+  @ApiOperation(value = "Update user name", notes = "",
+    response=classOf[User],
+    nickname = "updateUserName",
+    httpMethod = "POST")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "userId", value = "ID of user that needs to be updated", required = true, dataType = "string", paramType = "path"),
     new ApiImplicitParam(name = "name", value = "Updated name of the user.", required = false, dataType = "string", paramType = "form"),
@@ -45,7 +52,7 @@ trait UserHttpService extends HttpService with Json4sSupport {
   @ApiResponses(Array(
     new ApiResponse(code = 404, message = "User does not exist.")
   ))
-  def getUser = post { path("/user" / Segment) { id => { formFields('name, 'status) { (name, status) =>
+  def updateUser = post { path("/user" / Segment) { id => { formFields('name, 'status) { (name, status) =>
     complete("ok")
   }}}}
 

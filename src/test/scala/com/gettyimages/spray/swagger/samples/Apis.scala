@@ -15,24 +15,32 @@
  */
 package com.gettyimages.spray.swagger
 
-import com.wordnik.swagger.annotations._
+import io.swagger.annotations._
 import javax.ws.rs.Path
 import spray.routing.HttpService
-import spray.httpx.Json4sSupport
 
 abstract class TestApiWithNoAnnotation extends HttpService
 
 @Api(value = "/test")
-abstract class TestApiDoesNotExtendHttpService
-
-@Api(value = "/test")
-abstract class TestApiWithOnlyDataType extends HttpService {
+@Path("/test")
+abstract class TestApiDoesNotExtendHttpService {
   @ApiOperation(value = "testApiOperation", httpMethod = "GET")
-  @ApiImplicitParams(Array(new ApiImplicitParam(name = "test", value = "test param", dataType = "TestModel", paramType = "query")))
   def testOperation
 }
 
 @Api(value = "/test")
+@Path("/test")
+abstract class TestApiWithOnlyDataType extends HttpService {
+  @ApiOperation(value = "testApiOperation", httpMethod = "GET")
+  @ApiImplicitParams(Array(new ApiImplicitParam(name = "test",
+    value = "test param",
+    dataType = "com.gettyimages.spray.swagger.TestModel",
+    paramType = "body")))
+  def testOperation
+}
+
+@Api(value = "/test")
+@Path("/test")
 abstract class TestApiWithPathOperation extends HttpService {
   @Path("/sub/{someParam}/path/{anotherParam}")
   @ApiOperation(value = "subPathApiOperation", httpMethod = "GET", notes = "some notes")
@@ -48,6 +56,7 @@ abstract class TestApiWithPathOperation extends HttpService {
   }
 
 @Api(value = "/test")
+@Path(value = "/test")
 abstract class TestApiWithParamsHierarchy extends HttpService {
   @Path("/paramHierarchyOperation")
   @ApiOperation(value = "paramHierarchyOperation", httpMethod = "GET", response = classOf[ModelExtension])
@@ -59,12 +68,13 @@ abstract class TestApiWithParamsHierarchy extends HttpService {
 // order the paths by the lowest position of an operation they contain, hence why the expected
 // order here (as indicated by `value`) doesn't match the position attributes
 @Api(value = "/test")
+@Path("/test")
 abstract class TestApiWithOperationPositions extends HttpService {
   @Path("/path1")
-  @ApiOperation(position = 3, value = "order3", httpMethod = "GET", response = classOf[ModelBase])
+  @ApiOperation(position = 3, value = "order3", httpMethod = "HEAD", response = classOf[ModelBase])
   def operation4
   @Path("/path0")
-  @ApiOperation(position = 0, value = "order0", httpMethod = "GET", response = classOf[ModelBase])
+  @ApiOperation(position = 0, value = "order0", httpMethod = "HEAD", response = classOf[ModelBase])
   def operation0
   @Path("/path1")
   @ApiOperation(position = 1, value = "order2", httpMethod = "GET", response = classOf[ModelBase])
@@ -78,9 +88,46 @@ abstract class TestApiWithOperationPositions extends HttpService {
 
 }
 
-@Api(value = "/test", basePath = "http://override.com/api")
-abstract class TestApiWithBasePathAnnotation extends HttpService {
-  @ApiOperation(value = "testApiOperation", httpMethod = "GET")
-  @ApiImplicitParams(Array(new ApiImplicitParam(name = "pathParam", value = "test param", dataType = "string", paramType = "path")))
+@Api(value = "/test")
+@Path("/test")
+abstract class TestApiWithResponseContainer extends HttpService {
+  @ApiOperation(value = "testApiOperation",
+    httpMethod = "GET",
+    response = classOf[ListReply[TestModel]],
+    responseContainer = "com.gettyimages.spray.swagger.ListReply")
   def testOperation
 }
+
+@Api(value = "/test")
+@Path("/test")
+abstract class TestApiWithDateTime extends HttpService {
+  @ApiOperation(value = "testApiOperation", httpMethod = "GET")
+  @ApiImplicitParams(Array(new ApiImplicitParam(name = "test",
+    value = "test param",
+    dataType = "dateTime",
+    paramType = "body")))
+  def testOperation
+}
+
+@Api(value = "/test")
+@Path("/test")
+abstract class TestApiWithApiResponse extends HttpService {
+  @ApiOperation(value = "testApiOperation",
+    httpMethod = "GET",
+    // code = 201,
+    response = classOf[Pet])
+  @ApiImplicitParams(Array(new ApiImplicitParam(name = "test",
+    value = "test param",
+    dataType = "dateTime",
+    paramType = "body"
+  )))
+  @ApiResponses(Array(
+    new ApiResponse(code = 1,
+      message = "Successful",
+      response = classOf[Pet]),
+    new ApiResponse(code = 500,
+      message = "Internal Server Error")
+  ))
+  def testOperation
+}
+

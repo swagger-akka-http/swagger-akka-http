@@ -15,15 +15,20 @@
  */
 package com.gettyimages.spray.swagger
 
-import com.wordnik.swagger.annotations._
+import io.swagger.annotations._
 import javax.ws.rs.Path
 import spray.routing.HttpService
 import spray.httpx.Json4sSupport
 
-@Api(value = "/pet", description = "Operations about pets.", produces="application/json, application/vnd.test.pet", consumes="application/json, application/vnd.test.pet")
+@Api(value = "/pet",
+  description = "Operations about pets.",
+  produces="application/json, application/vnd.test.pet",
+  consumes="application/json, application/vnd.test.pet")
+@Path(value = "/pet")
 trait PetHttpService extends HttpService with Json4sSupport {
 
 
+  @Path(value = "{petId}")
   @ApiOperation(value = "Find a pet by ID", notes = "Returns a pet based on ID", httpMethod = "GET", response = classOf[Pet])
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "petId", value = "ID of pet that needs to be fetched", required = true, dataType = "integer", paramType = "path", allowableValues="[1,100000]")
@@ -36,6 +41,27 @@ trait PetHttpService extends HttpService with Json4sSupport {
     complete(id)
   }}
 
+  @Path(value = "{petId}/owner")
+  @ApiOperation(value = "Find a pet's owner", notes = "Returns a pet's owner",
+    httpMethod = "GET",
+    response = classOf[PetOwner])
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "petId",
+      value = "ID of pet whose owner is being fetched",
+      required = true,
+      dataType = "integer",
+      paramType = "path",
+      allowableValues="[1,100000]")
+  ))
+  @ApiResponses(Array(
+    new ApiResponse(code = 404, message = "Pet not found"),
+    new ApiResponse(code = 400, message = "Invalid ID supplied")
+  ))
+  def readOwner = get { path("/pet" / Segment / "owner") { id =>
+    complete(id)
+  }}
+
+  @Path(value = "{petId}")
   @ApiOperation(value = "Updates a pet in the store with form data.", notes = "", nickname = "updatePetWithForm", httpMethod = "POST", consumes="application/json")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "petId", value = "ID of pet that needs to be updated", required = true, dataType = "string", paramType = "path"),
@@ -49,6 +75,7 @@ trait PetHttpService extends HttpService with Json4sSupport {
     complete("ok")
   }}}}
 
+  @Path(value = "{petId}")
   @ApiOperation(value = "Deletes a pet", nickname="deletePet", httpMethod = "DELETE")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "petId", value = "Pet id to delete", required = true, paramType="path")
@@ -72,3 +99,5 @@ trait PetHttpService extends HttpService with Json4sSupport {
 }
 
 case class Pet(id: Int, name: String, birthDate: java.util.Date)
+
+case class PetOwner(id: Int, name: String)

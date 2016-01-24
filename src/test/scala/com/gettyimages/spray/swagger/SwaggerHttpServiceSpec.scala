@@ -1,76 +1,116 @@
 package com.gettyimages.spray.swagger
 
+import com.gettyimages.spray.swagger.model.{License, Contact, Info}
+import io.swagger.jaxrs.config.ReaderConfig
+import org.json4s.jackson.Serialization
 import org.scalatest.WordSpec
 import org.scalatest.matchers.ShouldMatchers
+import spray.httpx.Json4sJacksonSupport
 import spray.testkit._
 import scala.reflect.runtime.universe._
-import akka.actor.ActorSystem
+import akka.actor.ActorRefFactory
 import spray.http._
-import org.json4s.jackson.JsonMethods._
 import org.json4s._
+import scala.collection.JavaConversions._
+
 
 class SwaggerHttpServiceSpec
   extends WordSpec
   with ShouldMatchers
-  with ScalatestRouteTest {
+  with ScalatestRouteTest
+  with Json4sJacksonSupport {
 
-   val swaggerService = new SwaggerHttpService {
-      override def apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
-      override def apiVersion = "2.0"
-      override def baseUrl = "http://some.domain.com/api"
-      override def docsPath = "docs-are-here"
-      override def actorRefFactory = ActorSystem("swagger-spray-test")
-      //apiInfo, not used
-      //authorizations, not used
-   }
+  val swaggerService = new SwaggerHttpService {
+    override val apiTypes = Seq(
+      typeOf[PetHttpService],
+      typeOf[UserHttpService]
+    )
+
+    override val host = "some.domain.com"
+
+    override val basePath = "api-doc"
+
+    override val description = "Pets love APIs"
+
+    override val readerConfig = new ReaderConfig {
+      def getIgnoredRoutes(): java.util.Collection[String] = List()
+
+      def isScanAllResources(): Boolean = false
+    }
+
+    override val info: Info = Info(
+      description = "Pets love APIs",
+      version = "1.0",
+      title = "Test API Service",
+      termsOfService = "Lenient",
+      contact = Some(Contact("James T. Kirk", "http://startrek.com", "captain@kirk.com")),
+      license = Some(License("Apache", "http://license.apache.com")))
+
+    implicit def actorRefFactory: ActorRefFactory = system
+  }
 
   implicit val formats = org.json4s.DefaultFormats
 
+  implicit val json4sJacksonFormats: Formats = Serialization.formats(NoTypeHints)
+
+
   "The SwaggerHttpService" when {
+    "defining a derived service" should {
+      "set the basePath" in {
+        swaggerService.basePath should equal ("api-doc")
+      }
+    }
     "accessing the root doc path" should {
       "return the basic set of api info" in {
-        Get("/docs-are-here") ~> swaggerService.routes ~> check {
+        Get("http://some.domain.com/api-doc/swagger.json") ~> swaggerService.routes ~> check {
           handled shouldBe true
-          contentType shouldBe ContentTypes.`application/json`
-          val response = parse(responseAs[String])
-          (response \ "apiVersion").extract[String] shouldEqual "2.0"
-          (response \ "swaggerVersion").extract[String] shouldEqual "1.2"
-          val apis = (response \ "apis").extract[Array[JValue]]
-          apis.size shouldEqual 2
-          val api = apis.filter(a => (a \ "path").extract[String] == "/pet").head
-          (api \ "description").extract[String] shouldEqual "Operations about pets."
-          (api \ "path").extract[String] shouldEqual "/pet"
-          //need api info
+          status.intValue should be (200)
+          contentType should be (ContentTypes.`application/json`)
+          val resp: JValue = responseAs[JValue]
+          (resp \ "swagger").extract[String] should equal ("2.0")
+          val paths = (resp \ "paths")
+          paths.children.size shouldEqual 4
+          val petPath = (paths \ "/pet")
+          (petPath \ "post" \ "summary").extract[String] shouldEqual "Add a new pet to the store"
+          (resp \ "info" \ "version").extract[String] shouldEqual "1.0"
+          (resp \ "info" \ "description").extract[String] shouldEqual "Pets love APIs"
+          val definitions = (resp \ "definitions")
+
+          // Includes Function1RequestContextBoxedUnit which is an error at some level
+          definitions.children.size shouldEqual (4)
+          val pet = (definitions \ "Pet")
+          (pet \ "properties" \ "name" \ "type").extract[String] shouldEqual ("string")
+          val user = (definitions \ "User")
+          (user \ "properties" \ "username" \ "type").extract[String] shouldEqual ("string")
+          val petIdPath = (paths \ "/pet/{petId}")
+          val delPetParams = (petIdPath \ "delete" \ "parameters")
+          delPetParams.children should have size (1)
+          val petIdOpt = delPetParams.find(pp => {
+            (pp \ "name").extract[String] == "petId"
+          })
+          petIdOpt should be ('defined)
+          (petIdOpt.get \ "in").extract[String] shouldEqual ("path")
+
+          // Check for the owner sub-resource
+          val ownerPath = (paths \ "/pet/{petId}/owner")
+          (ownerPath \ "get" \ "operationId").extract[String] should equal ("readOwner")
         }
       }
     }
-    "accessing a sub-resource" should {
-      "return the api description" in {
-        Get("/docs-are-here/pet") ~> swaggerService.routes ~> check {
+
+    "defining an HttpService on an inner object" should {
+      "return the basic set of api info" in {
+        val svc = new NestedService(system)
+
+        Get("http://some.domain.com/api-doc/swagger.json") ~> svc.swaggerService.routes ~> check {
           handled shouldBe true
-          contentType shouldBe ContentTypes.`application/json`
-
-          val response = parse(responseAs[String])
-          (response \ "apiVersion").extract[String] shouldEqual "2.0"
-          (response \ "resourcePath").extract[String] shouldEqual "/pet"
-          val apis = (response \ "apis").extract[Array[JValue]]
-          apis.size shouldEqual 2
-          val api = apis.filter(a => (a \ "path").extract[String] == "/pet/{petId}").head
-          (api \ "path").extract[String] shouldEqual "/pet/{petId}"
-          val ops = (api \ "operations").extract[Array[JValue]]
-          ops.size shouldEqual 3
-          val models = (response \ "models").extract[JObject]
-          val pet = (models \ "Pet").extract[JObject]
-          (pet \ "id").extract[String] shouldEqual "Pet"
-          (pet \ "properties" \ "id" \ "type").extract[String] shouldEqual "integer"
-          (pet \ "properties" \ "id" \ "format").extract[String] shouldEqual "int32"
-          (pet \ "properties" \ "name" \ "type").extract[String] shouldEqual "string"
-          (pet \ "properties" \ "birthDate" \ "type").extract[String] shouldEqual "string"
-          (pet \ "properties" \ "birthDate" \ "format").extract[String] shouldEqual "date-time"
-
+          status.intValue should be (200)
+          contentType should be (ContentTypes.`application/json`)
+          val resp: JValue = responseAs[JValue]
+          (resp \ "swagger").extract[String] should equal ("2.0")
+          (resp \ "paths" \ "/dogs" \ "get" \ "operationId").extract[String] shouldEqual ("getDogs")
         }
       }
     }
   }
-
 }
