@@ -1,22 +1,20 @@
-package com.gettyimages.spray.swagger
+package com.github.swagger.spray
 
-import com.gettyimages.spray.swagger.model.{License, Contact, Info}
+import com.github.swagger.spray.model.{License, Contact, Info}
+import akka.actor.ActorRefFactory
 import io.swagger.jaxrs.config.ReaderConfig
+import org.json4s._
 import org.json4s.jackson.Serialization
-import org.scalatest.WordSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.{Matchers, WordSpec}
+import spray.http._
 import spray.httpx.Json4sJacksonSupport
 import spray.testkit._
-import scala.reflect.runtime.universe._
-import akka.actor.ActorRefFactory
-import spray.http._
-import org.json4s._
 import scala.collection.JavaConversions._
-
+import scala.reflect.runtime.universe._
 
 class SwaggerHttpServiceSpec
   extends WordSpec
-  with ShouldMatchers
+  with Matchers
   with ScalatestRouteTest
   with Json4sJacksonSupport {
 

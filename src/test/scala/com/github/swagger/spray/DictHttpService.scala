@@ -1,4 +1,4 @@
-package com.gettyimages.spray.swagger
+package com.github.swagger.spray
 
 import io.swagger.annotations._
 import javax.ws.rs.Path
@@ -18,7 +18,7 @@ trait DictHttpService extends HttpService with Json4sSupport {
     new ApiImplicitParam(name = "entry",
       value = "Key/Value pair of dictionary entry, with optional expiration time.",
       required = true,
-      dataType = "com.gettyimages.spray.swagger.DictEntry",
+      dataType = "com.github.swagger.spray.DictEntry",
       paramType = "body")
   ))
   @ApiResponses(Array(

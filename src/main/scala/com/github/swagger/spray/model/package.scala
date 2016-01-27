@@ -1,12 +1,13 @@
-package com.gettyimages.spray.swagger
+package com.github.swagger.spray
+
 import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._
-
 import io.swagger.models.{
 Info ⇒ SwaggerInfo,
 Contact ⇒ SwaggerContact,
 License ⇒ SwaggerLicense
 }
+
 /**
  * @author rleibman
  */

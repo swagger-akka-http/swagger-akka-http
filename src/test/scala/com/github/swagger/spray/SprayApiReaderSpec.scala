@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Getty Imges, Inc.
+ * Copyright 2014 Getty Images, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.gettyimages.spray.swagger
+package com.github.swagger.spray
 
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
@@ -21,15 +21,14 @@ import io.swagger.models.parameters.BodyParameter
 import io.swagger.models.properties.{RefProperty, StringProperty}
 import io.swagger.models._
 import io.swagger.util.Json
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.WordSpec
 import io.swagger.config._
+import org.scalatest.{Matchers, WordSpec}
 import scala.reflect.runtime.universe._
 import scala.collection.JavaConversions._
 
 class SprayApiReaderSpec
     extends WordSpec
-    with ShouldMatchers {
+    with Matchers {
 
   val SWAGGER_VERSION = "2.0"
   val API_VERSION = "1.0"

@@ -1,11 +1,11 @@
-package com.gettyimages.spray.swagger
+package com.github.swagger.spray
 
 import org.json4s.JObject
 import org.json4s.jackson.Serialization
 import spray.http.MediaTypes
 import spray.httpx.Json4sJacksonSupport
 import scala.collection.JavaConversions._
-import com.gettyimages.spray.swagger.model._
+import com.github.swagger.spray.model._
 
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
@@ -20,7 +20,6 @@ import scala.reflect.runtime.universe.Type
 /**
  * @author rleibman
  */
-
 trait SwaggerHttpService extends HttpService with Json4sJacksonSupport {
   val apiTypes: Seq[Type]
   val host: String

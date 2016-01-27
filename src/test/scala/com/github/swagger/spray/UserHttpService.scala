@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Getty Imges, Inc.
+ * Copyright 2014 Getty Images, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.gettyimages.spray.swagger
+package com.github.swagger.spray
 
 import io.swagger.annotations._
 import spray.routing.HttpService
 import spray.httpx.Json4sSupport
 import javax.ws.rs.Path
-
 
 @Api(value = "/user", description = "Operations about users.", produces="application/json")
 @Path(value = "/user")

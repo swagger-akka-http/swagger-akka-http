@@ -1,8 +1,8 @@
 import sbtrelease.ReleasePlugin.ReleaseKeys._
 
-organization := "com.gettyimages"
+organization := "com.github.swagger-spray"
 
-name := "spray-swagger"
+name := "swagger-spray"
 
 scalaVersion := "2.11.7"
 
@@ -31,7 +31,6 @@ libraryDependencies ++= Seq(
   "org.json4s" %% "json4s-native" % "3.2.11",
   "joda-time" % "joda-time" % "2.8",
   "org.joda" % "joda-convert" % "1.7",
-//  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "javax.ws.rs" % "jsr311-api" % "1.1.1"
 )
 
@@ -58,7 +57,7 @@ pomIncludeRepository := { _ => false }
 
 parallelExecution in Test := false
 
-homepage := Some(url("https://github.com/gettyimages/spray-swagger"))
+homepage := Some(url("https://github.com/swagger-spray/swagger-spray"))
 
 licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
@@ -66,8 +65,8 @@ publishArtifactsAction := PgpKeys.publishSigned.value
 
 pomExtra := (
   <scm>
-    <url>git@github.com:gettyimages/spray-swagger.git</url>
-    <connection>scm:git:git@github.com:gettyimages/spray-swagger.git</connection>
+    <url>git@github.com:swagger-spray/swagger-spray.git</url>
+    <connection>scm:git:git@github.com:swagger-spray/swagger-spray.git</connection>
   </scm>
   <developers>
     <developer>
@@ -79,5 +78,10 @@ pomExtra := (
       <id>efuquen</id>
       <name>Edwin Fuquen</name>
       <url>http://parascal.com</url>
+    </developer>
+    <developer>
+      <id>pjfanning</id>
+      <name>PJ Fanning</name>
+      <url>https://github.com/pjfanning</url>
     </developer>
   </developers>)
