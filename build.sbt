@@ -2,7 +2,7 @@ import sbtrelease.ReleasePlugin.ReleaseKeys._
 
 organization := "com.github.swagger-spray"
 
-name := "swagger-spray"
+name := "swagger-akka-http"
 
 scalaVersion := "2.11.7"
 
@@ -17,16 +17,15 @@ resolvers += Resolver.mavenLocal
 checksums in update := Nil
 
 libraryDependencies ++= Seq(
-  "io.spray" %% "spray-routing" % "1.3.3",
-  "io.spray" %% "spray-testkit" % "1.3.3" % "test",
-  "io.spray" %% "spray-json" % "1.3.2",
+  "com.typesafe.akka" %% "akka-http-experimental" % "2.0.3", 
+  "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.0.3" % "test",
+  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.0.3",
   "io.swagger" %% "swagger-scala-module" % "1.0.1" withSources(),
   "io.swagger" % "swagger-core" % "1.5.6" withSources(),
   "io.swagger" % "swagger-annotations" % "1.5.6" withSources(),
   "io.swagger" % "swagger-models" % "1.5.6" withSources(),
   "io.swagger" % "swagger-jaxrs" % "1.5.6" withSources(),
   "org.scalatest" %% "scalatest" % "2.2.4" % "test" ,
-  "com.typesafe.akka" %% "akka-actor" % "2.3.9",
   "org.json4s" %% "json4s-jackson" % "3.2.11",
   "org.json4s" %% "json4s-native" % "3.2.11",
   "joda-time" % "joda-time" % "2.8",

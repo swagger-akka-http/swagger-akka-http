@@ -1,26 +1,32 @@
 package com.github.swagger.spray
 
-import org.json4s.JObject
-import org.json4s.jackson.Serialization
-import spray.http.MediaTypes
-import spray.httpx.Json4sJacksonSupport
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
+import scala.reflect.runtime.universe._
 import com.github.swagger.spray.model._
-
+import akka.actor.ActorSystem
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.server.Directives
+import akka.http.scaladsl.server.Route
+import akka.stream.ActorMaterializer
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
-import io.swagger.models.{Scheme, Swagger}
+import io.swagger.models.Swagger
 import io.swagger.util.Json
-
-import spray.json.{JsObject, pimpString}
-import spray.routing.{ HttpService, Route }
-
-import scala.reflect.runtime.universe.Type
+import spray.json.pimpString
+import io.swagger.models.Scheme
 
 /**
  * @author rleibman
  */
-trait SwaggerHttpService extends HttpService with Json4sJacksonSupport {
+trait HasActorSystem {
+  implicit val actorSystem: ActorSystem
+  implicit val materializer: ActorMaterializer
+}
+
+trait SwaggerHttpService extends Directives with SprayJsonSupport {
+  this: HasActorSystem ⇒
+
   val apiTypes: Seq[Type]
   val host: String
   val basePath: String
@@ -32,51 +38,17 @@ trait SwaggerHttpService extends HttpService with Json4sJacksonSupport {
     def isScanAllResources(): Boolean = true
   }
 
-  def swaggerConfig: Swagger = new Swagger().basePath(basePath).host(host).info(info).scheme(scheme)
+  def swaggerConfig = new Swagger().basePath(basePath).host(host).info(info).scheme(scheme)
 
-  def reader: Reader = new Reader(swaggerConfig, readerConfig)
-  def swagger: Swagger = reader.read(apiTypes.map(t ⇒ {
-    Class.forName(getClassNameForType(t))
-  }).toSet)
+  def reader = new Reader(swaggerConfig, readerConfig)
+  def swagger = reader.read(apiTypes.map(t ⇒ Class.forName(t.toString())).toSet)
 
-  override def json4sJacksonFormats = org.json4s.DefaultFormats
-
-  def toJsObject(s: Swagger): JsObject ={
-    val result = Json.mapper()
-      .writeValueAsString(s)
-      .parseJson
-      .asJsObject
-    result
-  }
-
-  def toJObject(s: Swagger): JObject ={
-    implicit val fmts = org.json4s.DefaultFormats
-    val jString = toJsObject(s).compactPrint
-    val jObj = Serialization.read[JObject](jString)
-    jObj
-  }
-
-  lazy val routes: Route = get {
-    import MediaTypes._
-
-    pathPrefix(basePath) {
-      path("swagger.json") {
-        respondWithMediaType(`application/json`) {
-          complete(toJObject(swagger))
-        }
+  val routes: Route = get {
+    path("swagger.json") {
+      complete {
+        val result = Json.mapper().writeValueAsString(swagger).parseJson.asJsObject
+        result
       }
     }
-  }
-
-  def getClassNameForType(t: Type): String ={
-    val typeSymbol = t.typeSymbol
-    val fullName = typeSymbol.fullName
-    if (typeSymbol.isModuleClass) {
-      val idx = fullName.lastIndexOf('.')
-      if (idx >=0) {
-        val mangledName = s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1,fullName.size)}$$"
-        mangledName
-      } else fullName
-    } else fullName
   }
 }

@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray
+package com.github.swagger.spray.samples
 
 import javax.ws.rs.Path
+import com.github.swagger.spray._
 import com.github.swagger.spray.model.{License, Contact, Info}
 import akka.actor.{ActorRefFactory, ActorSystem}
+import akka.http.scaladsl.server.Directives
+import akka.stream.ActorMaterializer
 import io.swagger.annotations._
 import io.swagger.jaxrs.config.ReaderConfig
-import spray.routing.HttpService
-import spray.httpx.Json4sSupport
 import scala.reflect.runtime.universe._
 import scala.collection.JavaConversions._
-
 
 case class Dog(breed: String)
 
 class NestedService(system: ActorSystem) {self =>
-  val swaggerService = new SwaggerHttpService {
+  val swaggerService = new SwaggerHttpService with HasActorSystem {
+    implicit val actorSystem = system
+    implicit val materializer: ActorMaterializer = ActorMaterializer()
+
     override val apiTypes = Seq(typeOf[Dogs.type])
     override val host = "some.domain.com"
 
@@ -56,7 +59,7 @@ class NestedService(system: ActorSystem) {self =>
 
   @Api(value="/dogs", description="This is the dogs resource")
   @Path(value = "/dogs")
-  object Dogs extends HttpService with Json4sSupport {
+  object Dogs extends Directives {
 
     implicit def actorRefFactory: ActorRefFactory = self.system
     implicit val json4sFormats = org.json4s.DefaultFormats

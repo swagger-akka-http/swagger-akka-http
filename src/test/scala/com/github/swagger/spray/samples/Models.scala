@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray
+package com.github.swagger.spray.samples
 
 import io.swagger.annotations.ApiModelProperty
 import io.swagger.annotations.ApiModel
@@ -73,7 +73,7 @@ case class TestModel(
   @(ApiModelProperty @field)(value = NodesDescription)
   nodes: List[TestModelNode] = List[TestModelNode](),
   @(ApiModelProperty @field)(value = EnumDescription,
-    dataType = "com.github.swagger.spray.TestEnum$")
+    dataType = "com.github.swagger.spray.samples.TestEnum$")
   testEnum: TestEnum.TestEnum = TestEnum.AEnum,
   @(ApiModelProperty @field)(value = StartDateDescription)
   startDate: Date,

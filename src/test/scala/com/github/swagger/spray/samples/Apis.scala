@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray
+package com.github.swagger.spray.samples
 
 import io.swagger.annotations._
 import javax.ws.rs.Path
-import spray.routing.HttpService
 
-abstract class TestApiWithNoAnnotation extends HttpService
+abstract class TestApiWithNoAnnotation
 
 @Api(value = "/test")
 @Path("/test")
@@ -30,7 +29,7 @@ abstract class TestApiDoesNotExtendHttpService {
 
 @Api(value = "/test")
 @Path("/test")
-abstract class TestApiWithOnlyDataType extends HttpService {
+abstract class TestApiWithOnlyDataType {
   @ApiOperation(value = "testApiOperation", httpMethod = "GET")
   @ApiImplicitParams(Array(new ApiImplicitParam(name = "test",
     value = "test param",
@@ -41,7 +40,7 @@ abstract class TestApiWithOnlyDataType extends HttpService {
 
 @Api(value = "/test")
 @Path("/test")
-abstract class TestApiWithPathOperation extends HttpService {
+abstract class TestApiWithPathOperation {
   @Path("/sub/{someParam}/path/{anotherParam}")
   @ApiOperation(value = "subPathApiOperation", httpMethod = "GET", notes = "some notes")
   @ApiImplicitParams(Array(
@@ -57,7 +56,7 @@ abstract class TestApiWithPathOperation extends HttpService {
 
 @Api(value = "/test")
 @Path(value = "/test")
-abstract class TestApiWithParamsHierarchy extends HttpService {
+abstract class TestApiWithParamsHierarchy {
   @Path("/paramHierarchyOperation")
   @ApiOperation(value = "paramHierarchyOperation", httpMethod = "GET", response = classOf[ModelExtension])
   def paramHierarchyOperation
@@ -69,7 +68,7 @@ abstract class TestApiWithParamsHierarchy extends HttpService {
 // order here (as indicated by `value`) doesn't match the position attributes
 @Api(value = "/test")
 @Path("/test")
-abstract class TestApiWithOperationPositions extends HttpService {
+abstract class TestApiWithOperationPositions {
   @Path("/path1")
   @ApiOperation(position = 3, value = "order3", httpMethod = "HEAD", response = classOf[ModelBase])
   def operation4
@@ -90,7 +89,7 @@ abstract class TestApiWithOperationPositions extends HttpService {
 
 @Api(value = "/test")
 @Path("/test")
-abstract class TestApiWithResponseContainer extends HttpService {
+abstract class TestApiWithResponseContainer {
   @ApiOperation(value = "testApiOperation",
     httpMethod = "GET",
     response = classOf[ListReply[TestModel]],
@@ -100,7 +99,7 @@ abstract class TestApiWithResponseContainer extends HttpService {
 
 @Api(value = "/test")
 @Path("/test")
-abstract class TestApiWithDateTime extends HttpService {
+abstract class TestApiWithDateTime {
   @ApiOperation(value = "testApiOperation", httpMethod = "GET")
   @ApiImplicitParams(Array(new ApiImplicitParam(name = "test",
     value = "test param",
@@ -111,7 +110,7 @@ abstract class TestApiWithDateTime extends HttpService {
 
 @Api(value = "/test")
 @Path("/test")
-abstract class TestApiWithApiResponse extends HttpService {
+abstract class TestApiWithApiResponse {
   @ApiOperation(value = "testApiOperation",
     httpMethod = "GET",
     // code = 201,
