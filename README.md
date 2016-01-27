@@ -1,19 +1,22 @@
-# spray-swagger
+# swagger-spray
 
-[![Build Status](https://travis-ci.org/swagger-spray/swagger-spray.svg?branch=swagger2.0)](https://travis-ci.org/swagger-spray/swagger-spray)
+[![Build Status](https://travis-ci.org/swagger-spray/swagger-spray.svg?branch=master)](https://travis-ci.org/swagger-spray/swagger-spray)
 
-Spray-Swagger brings [Swagger](https://github.com/wordnik/swagger-core) support for [Spray](http://spray.io) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](https://github.com/wordnik/swagger-ui).
+Swagger-Spray brings [Swagger](http://swagger.io/swagger-core/) support for [Spray](http://spray.io) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
 
-The swagger spec [swagger spec](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
+This is a fork of https://github.com/gettyimages/spray-swagger which has been extended to include pull requests to support the latest swagger.io annotations.
 
-## Getting Spray-Swagger
+The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
+
+## Getting Swagger-Spray
 
 ### Release Version
 
-The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. As of version 0.5.1, spray-swagger is built against scala 2.11.6 and is no longer cross compiled. Snapshot releases are also hosted on sonatype. 
+The jars will soon be hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-spray is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype. 
 
+*Coming Soon*
 ```
-libraryDependencies += "com.gettyimages" %% "spray-swagger" % "0.5.1"
+libraryDependencies += "com.github.swagger-spray" %% "swagger-spray" % "0.6.0"
 ```
 
 ## Examples
@@ -34,12 +37,11 @@ Here's an example ```SwaggerHttpService``` snippet which exposes [Wordnik's PetS
 
 ```
 new SwaggerHttpService {
-       def actorRefFactory = context
-       def apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
-       def apiVersion = "1.0"
-       def swaggerVersion = "1.2" // you can omit, defaults to 1.2
-       def baseUrl = "http://localhost:8080" //the url of your api, not swagger's json endpoint
-       def docsPath = "/api-docs" //where you want the swagger-json endpoint exposed
+       implicit def actorRefFactory = context
+       val apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
+       val host = "localhost" //the url of your api, not swagger's json endpoint
+       val basePath = "api-docs" //where you want the swagger-json endpoint exposed
+       val info = Info() //provides license and other description details
      }.routes
 ```
 
@@ -101,7 +103,7 @@ case class Pet(
 
 ## Swagger UI
 
-This library does not include [Swagger's UI](https://github.com/wordnik/swagger-ui) only the api support for powering a UI. Adding such a UI to your Spray app is easy with Spray's ```getFromResource``` and ```getFromResourceDirectory``` support.
+This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your Spray app is easy with Spray's ```getFromResource``` and ```getFromResourceDirectory``` support.
 
 To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a ```swagger``` route hosting files from the ```resources/swagger/`` directory: 
 
@@ -117,16 +119,4 @@ You can then mix this trait with a new or existing Spray class with an ``actorRe
 
 ## How Annotations are Mapped to Swagger
 
-Let's categorize [the Swagger Spec](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md) into the following levels:
-
-* [The Resource Listing](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#51-resource-listing), at the root level of documentation, which provides an overview of multiple endpoints by listing available resources as an array of [Resource Objects](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#512-resource-object) via the ```apis``` property, authorizations required for the API (via the ```authorizations``` property) and descriptive information about the API (via the ``info`` property)
-* API Declarations, at a subsequent level, providing information about a specific API endpoint exposed with an [API Declaration](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#52-api-declaration). As per the Swagger spec there should be one file per Resource described in the Api listing. An API delcaration, via its ```apis``` property, lists available operations on the resource with an array of [API Objects](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#522-api-object) each having its own unique path. In turn each API Object has an array of [Operations](https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#523-operation-object) describing the available actions on that path. 
-
-* The Resource Listing is based on fields set when declaring the ```HttpService```. 
-* The Resource Listing ```apis``` property--the list of ```Resource Objects```--are built based on the ```apiTypes``` set when declaring the ```HttpService```.
-* The ```@Api.value``` is used to specify the path in the ```Resource Objects``` list. This is relative and points to the ```API Declaration``` describing the resource.
-* An individual API Declaration is built from a combination of ```@Api``` and ```@ApiOperation``` annotations set on a specific spray service object. Anything describing a property related to an API Declaration is set via the ```@Api``` annotation and anything related to an Operation is done via ```@ApiOperation```. 
-* Spray-Swagger does not validate that annotation values conform to the spec; this is up to the developer when applying annotations. We are adding functionality to provide validation when possible.
-* ```@Path``` will override the provided default value from ```@ApiOperation```. It is only applicable with ```@ApiOperation```.
-* By default an API Declaration's ```basePath``` is set from the ```HttpService.baseUrl``` property (this should be a full url) but can be overriden by specifying a ```basePath``` in an ```@Api``` annotation (again, as per spec, should be a full url).
-
+[Swagger Annotations Guide](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X)
