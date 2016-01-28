@@ -1,6 +1,6 @@
 # swagger-spray
 
-[![Build Status](https://travis-ci.org/swagger-spray/swagger-spray.svg?branch=master)](https://travis-ci.org/swagger-spray/swagger-spray)
+[![Build Status](https://travis-ci.org/pjfanning/swagger-akka-http.svg?branch=master)](https://travis-ci.org/pjfanning/swagger-akka-http)
 
 Swagger-Spray brings [Swagger](http://swagger.io/swagger-core/) support for [Spray](http://spray.io) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
 
