@@ -27,8 +27,8 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-jaxrs" % "1.5.6",
   "org.scalatest" %% "scalatest" % "2.2.5" % "test" ,
   "com.typesafe.akka" %% "akka-actor" % "2.3.11",
-  "org.json4s" %% "json4s-jackson" % "3.2.11",
-  "org.json4s" %% "json4s-native" % "3.2.11",
+  "org.json4s" %% "json4s-jackson" % "3.2.11" % "test",
+  "org.json4s" %% "json4s-native" % "3.2.11" % "test",
   "joda-time" % "joda-time" % "2.8" % "test",
   "org.joda" % "joda-convert" % "1.7" % "test",
   "javax.ws.rs" % "jsr311-api" % "1.1.1"

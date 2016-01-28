@@ -32,10 +32,7 @@ class NestedService(system: ActorSystem) {self =>
   val swaggerService = new SwaggerHttpService {
     override val apiTypes = Seq(typeOf[Dogs.type])
     override val host = "some.domain.com"
-
     override val basePath = "api-doc"
-
-    override val description = "Dogs love APIs"
 
     override val readerConfig = new ReaderConfig {
       def getIgnoredRoutes(): java.util.Collection[String] = List()

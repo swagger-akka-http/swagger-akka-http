@@ -263,6 +263,7 @@ class SprayApiReaderSpec
       }
     }
 
+    //@ApiOperation position is deprecated and ignored in Swagger 1.5.X
     "passed a service with operations defined by position" ignore {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
