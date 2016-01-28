@@ -20,17 +20,17 @@ libraryDependencies ++= Seq(
   "io.spray" %% "spray-routing" % "1.3.3",
   "io.spray" %% "spray-testkit" % "1.3.3" % "test",
   "io.spray" %% "spray-json" % "1.3.2",
-  "io.swagger" %% "swagger-scala-module" % "1.0.1" withSources(),
-  "io.swagger" % "swagger-core" % "1.5.6" withSources(),
-  "io.swagger" % "swagger-annotations" % "1.5.6" withSources(),
-  "io.swagger" % "swagger-models" % "1.5.6" withSources(),
-  "io.swagger" % "swagger-jaxrs" % "1.5.6" withSources(),
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test" ,
-  "com.typesafe.akka" %% "akka-actor" % "2.3.9",
+  "io.swagger" %% "swagger-scala-module" % "1.0.1",
+  "io.swagger" % "swagger-core" % "1.5.6",
+  "io.swagger" % "swagger-annotations" % "1.5.6",
+  "io.swagger" % "swagger-models" % "1.5.6",
+  "io.swagger" % "swagger-jaxrs" % "1.5.6",
+  "org.scalatest" %% "scalatest" % "2.2.5" % "test" ,
+  "com.typesafe.akka" %% "akka-actor" % "2.3.11",
   "org.json4s" %% "json4s-jackson" % "3.2.11",
   "org.json4s" %% "json4s-native" % "3.2.11",
-  "joda-time" % "joda-time" % "2.8",
-  "org.joda" % "joda-convert" % "1.7",
+  "joda-time" % "joda-time" % "2.8" % "test",
+  "org.joda" % "joda-convert" % "1.7" % "test",
   "javax.ws.rs" % "jsr311-api" % "1.1.1"
 )
 
@@ -78,6 +78,11 @@ pomExtra := (
       <id>efuquen</id>
       <name>Edwin Fuquen</name>
       <url>http://parascal.com</url>
+    </developer>
+    <developer>
+      <id>rliebman</id>
+      <name>Roberto Liebman</name>
+      <url>https://github.com/rleibman</url>
     </developer>
     <developer>
       <id>pjfanning</id>

@@ -25,6 +25,7 @@ import io.swagger.config._
 import org.scalatest.{Matchers, WordSpec}
 import scala.reflect.runtime.universe._
 import scala.collection.JavaConversions._
+import com.github.swagger.spray.samples._
 
 class SprayApiReaderSpec
     extends WordSpec

@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray
+package com.github.swagger.spray.samples
 
 import javax.ws.rs.Path
+import com.github.swagger.spray.SwaggerHttpService
 import com.github.swagger.spray.model.{License, Contact, Info}
 import akka.actor.{ActorRefFactory, ActorSystem}
 import io.swagger.annotations._
@@ -24,7 +25,6 @@ import spray.routing.HttpService
 import spray.httpx.Json4sSupport
 import scala.reflect.runtime.universe._
 import scala.collection.JavaConversions._
-
 
 case class Dog(breed: String)
 

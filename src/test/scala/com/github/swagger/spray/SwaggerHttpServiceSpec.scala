@@ -1,6 +1,7 @@
 package com.github.swagger.spray
 
 import com.github.swagger.spray.model.{License, Contact, Info}
+import com.github.swagger.spray.samples._
 import akka.actor.ActorRefFactory
 import io.swagger.jaxrs.config.ReaderConfig
 import org.json4s._

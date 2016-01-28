@@ -1,9 +1,11 @@
-package com.github.swagger.spray
+package com.github.swagger.spray.samples
 
 import io.swagger.annotations._
 import javax.ws.rs.Path
 import spray.routing.HttpService
 import spray.httpx.Json4sSupport
+import spray.httpx.marshalling.ToResponseMarshallable.isMarshallable
+import spray.routing.Directive.pimpApply
 
 @Api(value = "/dict", description = "This is a dictionary api.")
 @Path("/dict")

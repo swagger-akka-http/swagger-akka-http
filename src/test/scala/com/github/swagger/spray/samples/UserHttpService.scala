@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray
+package com.github.swagger.spray.samples
 
 import io.swagger.annotations._
 import spray.routing.HttpService
 import spray.httpx.Json4sSupport
 import javax.ws.rs.Path
+import spray.httpx.marshalling.ToResponseMarshallable.isMarshallable
+import spray.routing.Directive.pimpApply
+import spray.routing.directives.FieldDefMagnet.apply
 
 @Api(value = "/user", description = "Operations about users.", produces="application/json")
 @Path(value = "/user")
