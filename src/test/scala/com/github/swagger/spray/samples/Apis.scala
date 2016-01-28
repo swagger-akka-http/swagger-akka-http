@@ -33,7 +33,7 @@ abstract class TestApiWithOnlyDataType {
   @ApiOperation(value = "testApiOperation", httpMethod = "GET")
   @ApiImplicitParams(Array(new ApiImplicitParam(name = "test",
     value = "test param",
-    dataType = "com.github.swagger.spray.TestModel",
+    dataType = "com.github.swagger.spray.samples.TestModel",
     paramType = "body")))
   def testOperation
 }
@@ -93,7 +93,7 @@ abstract class TestApiWithResponseContainer {
   @ApiOperation(value = "testApiOperation",
     httpMethod = "GET",
     response = classOf[ListReply[TestModel]],
-    responseContainer = "com.github.swagger.spray.ListReply")
+    responseContainer = "com.github.swagger.spray.samples.ListReply")
   def testOperation
 }
 

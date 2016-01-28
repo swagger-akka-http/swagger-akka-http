@@ -20,7 +20,7 @@ import akka.stream.ActorMaterializer
 import spray.json._
 import spray.json.DefaultJsonProtocol._
 import spray.json.pimpString
-import com.github.swagger.spray.samples.UserHttpService
+import com.github.swagger.spray.samples._
 
 class SwaggerHttpServiceSpec
     extends WordSpec
@@ -35,11 +35,6 @@ class SwaggerHttpServiceSpec
     override val apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
     override val basePath = "/api"
     override val host = "http://some.domain.com"
-    //    override def apiVersion = "2.0"
-    //    override def baseUrl = "http://some.domain.com/api"
-    //    override def docsPath = "docs-are-here"
-    //apiInfo, not used
-    //authorizations, not used
   }
 
   implicit val formats = org.json4s.DefaultFormats

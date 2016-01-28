@@ -41,8 +41,10 @@ trait SwaggerHttpService extends Directives with SprayJsonSupport {
   def swaggerConfig = new Swagger().basePath(basePath).host(host).info(info).scheme(scheme)
 
   def reader = new Reader(swaggerConfig, readerConfig)
-  def swagger = reader.read(apiTypes.map(t ⇒ Class.forName(t.toString())).toSet)
-
+  def swagger: Swagger = reader.read(apiTypes.map(t ⇒ {
+    Class.forName(getClassNameForType(t))
+  }).toSet)
+  
   val routes: Route = get {
     path("swagger.json") {
       complete {
@@ -51,4 +53,17 @@ trait SwaggerHttpService extends Directives with SprayJsonSupport {
       }
     }
   }
+  
+  def getClassNameForType(t: Type): String ={
+    val typeSymbol = t.typeSymbol
+    val fullName = typeSymbol.fullName
+    if (typeSymbol.isModuleClass) {
+      val idx = fullName.lastIndexOf('.')
+      if (idx >=0) {
+        val mangledName = s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1,fullName.size)}$$"
+        mangledName
+      } else fullName
+    } else fullName
+  }
+
 }
