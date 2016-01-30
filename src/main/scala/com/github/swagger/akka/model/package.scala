@@ -1,4 +1,4 @@
-package com.github.swagger.spray
+package com.github.swagger.akka
 
 import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._

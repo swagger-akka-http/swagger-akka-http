@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray
+package com.github.swagger.akka
 
 import io.swagger.converter.ModelConverters
 import io.swagger.models.properties.{RefProperty, DateProperty, ArrayProperty, StringProperty}
 import org.scalatest.{Matchers, WordSpec}
 import scala.collection.JavaConverters._
-import com.github.swagger.spray.samples._
+import com.github.swagger.akka.samples._
 
-class SprayModelConverterSpec
+class SwaggerModelConverterSpec
   extends WordSpec
   with Matchers {
 

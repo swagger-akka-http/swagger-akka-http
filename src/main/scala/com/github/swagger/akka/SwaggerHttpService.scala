@@ -1,8 +1,9 @@
-package com.github.swagger.spray
+package com.github.swagger.akka
 
 import scala.collection.JavaConversions._
 import scala.reflect.runtime.universe._
-import com.github.swagger.spray.model._
+
+import com.github.swagger.akka.model._
 import akka.actor.ActorSystem
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.MediaTypes

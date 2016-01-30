@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray.samples
+package com.github.swagger.akka.samples
 
 import io.swagger.annotations._
 import javax.ws.rs.Path
@@ -33,7 +33,7 @@ abstract class TestApiWithOnlyDataType {
   @ApiOperation(value = "testApiOperation", httpMethod = "GET")
   @ApiImplicitParams(Array(new ApiImplicitParam(name = "test",
     value = "test param",
-    dataType = "com.github.swagger.spray.samples.TestModel",
+    dataType = "com.github.swagger.akka.samples.TestModel",
     paramType = "body")))
   def testOperation
 }
@@ -93,7 +93,7 @@ abstract class TestApiWithResponseContainer {
   @ApiOperation(value = "testApiOperation",
     httpMethod = "GET",
     response = classOf[ListReply[TestModel]],
-    responseContainer = "com.github.swagger.spray.samples.ListReply")
+    responseContainer = "com.github.swagger.akka.samples.ListReply")
   def testOperation
 }
 

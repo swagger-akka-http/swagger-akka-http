@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray
+package com.github.swagger.akka
 
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
@@ -27,9 +27,10 @@ import scala.reflect.runtime.universe._
 import scala.collection.JavaConversions._
 import javax.ws.rs.Path
 import scala.reflect.runtime.universe
-import com.github.swagger.spray.samples._
+import com.github.swagger.akka.samples._
 
-class SprayApiReaderSpec
+
+class ApiReaderSpec
     extends WordSpec
     with Matchers {
 
@@ -60,7 +61,7 @@ class SprayApiReaderSpec
       val reader = new Reader(swaggerConfig, readerConfig)
       val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[DictHttpService])))
 
-      val info = com.github.swagger.spray.model.swagger2scala(swagger.getInfo())
+      val info = com.github.swagger.akka.model.swagger2scala(swagger.getInfo())
 
       "set the swagger version" in {
         swagger.getSwagger() shouldBe SWAGGER_VERSION

@@ -1,11 +1,11 @@
-package com.github.swagger.spray
+package com.github.swagger.akka
 
 import scala.reflect.runtime.universe._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 import org.scalatest.Matchers
 import org.scalatest.WordSpec
-import com.github.swagger.spray.samples._
+import com.github.swagger.akka.samples._
 import akka.actor.ActorSystem
 import akka.http._
 import akka.http.scaladsl._
@@ -19,8 +19,6 @@ import akka.http.scaladsl.unmarshalling._
 import akka.stream.ActorMaterializer
 import spray.json._
 import spray.json.DefaultJsonProtocol._
-import spray.json.pimpString
-import com.github.swagger.spray.samples._
 
 class SwaggerHttpServiceSpec
     extends WordSpec

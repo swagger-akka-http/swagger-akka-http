@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray.samples
+package com.github.swagger.akka.samples
 
 import io.swagger.annotations._
 import javax.ws.rs.Path

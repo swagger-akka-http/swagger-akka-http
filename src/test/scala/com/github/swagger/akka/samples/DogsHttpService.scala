@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.swagger.spray.samples
+package com.github.swagger.akka.samples
 
 import javax.ws.rs.Path
-import com.github.swagger.spray._
-import com.github.swagger.spray.model.{License, Contact, Info}
+import com.github.swagger.akka._
+import com.github.swagger.akka.model.{License, Contact, Info}
 import akka.actor.{ActorRefFactory, ActorSystem}
 import akka.http.scaladsl.server.Directives
 import akka.stream.ActorMaterializer
