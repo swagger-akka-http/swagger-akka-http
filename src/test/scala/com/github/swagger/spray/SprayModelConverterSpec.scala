@@ -19,13 +19,7 @@ import io.swagger.converter.ModelConverters
 import io.swagger.models.properties.{RefProperty, DateProperty, ArrayProperty, StringProperty}
 import org.scalatest.{Matchers, WordSpec}
 import scala.collection.JavaConverters._
-import com.github.swagger.spray.samples.Letter
-import com.github.swagger.spray.samples.ModelBase
-import com.github.swagger.spray.samples.ModelExtension
-import com.github.swagger.spray.samples.ModelWithCustomPropertyDatatypes
-import com.github.swagger.spray.samples.SwaggerModelBuilderSpecValues
-import com.github.swagger.spray.samples.TestModel
-import com.github.swagger.spray.samples.TestModelPositions
+import com.github.swagger.spray.samples._
 
 class SprayModelConverterSpec
   extends WordSpec

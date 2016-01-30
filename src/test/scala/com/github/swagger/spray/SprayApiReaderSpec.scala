@@ -26,17 +26,8 @@ import org.scalatest.{Matchers, WordSpec}
 import scala.reflect.runtime.universe._
 import scala.collection.JavaConversions._
 import javax.ws.rs.Path
-import com.github.swagger.spray.samples.DictHttpService
-import com.github.swagger.spray.samples.TestApiDoesNotExtendHttpService
-import com.github.swagger.spray.samples.TestApiWithApiResponse
-import com.github.swagger.spray.samples.TestApiWithDateTime
-import com.github.swagger.spray.samples.TestApiWithNoAnnotation
-import com.github.swagger.spray.samples.TestApiWithOnlyDataType
-import com.github.swagger.spray.samples.TestApiWithOperationPositions
-import com.github.swagger.spray.samples.TestApiWithParamsHierarchy
-import com.github.swagger.spray.samples.TestApiWithPathOperation
-import com.github.swagger.spray.samples.TestApiWithResponseContainer
 import scala.reflect.runtime.universe
+import com.github.swagger.spray.samples._
 
 class SprayApiReaderSpec
     extends WordSpec
