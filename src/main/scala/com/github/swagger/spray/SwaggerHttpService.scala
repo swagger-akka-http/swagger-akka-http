@@ -1,15 +1,14 @@
 package com.github.swagger.spray
 
 import scala.collection.JavaConversions._
+import scala.reflect.runtime.universe.Type
 import com.github.swagger.spray.model._
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
 import io.swagger.models.{Scheme, Swagger}
 import io.swagger.util.Json
 import spray.http.MediaTypes
-import spray.json.{JsObject, pimpString}
 import spray.routing.{ HttpService, Route }
-import scala.reflect.runtime.universe.Type
 
 object SwaggerHttpService {
   val readerConfig = new ReaderConfig {
@@ -48,9 +47,7 @@ trait SwaggerHttpService extends HttpService {
   def swaggerConfig: Swagger = new Swagger().basePath(basePath).host(host).info(info).scheme(scheme)
 
   def reader: Reader = new Reader(swaggerConfig, readerConfig)
-  def swagger: Swagger = reader.read(apiTypes.map(t ⇒ {
-    Class.forName(getClassNameForType(t))
-  }).toSet)
+  def swagger: Swagger = reader.read(toJavaTypeSet(apiTypes))
 
   def toJsonString(s: Swagger): String = {
     Json.mapper().writeValueAsString(s)
