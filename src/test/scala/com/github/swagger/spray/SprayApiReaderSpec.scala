@@ -31,20 +31,13 @@ class SprayApiReaderSpec
     extends WordSpec
     with Matchers {
 
+  import SwaggerHttpService._
   val SWAGGER_VERSION = "2.0"
   val API_VERSION = "1.0"
   val BASE_PATH = "foo"
   val HOST = "www.example.com"
 
   val swaggerInfo = new Info().version(API_VERSION)
-  val readerConfig = new ReaderConfig {
-    def getIgnoredRoutes(): java.util.Collection[String] = List()
-    def isScanAllResources(): Boolean = false
-  }
-
-  def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] ={
-    apiTypes.map(t => Class.forName(t.toString())).toSet
-  }
 
   "The Reader object" when {
     "passed an api with no annotation" should {

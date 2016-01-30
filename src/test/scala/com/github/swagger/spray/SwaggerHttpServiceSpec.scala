@@ -28,13 +28,6 @@ class SwaggerHttpServiceSpec
     override val host = "some.domain.com"
     override val basePath = "api-doc"
 
-
-    override val readerConfig = new ReaderConfig {
-      def getIgnoredRoutes(): java.util.Collection[String] = List()
-
-      def isScanAllResources(): Boolean = false
-    }
-
     override val info: Info = Info(
       description = "Pets love APIs",
       version = "1.0",
