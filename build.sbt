@@ -1,6 +1,6 @@
 import sbtrelease.ReleasePlugin.ReleaseKeys._
 
-organization := "com.github.swagger-spray"
+organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
@@ -9,8 +9,6 @@ scalaVersion := "2.11.7"
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 resolvers += "Maven" at "https://repo1.maven.org/maven2/"
-
-resolvers += "spray repo" at "http://repo.spray.io"
 
 resolvers += Resolver.mavenLocal
 
@@ -38,6 +36,7 @@ releaseSettings
 testOptions in Test += Tests.Argument("-oD")
 
 parallelExecution in Test := false
+logBuffered := false
 
 publishMavenStyle := true
 
@@ -55,7 +54,7 @@ pomIncludeRepository := { _ => false }
 
 parallelExecution in Test := false
 
-homepage := Some(url("https://github.com/swagger-spray/swagger-spray"))
+homepage := Some(url("https://github.com/swagger-akka-http/swagger-akka-http"))
 
 licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
@@ -63,8 +62,8 @@ publishArtifactsAction := PgpKeys.publishSigned.value
 
 pomExtra := (
   <scm>
-    <url>git@github.com:swagger-spray/swagger-spray.git</url>
-    <connection>scm:git:git@github.com:swagger-spray/swagger-spray.git</connection>
+    <url>git@github.com:swagger-akka-http/swagger-akka-http.git</url>
+    <connection>scm:git:git@github.com:swagger-akka-http/swagger-akka-http.git</connection>
   </scm>
   <developers>
     <developer>
