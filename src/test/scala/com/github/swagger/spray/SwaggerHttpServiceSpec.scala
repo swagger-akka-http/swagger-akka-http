@@ -33,7 +33,7 @@ class SwaggerHttpServiceSpec
     override implicit val actorSystem: ActorSystem = system
     override implicit val materializer: ActorMaterializer = myMaterializer
     override val apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
-    override val basePath = "/api"
+    override val basePath = "api"
     override val host = "http://some.domain.com"
   }
 
@@ -42,7 +42,7 @@ class SwaggerHttpServiceSpec
   "The SwaggerHttpService" when {
     "accessing the root doc path" should {
       "return the basic set of api info" in {
-        Get("/swagger.json") ~> swaggerService.routes ~> check {
+        Get(s"/${swaggerService.basePath}/swagger.json") ~> swaggerService.routes ~> check {
           handled shouldBe true
           contentType shouldBe ContentTypes.`application/json`
           val str = responseAs[String]
@@ -51,7 +51,7 @@ class SwaggerHttpServiceSpec
           val paths = (response \ "paths").extract[JObject]
           paths.values.size shouldEqual 2
           val petPath = (paths \ "/pet")
-          (petPath \ "post" \ "summary").extract[String] shouldEqual "Add a new pet to the store"
+          (petPath \ "post" \ "summary").extract[String] shouldEqual "Updates a pet in the store with form data."
         }
       }
     }

@@ -52,7 +52,8 @@ class SprayModelConverterSpec
           val date = userSchema.getProperties().get("date")
           date.getDescription() should equal (EndDateDescription)
         }
-      "order fields by position in the Swagger Model" ignore {
+      //@ApiOperation position is deprecated and ignored in Swagger 1.5.X
+	    "order fields by position in the Swagger Model" ignore {
         val schemas = ModelConverters.getInstance().readAll(classOf[TestModelPositions])
         val userSchema = schemas.get ("TestModelPositions")
         userSchema should not be (null)
