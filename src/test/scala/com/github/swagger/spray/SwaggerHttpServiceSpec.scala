@@ -50,8 +50,8 @@ class SwaggerHttpServiceSpec
           (response \ "swagger").extract[String] shouldEqual "2.0"
           val paths = (response \ "paths").extract[JObject]
           paths.values.size shouldEqual 2
-          val petPath = (paths \ "/pet")
-          (petPath \ "post" \ "summary").extract[String] shouldEqual "Updates a pet in the store with form data."
+          val userPath = (paths \ "/user")
+          (userPath \ "get" \ "summary").extract[String] shouldEqual "Get user by name"
         }
       }
     }
