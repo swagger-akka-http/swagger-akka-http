@@ -14,9 +14,8 @@ The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for
 
 The jars will soon be hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-spray is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype. 
 
-*Coming Soon*
 ```
-libraryDependencies += "com.github.swagger-spray" %% "swagger-spray" % "0.6.0"
+libraryDependencies += "com.github.swagger-spray" %% "swagger-spray" % "0.6.1"
 ```
 
 ## Examples
@@ -31,9 +30,9 @@ The ```SwaggerHttpService``` is a trait extending Spray's ```HttpService```. It 
 
 The  ```SwagerHttpService``` will contain a ```routes``` property you can concatenate along with your existing spray routes. This will expose an endpoint at ```<baseUrl>/<specPath>/<resourcePath>``` with the specified ```apiVersion```, ```swaggerVersion``` and resource listing.
 
-The service requires a set of ```apiTypes``` and ```modelTypes``` you want to expose via Swagger. These types include the appropriate Swagger annotations for describing your api. The ```SwaggerHttpService``` will inspect these annotations and build the approrpiate Swagger response.
+The service requires a set of ```apiTypes``` you want to expose via Swagger. These types include the appropriate Swagger annotations for describing your api. The ```SwaggerHttpService``` will inspect these annotations and build the appropriate Swagger response.
 
-Here's an example ```SwaggerHttpService``` snippet which exposes [Wordnik's PetStore](http://swagger.wordnik.com/) resources, ```Pet```, ```User``` and ```Store```. The routes property can be concatenated to your other route definitions:
+Here's an example ```SwaggerHttpService``` snippet which exposes [Swagger's PetStore](http://petstore.swagger.io/) resources, ```Pet```, ```User``` and ```Store```. The routes property can be concatenated to your other route definitions:
 
 ```
 new SwaggerHttpService {
@@ -69,6 +68,7 @@ The general pattern for resource definitions and spray routes:
 Here's what Swagger's *pet* resource would look like:
 
 ```
+@Path("/pet")
 @Api(value = "/pet", description = "Operations about pets")
 trait PetHttpService extends HttpService {
 
