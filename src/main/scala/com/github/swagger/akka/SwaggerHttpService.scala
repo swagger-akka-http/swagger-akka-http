@@ -53,21 +53,23 @@ trait SwaggerHttpService extends Directives with SprayJsonSupport {
   import SwaggerHttpService._
   val apiTypes: Seq[Type]
   val host: String = "localhost"
-  val basePath: String = "api-docs"
+  val basePath: String = "/"
+  val apiDocsPath: String = "/"
   val info: Info = Info()
   val scheme: Scheme = Scheme.HTTP
 
-  def swaggerConfig = new Swagger().basePath(basePath).host(host).info(info).scheme(scheme)
+  def swaggerConfig = new Swagger().basePath(prependSlashIfNecessary(basePath)).host(host).info(info).scheme(scheme)
 
   def reader = new Reader(swaggerConfig, readerConfig)
   def swagger: Swagger = reader.read(toJavaTypeSet(apiTypes))
+  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path" 
+  def removeInitialSlashIfNecessary(path: String): String =
+    if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path 
   
-  def toJsonString(s: Swagger): String = {
-    Json.mapper().writeValueAsString(s)
-  }
+  def toJsonString(s: Swagger): String = Json.mapper().writeValueAsString(s)
   
   val routes: Route = get {
-    path(basePath / "swagger.json") {
+    path(removeInitialSlashIfNecessary(apiDocsPath) / "swagger.json") {
       complete(toJsonString(swagger).parseJson.asJsObject)
     }
   }
