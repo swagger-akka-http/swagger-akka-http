@@ -75,6 +75,7 @@ class SwaggerHttpServiceSpec
           val resp: JValue = responseAs[JValue]
           (resp \ "swagger").extract[String] should equal ("2.0")
           (resp \ "host").extract[String] should equal (swaggerService.host)
+          (resp \ "basePath").extract[String] should equal (s"/${swaggerService.basePath}")
           val paths = (resp \ "paths")
           paths.children.size shouldEqual 4
           val petPath = (paths \ "/pet")
