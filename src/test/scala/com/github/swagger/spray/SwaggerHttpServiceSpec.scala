@@ -25,8 +25,9 @@ class SwaggerHttpServiceSpec
       typeOf[UserHttpService]
     )
 
-    override val host = "some.domain.com"
-    override val basePath = "api-doc"
+    override val host = "some.domain.com:12345"
+    override val basePath = "api"
+    override val apiDocsPath = "api-doc"
 
     override val info: Info = Info(
       description = "Pets love APIs",
@@ -47,7 +48,22 @@ class SwaggerHttpServiceSpec
   "The SwaggerHttpService" when {
     "defining a derived service" should {
       "set the basePath" in {
-        swaggerService.basePath should equal ("api-doc")
+        swaggerService.basePath should equal ("api")
+      }
+      "set the apiDocsPath" in {
+        swaggerService.apiDocsPath should equal ("api-doc")
+      }
+      "prependSlashIfNecessary adds a slash" in {
+        swaggerService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
+      }
+      "prependSlashIfNecessary does not need to add a slash" in {
+        swaggerService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
+      }
+      "removeInitialSlashIfNecessary removes a slash" in {
+        swaggerService.removeInitialSlashIfNecessary("/api-doc") should equal ("api-doc")
+      }
+      "removeInitialSlashIfNecessary does not need to remove a slash" in {
+        swaggerService.removeInitialSlashIfNecessary("api-doc") should equal ("api-doc")
       }
     }
     "accessing the root doc path" should {
@@ -58,6 +74,7 @@ class SwaggerHttpServiceSpec
           contentType should be (ContentTypes.`application/json`)
           val resp: JValue = responseAs[JValue]
           (resp \ "swagger").extract[String] should equal ("2.0")
+          (resp \ "host").extract[String] should equal (swaggerService.host)
           val paths = (resp \ "paths")
           paths.children.size shouldEqual 4
           val petPath = (paths \ "/pet")

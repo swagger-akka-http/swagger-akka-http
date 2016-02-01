@@ -40,27 +40,27 @@ trait SwaggerHttpService extends HttpService {
   import SwaggerHttpService._
   val apiTypes: Seq[Type]
   val host: String = "localhost"
-  val basePath = "api-docs"
+  val basePath: String = ""
+  val apiDocsPath: String = "api-docs"
   val info: Info = Info()
   val scheme: Scheme = Scheme.HTTP
 
-  def swaggerConfig: Swagger = new Swagger().basePath(basePath).host(host).info(info).scheme(scheme)
+  def swaggerConfig: Swagger = new Swagger().basePath(prependSlashIfNecessary(basePath)).host(host).info(info).scheme(scheme)
+  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path" 
+  def removeInitialSlashIfNecessary(path: String): String =
+    if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path 
 
   def reader: Reader = new Reader(swaggerConfig, readerConfig)
   def swagger: Swagger = reader.read(toJavaTypeSet(apiTypes))
 
-  def toJsonString(s: Swagger): String = {
-    Json.mapper().writeValueAsString(s)
-  }
+  def toJsonString(s: Swagger): String = Json.mapper().writeValueAsString(s)
 
   lazy val routes: Route = get {
     import MediaTypes._
 
-    pathPrefix(basePath) {
-      path("swagger.json") {
-        respondWithMediaType(`application/json`) {
-          complete(toJsonString(swagger))
-        }
+    path(removeInitialSlashIfNecessary(apiDocsPath) / "swagger.json") {
+      respondWithMediaType(`application/json`) {
+        complete(toJsonString(swagger))
       }
     }
   }

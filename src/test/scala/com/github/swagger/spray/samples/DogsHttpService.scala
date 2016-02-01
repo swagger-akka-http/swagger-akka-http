@@ -32,7 +32,7 @@ class NestedService(system: ActorSystem) {self =>
   val swaggerService = new SwaggerHttpService {
     override val apiTypes = Seq(typeOf[Dogs.type])
     override val host = "some.domain.com"
-    override val basePath = "api-doc"
+    override val apiDocsPath = "api-doc"
 
     override val info: Info = Info(
       description = "Dogs love APIs",
