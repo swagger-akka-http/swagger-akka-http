@@ -5,6 +5,7 @@
 Swagger-Spray brings [Swagger](http://swagger.io/swagger-core/) support for [Spray](http://spray.io) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
 
 This is a fork of https://github.com/gettyimages/spray-swagger which has been extended to include pull requests to support the latest swagger.io annotations.
+https://github.com/swagger-akka-http/swagger-akka-http is an actively maintained Akka-Http equivalent.
 
 The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
 
@@ -15,7 +16,7 @@ The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for
 The jars will soon be hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-spray is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype. 
 
 ```
-libraryDependencies += "com.github.swagger-spray" %% "swagger-spray" % "0.6.1"
+libraryDependencies += "com.github.swagger-spray" %% "swagger-spray" % "0.6.2"
 ```
 
 ## Examples
@@ -37,9 +38,10 @@ Here's an example ```SwaggerHttpService``` snippet which exposes [Swagger's PetS
 ```
 new SwaggerHttpService {
        implicit def actorRefFactory = context
-       val apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
-       val host = "localhost" //the url of your api, not swagger's json endpoint
-       val basePath = "api-docs" //where you want the swagger-json endpoint exposed
+       override val apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
+       override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
+       override val basePath = "/"    //the basePath for the API you are exposing
+       override val apiDocsPath = "/" //where you want the swagger-json endpoint exposed
        val info = Info() //provides license and other description details
      }.routes
 ```
