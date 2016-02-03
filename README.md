@@ -21,7 +21,9 @@ libraryDependencies += "com.github.swagger-spray" %% "swagger-spray" % "0.6.2"
 
 ## Examples
 
-[mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with spray-swagger support and a Swagger UI.
+https://github.com/pjfanning/swagger-spray-sample is a simple sample based on this project.
+
+[mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with the original spray-swagger support and a Swagger UI.
 
 The ```/test``` directory includes an ```HttpSwaggerServiceSpec``` which leverages ```spray.testkit``` to test the API. It uses a ```PetHttpService``` and ```UserHttpService``` declared in the ```/samples``` folder. 
 
