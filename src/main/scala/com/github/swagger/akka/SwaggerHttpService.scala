@@ -54,7 +54,7 @@ trait SwaggerHttpService extends Directives with SprayJsonSupport {
   val apiTypes: Seq[Type]
   val host: String = "localhost"
   val basePath: String = "/"
-  val apiDocsPath: String = "/"
+  val apiDocsPath: String = "api-docs"
   val info: Info = Info()
   val scheme: Scheme = Scheme.HTTP
 
