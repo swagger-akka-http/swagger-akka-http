@@ -40,7 +40,7 @@ trait SwaggerHttpService extends HttpService {
   import SwaggerHttpService._
   val apiTypes: Seq[Type]
   val host: String = "localhost"
-  val basePath: String = ""
+  val basePath: String = "/"
   val apiDocsPath: String = "api-docs"
   val info: Info = Info()
   val scheme: Scheme = Scheme.HTTP
