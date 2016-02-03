@@ -38,9 +38,10 @@ Here's an example ```SwaggerHttpService``` snippet which exposes [Wordnik's PetS
 ```
 new SwaggerHttpService {
        implicit def actorRefFactory = context
-       val apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
-       val host = "localhost" //the url of your api, not swagger's json endpoint
-       val basePath = "api-docs" //where you want the swagger-json endpoint exposed
+       override val apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
+       override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
+       override val basePath = "/"    //the basePath for the API you are exposing
+       override val apiDocsPath = "/" //where you want the swagger-json endpoint exposed
        val info = Info() //provides license and other description details
      }.routes
 ```
