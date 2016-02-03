@@ -13,7 +13,7 @@ The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for
 
 ### Release Version
 
-The jars will soon be hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-spray is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype. 
+The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-spray is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype. 
 
 ```
 libraryDependencies += "com.github.swagger-spray" %% "swagger-spray" % "0.6.2"
