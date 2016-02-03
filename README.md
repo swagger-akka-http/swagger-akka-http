@@ -13,7 +13,7 @@ The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for
 
 ### Release Version
 
-The jars will soon be hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype. 
+The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype. 
 
 ```
 libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.6.2"
@@ -21,7 +21,9 @@ libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "
 
 ## Examples
 
-[mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with spray-swagger support and a Swagger UI.
+https://github.com/pjfanning/swagger-akka-http-sample is a simple sample using this project.
+
+[mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with the original spray-swagger support and a Swagger UI.
 
 The ```/test``` directory includes an ```HttpSwaggerServiceSpec``` which leverages ```akka-http.testkit``` to test the API. It uses a ```PetHttpService``` and ```UserHttpService``` declared in the ```/samples``` folder. 
 
