@@ -14,9 +14,8 @@ The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for
 
 The jars will soon be hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype. 
 
-*Coming Soon*
 ```
-libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.6.0"
+libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.6.2"
 ```
 
 ## Examples
