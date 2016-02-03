@@ -38,14 +38,15 @@ The service requires a set of ```apiTypes``` and ```modelTypes``` you want to ex
 Here's an example ```SwaggerHttpService``` snippet which exposes [Wordnik's PetStore](http://petstore.swagger.io/) resources, ```Pet```, ```User``` and ```Store```. The routes property can be concatenated to your other route definitions:
 
 ```
-new SwaggerHttpService {
-       implicit def actorRefFactory = context
-       override val apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
-       override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
-       override val basePath = "/"    //the basePath for the API you are exposing
-       override val apiDocsPath = "/" //where you want the swagger-json endpoint exposed
-       val info = Info() //provides license and other description details
-     }.routes
+class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService with HasActorSystem {
+  override implicit val actorSystem: ActorSystem = system
+  override implicit val materializer: ActorMaterializer = ActorMaterializer()
+  override val apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
+  override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
+  override val basePath = "/"    //the basePath for the API you are exposing
+  override val apiDocsPath = "/" //where you want the swagger-json endpoint exposed
+  val info = Info() //provides license and other description details
+}.routes
 ```
 
 ## Adding Swagger Annotations
