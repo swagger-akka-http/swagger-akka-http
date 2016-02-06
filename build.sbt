@@ -6,28 +6,28 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.11.7"
 
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-resolvers += "Maven" at "https://repo1.maven.org/maven2/"
-
-resolvers += Resolver.mavenLocal
+resolvers ++= Seq(
+  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+  "Maven" at "https://repo1.maven.org/maven2/",
+  Resolver.mavenLocal
+)
 
 checksums in update := Nil
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-http-experimental" % "2.0.3", 
+  "com.typesafe.akka" %% "akka-http-experimental" % "2.0.3",
   "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.0.3" % "test",
   "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.0.3",
   "io.swagger" %% "swagger-scala-module" % "1.0.1",
-  "io.swagger" % "swagger-core" % "1.5.6",
-  "io.swagger" % "swagger-annotations" % "1.5.6",
-  "io.swagger" % "swagger-models" % "1.5.6",
-  "io.swagger" % "swagger-jaxrs" % "1.5.6",
-  "org.scalatest" %% "scalatest" % "2.2.5" % "test" ,
-  "org.json4s" %% "json4s-jackson" % "3.2.11",
-  "org.json4s" %% "json4s-native" % "3.2.11",
-  "joda-time" % "joda-time" % "2.8" % "test",
-  "org.joda" % "joda-convert" % "1.7" % "test"
+  "io.swagger" % "swagger-core" % "1.5.7",
+  "io.swagger" % "swagger-annotations" % "1.5.7",
+  "io.swagger" % "swagger-models" % "1.5.7",
+  "io.swagger" % "swagger-jaxrs" % "1.5.7",
+  "org.scalatest" %% "scalatest" % "2.2.6" % "test" ,
+  "org.json4s" %% "json4s-jackson" % "3.3.0",
+  "org.json4s" %% "json4s-native" % "3.3.0",
+  "joda-time" % "joda-time" % "2.9.2" % "test",
+  "org.joda" % "joda-convert" % "1.8.1" % "test"
 )
 
 
@@ -85,5 +85,10 @@ pomExtra := (
       <id>pjfanning</id>
       <name>PJ Fanning</name>
       <url>https://github.com/pjfanning</url>
+    </developer>
+    <developer>
+      <id>fabiofumarola</id>
+      <name>Fabio Fumarola</name>
+      <url>https://github.com/fabiofumarola</url>
     </developer>
   </developers>)

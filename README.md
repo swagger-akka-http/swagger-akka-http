@@ -13,10 +13,10 @@ The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for
 
 ### Release Version
 
-The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype. 
+The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.10 and 2.11. Snapshot releases are also hosted on sonatype.
 
 ```
-libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.6.2"
+libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.6.3"
 ```
 
 ## Examples
@@ -25,7 +25,7 @@ https://github.com/pjfanning/swagger-akka-http-sample is a simple sample using t
 
 [mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with the original spray-swagger support and a Swagger UI.
 
-The ```/test``` directory includes an ```HttpSwaggerServiceSpec``` which leverages ```akka-http.testkit``` to test the API. It uses a ```PetHttpService``` and ```UserHttpService``` declared in the ```/samples``` folder. 
+The ```/test``` directory includes an ```HttpSwaggerServiceSpec``` which leverages ```akka-http.testkit``` to test the API. It uses a ```PetHttpService``` and ```UserHttpService``` declared in the ```/samples``` folder.
 
 ## SwaggerHttpService
 
@@ -109,7 +109,7 @@ case class Pet(
 
 This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy with akka-http's ```getFromResource``` and ```getFromResourceDirectory``` support.
 
-To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a ```swagger``` route hosting files from the ```resources/swagger/`` directory: 
+To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a ```swagger``` route hosting files from the ```resources/swagger/`` directory:
 
 ```
 trait Site extends Directives {
