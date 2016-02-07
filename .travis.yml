@@ -1,11 +1,8 @@
-sudo: required
 language: scala
 scala:
    - 2.10.5
    - 2.11.7
 script:
   - sbt ++$TRAVIS_SCALA_VERSION coverage test
-before_install:
-  - sudo pip install --user codecov
 after_success:
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
