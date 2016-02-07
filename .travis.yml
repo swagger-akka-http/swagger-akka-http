@@ -1,9 +1,9 @@
-sudo: false
+sudo: required
 language: scala
 scala:
    - 2.10.5
    - 2.11.7
 before_install:
-  - pip install codecov
+  - sudo pip install codecov
 after_success:
   - codecov
