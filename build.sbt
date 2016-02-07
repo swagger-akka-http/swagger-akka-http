@@ -6,6 +6,8 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.11.7"
 
+coverageEnabled := true
+
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 resolvers += "Maven" at "https://repo1.maven.org/maven2/"
