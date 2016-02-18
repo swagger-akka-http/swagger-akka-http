@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-core" % "1.5.6",
   "io.swagger" % "swagger-annotations" % "1.5.6",
   "io.swagger" % "swagger-models" % "1.5.6",
-  "io.swagger" % "swagger-jaxrs" % "1.5.6",
+  "io.swagger" % "swagger-jersey2-jaxrs" % "1.5.6",
   "org.scalatest" %% "scalatest" % "2.2.5" % "test" ,
   "org.json4s" %% "json4s-jackson" % "3.2.11",
   "org.json4s" %% "json4s-native" % "3.2.11",
