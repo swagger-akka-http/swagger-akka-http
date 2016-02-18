@@ -1,6 +1,6 @@
 import sbtrelease.ReleasePlugin.ReleaseKeys._
 
-organization := "com.github.swagger-akka-http"
+organization := "com.github.x4121"
 
 name := "swagger-akka-http"
 
@@ -56,7 +56,7 @@ pomIncludeRepository := { _ => false }
 
 parallelExecution in Test := false
 
-homepage := Some(url("https://github.com/swagger-akka-http/swagger-akka-http"))
+homepage := Some(url("https://github.com/x4121/swagger-akka-http"))
 
 licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
@@ -64,8 +64,8 @@ publishArtifactsAction := PgpKeys.publishSigned.value
 
 pomExtra := (
   <scm>
-    <url>git@github.com:swagger-akka-http/swagger-akka-http.git</url>
-    <connection>scm:git:git@github.com:swagger-akka-http/swagger-akka-http.git</connection>
+    <url>git@github.com:x4121/swagger-akka-http.git</url>
+    <connection>scm:git:git@github.com:x4121/swagger-akka-http.git</connection>
   </scm>
   <developers>
     <developer>
@@ -87,5 +87,10 @@ pomExtra := (
       <id>pjfanning</id>
       <name>PJ Fanning</name>
       <url>https://github.com/pjfanning</url>
+    </developer>
+    <developer>
+      <id>x4121</id>
+      <name>Armin Grodon</name>
+      <url>https://github.com/x4121</url>
     </developer>
   </developers>)
