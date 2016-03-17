@@ -7,8 +7,7 @@ name := "swagger-akka-http"
 scalaVersion := "2.11.7"
 
 coverageEnabled := true
-
-ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := {
+coverageHighlighting := {
   if (scalaBinaryVersion.value == "2.10") false
   else false
 }
@@ -30,11 +29,12 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-annotations" % "1.5.6",
   "io.swagger" % "swagger-models" % "1.5.6",
   "io.swagger" % "swagger-jaxrs" % "1.5.6",
-  "org.scalatest" %% "scalatest" % "2.2.5" % "test" ,
+  "org.scalatest" %% "scalatest" % "2.2.5" % "test",
   "org.json4s" %% "json4s-jackson" % "3.2.11",
   "org.json4s" %% "json4s-native" % "3.2.11",
   "joda-time" % "joda-time" % "2.8" % "test",
-  "org.joda" % "joda-convert" % "1.7" % "test"
+  "org.joda" % "joda-convert" % "1.7" % "test",
+  "org.slf4j" % "slf4j-simple" % "1.7.7" % "test"
 )
 
 
