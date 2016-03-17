@@ -8,6 +8,11 @@ scalaVersion := "2.11.7"
 
 coverageEnabled := true
 
+ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := {
+  if (scalaBinaryVersion.value == "2.10") false
+  else false
+}
+
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 resolvers += "Maven" at "https://repo1.maven.org/maven2/"
