@@ -5,6 +5,10 @@ organization := "com.github.swagger-spray"
 name := "swagger-spray"
 
 coverageEnabled := true
+coverageHighlighting := {
+  if (scalaBinaryVersion.value == "2.10") false
+  else false
+}
 
 scalaVersion := "2.11.7"
 
