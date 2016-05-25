@@ -4,7 +4,7 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 coverageEnabled := true
 coverageHighlighting := {
