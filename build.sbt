@@ -21,14 +21,14 @@ resolvers += Resolver.mavenLocal
 checksums in update := Nil
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-http-experimental" % "2.0.3", 
-  "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.0.3" % "test",
-  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.0.3",
-  "io.swagger" %% "swagger-scala-module" % "1.0.1",
-  "io.swagger" % "swagger-core" % "1.5.6",
-  "io.swagger" % "swagger-annotations" % "1.5.6",
-  "io.swagger" % "swagger-models" % "1.5.6",
-  "io.swagger" % "swagger-jaxrs" % "1.5.6",
+  "com.typesafe.akka" %% "akka-http-experimental" % "2.4.6", 
+  "com.typesafe.akka" %% "akka-http-testkit" % "2.4.6" % "test",
+  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.6",
+  "io.swagger" %% "swagger-scala-module" % "1.0.2",
+  "io.swagger" % "swagger-core" % "1.5.9",
+  "io.swagger" % "swagger-annotations" % "1.5.9",
+  "io.swagger" % "swagger-models" % "1.5.9",
+  "io.swagger" % "swagger-jaxrs" % "1.5.9",
   "org.scalatest" %% "scalatest" % "2.2.5" % "test",
   "org.json4s" %% "json4s-jackson" % "3.2.11",
   "org.json4s" %% "json4s-native" % "3.2.11",
