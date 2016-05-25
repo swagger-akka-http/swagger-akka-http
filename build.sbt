@@ -21,9 +21,9 @@ resolvers += Resolver.mavenLocal
 checksums in update := Nil
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-http-experimental" % "2.0.3", 
-  "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.0.3" % "test",
-  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.0.3",
+  "com.typesafe.akka" %% "akka-http-experimental" % "2.4.6",
+  "com.typesafe.akka" %% "akka-http-testkit" % "2.4.6" % "test",
+  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.6",
   "io.swagger" %% "swagger-scala-module" % "1.0.1",
   "io.swagger" % "swagger-core" % "1.5.6",
   "io.swagger" % "swagger-annotations" % "1.5.6",
