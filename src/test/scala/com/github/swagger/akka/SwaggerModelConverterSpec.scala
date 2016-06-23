@@ -100,7 +100,7 @@ class SwaggerModelConverterSpec
         // NOTE using stock swagger-scala-module at this point
         // will have this as an array instead of a string.
         // swagger-api/swagger-scala-module Pull Request #9 addresses this
-        value.getType() should equal ("string")
+        value.getType() should equal ("ref")
       }
     }
   }

@@ -191,7 +191,7 @@ class ApiReaderSpec
       val defMap = swagger.getDefinitions()
       "contain the dataType in the definitions" in {
         defMap should not be (null)
-        defMap should have size (2)
+        defMap should have size (4)
         val testModelDef = defMap.get("TestModel")
         testModelDef should not be (null)
         testModelDef.getProperties() should have size (11)
