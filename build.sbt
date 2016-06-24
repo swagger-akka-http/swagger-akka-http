@@ -6,11 +6,7 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.11.8"
 
-coverageEnabled := true
-coverageHighlighting := {
-  if (scalaBinaryVersion.value == "2.10") false
-  else false
-}
+coverageEnabled := false
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
