@@ -1,8 +1,9 @@
 language: scala
+jdk:
+  - oraclejdk8
 scala:
-   - 2.10.5
-   - 2.11.7
+   - 2.11.8
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION coverage test
+  - sbt ++$TRAVIS_SCALA_VERSION test coverageReport
 after_success:
   - bash <(curl -s https://codecov.io/bash)
