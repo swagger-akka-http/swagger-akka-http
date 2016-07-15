@@ -2,7 +2,9 @@
 
 [![Build Status](https://travis-ci.org/swagger-akka-http/swagger-akka-http.svg?branch=master)](https://travis-ci.org/swagger-akka-http/swagger-akka-http)
 
-Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka-stream-and-http-experimental/2.0.3/) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
+Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka/2.4.8/scala/http/) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
+
+This project was featured in a blog entry on [codecentric](https://blog.codecentric.de/en/2016/04/swagger-akka-http/).
 
 This is a fork of https://github.com/gettyimages/spray-swagger which has been extended to include pull requests to support the latest swagger.io annotations.
 https://github.com/swagger-spray/swagger-spray is an actively maintained Spray equivalent.
@@ -53,7 +55,7 @@ class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService with Has
 
 ## Adding Swagger Annotations
 
-Akka-Http routing works by concatenating various routes, built up by directives, to produce an api. The [routing dsl](http://doc.akka.io/docs/akka-stream-and-http-experimental/2.0.3/scala/http/routing-dsl/overview.html) is an elegant way to describe an api and differs from the more common class and method approach of other frameworks. But because Swagger's annotation library requires classes, methods and fields to describe an Api, one may find it difficult to annotate a akka-http routing application.
+Akka-Http routing works by concatenating various routes, built up by directives, to produce an api. The [routing dsl](http://doc.akka.io/docs/akka/2.4.8/scala/http/routing-dsl/overview.html) is an elegant way to describe an api and differs from the more common class and method approach of other frameworks. But because Swagger's annotation library requires classes, methods and fields to describe an Api, one may find it difficult to annotate a akka-http routing application.
 
 A simple solution is to break apart a akka-http routing application into various resource traits, with methods for specific api operations, joined by route concatentation into a route property. These traits with can then be joined together by their own route properties into a complete api. Despite losing the completeness of an entire api the result is a more modular application with a succint resource list. The balance is up to the developer but for a reasonably-sized applicaiton organizing routes across various traits is probably a good idea.
 
@@ -109,7 +111,7 @@ case class Pet(
 
 ## Swagger UI
 
-This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy with akka-http's ```getFromResource``` and ```getFromResourceDirectory``` support.
+This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy with akka-http's ```getFromResource``` and ```getFromResourceDirectory``` [support](http://doc.akka.io/docs/akka/2.4.8/scala/http/routing-dsl/directives/file-and-resource-directives/).
 
 To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a ```swagger``` route hosting files from the ```resources/swagger/`` directory: 
 
