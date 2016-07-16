@@ -1,7 +1,6 @@
 package com.github.swagger.akka
 
 import scala.collection.JavaConverters._
-import scala.collection.JavaConversions._
 import io.swagger.models.{
 Info ⇒ SwaggerInfo,
 Contact ⇒ SwaggerContact,
@@ -68,7 +67,7 @@ package object model {
       .contact(convertMe.contact.getOrElse(null))
       .license(convertMe.license.getOrElse(null))
 
-    ret.getVendorExtensions.putAll(convertMe.vendorExtensions)
+    ret.getVendorExtensions.putAll(convertMe.vendorExtensions.asJava)
     ret
   }
 }
