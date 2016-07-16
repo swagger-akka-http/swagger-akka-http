@@ -2,7 +2,8 @@ organization := "com.github.swagger-spray"
 
 name := "swagger-spray"
 
-coverageEnabled := true
+EclipseKeys.withSource := true
+
 coverageHighlighting := {
   if (scalaBinaryVersion.value == "2.10") false
   else false
