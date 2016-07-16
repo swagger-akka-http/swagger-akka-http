@@ -1,18 +1,19 @@
 package com.github.swagger.spray
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe.Type
 import com.github.swagger.spray.model._
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
-import io.swagger.models.{Scheme, Swagger}
+import io.swagger.models.{ExternalDocs, Scheme, Swagger}
+import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.util.Json
 import spray.http.MediaTypes
 import spray.routing.{ HttpService, Route }
 
 object SwaggerHttpService {
   val readerConfig = new ReaderConfig {
-    def getIgnoredRoutes(): java.util.Collection[String] = List()
+    def getIgnoredRoutes(): java.util.Collection[String] = List().asJavaCollection
     def isScanAllResources(): Boolean = false
   }
   
@@ -44,14 +45,25 @@ trait SwaggerHttpService extends HttpService {
   val apiDocsPath: String = "api-docs"
   val info: Info = Info()
   val scheme: Scheme = Scheme.HTTP
+  val securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map()
+  val externalDocs: Option[ExternalDocs] = None
 
-  def swaggerConfig: Swagger = new Swagger().basePath(prependSlashIfNecessary(basePath)).host(host).info(info).scheme(scheme)
+  def swaggerConfig: Swagger = {
+    val modifiedPath = prependSlashIfNecessary(basePath)
+    val swagger = new Swagger().basePath(modifiedPath).host(host).info(info).scheme(scheme)
+    swagger.setSecurityDefinitions(securitySchemeDefinitions.asJava)
+    externalDocs match {
+      case Some(ed) => swagger.externalDocs(ed)
+      case None => swagger
+    }
+  }
+
   def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path" 
   def removeInitialSlashIfNecessary(path: String): String =
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path 
 
   def reader: Reader = new Reader(swaggerConfig, readerConfig)
-  def swagger: Swagger = reader.read(toJavaTypeSet(apiTypes))
+  def swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
 
   def toJsonString(s: Swagger): String = Json.mapper().writeValueAsString(s)
 
