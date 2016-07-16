@@ -111,9 +111,9 @@ case class Pet(
 
 ## Swagger UI
 
-This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy with akka-http's ```getFromResource``` and ```getFromResourceDirectory``` [support](http://doc.akka.io/docs/akka/2.4.8/scala/http/routing-dsl/directives/file-and-resource-directives/).
+This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy with akka-http's `getFromResource` and `getFromResourceDirectory` [support](http://doc.akka.io/docs/akka/2.4.8/scala/http/routing-dsl/directives/file-and-resource-directives/).
 
-To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a ```swagger``` route hosting files from the ```resources/swagger/`` directory: 
+To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a `swagger` route hosting files from the `resources/swagger/` directory: 
 
 ```
 trait Site extends Directives {
@@ -123,7 +123,7 @@ trait Site extends Directives {
 }
 ```
 
-You can then mix this trait with a new or existing Akka-Http class with an ``actorRefFactory``` and concatenate the ```site``` route value to your existing route definitions.
+You can then mix this trait with a new or existing Akka-Http class with an `actorRefFactory` and concatenate the `site` route value to your existing route definitions.
 
 ## How Annotations are Mapped to Swagger
 
