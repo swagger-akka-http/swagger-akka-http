@@ -13,7 +13,7 @@ import spray.routing.{ HttpService, Route }
 
 object SwaggerHttpService {
   val readerConfig = new ReaderConfig {
-    def getIgnoredRoutes(): java.util.Collection[String] = List().asJavaCollection
+    def getIgnoredRoutes(): java.util.Collection[String] = List[String]().asJavaCollection
     def isScanAllResources(): Boolean = false
   }
   
