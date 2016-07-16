@@ -1,24 +1,15 @@
-import sbtrelease.ReleasePlugin.ReleaseKeys._
-
 organization := "com.github.swagger-spray"
 
 name := "swagger-spray"
 
-coverageEnabled := true
+EclipseKeys.withSource := true
+
 coverageHighlighting := {
   if (scalaBinaryVersion.value == "2.10") false
   else false
 }
 
-scalaVersion := "2.11.7"
-
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-resolvers += "Maven" at "https://repo1.maven.org/maven2/"
-
-resolvers += "spray repo" at "http://repo.spray.io"
-
-resolvers += Resolver.mavenLocal
+scalaVersion := "2.11.8"
 
 checksums in update := Nil
 
@@ -27,29 +18,28 @@ libraryDependencies ++= Seq(
   "io.spray" %% "spray-testkit" % "1.3.3" % "test",
   "io.spray" %% "spray-json" % "1.3.2",
   "com.typesafe.akka" %% "akka-actor" % "2.3.11",
-  "io.swagger" %% "swagger-scala-module" % "1.0.1",
-  "io.swagger" % "swagger-core" % "1.5.6",
-  "io.swagger" % "swagger-annotations" % "1.5.6",
-  "io.swagger" % "swagger-models" % "1.5.6",
-  "io.swagger" % "swagger-jaxrs" % "1.5.6",
-  "org.scalatest" %% "scalatest" % "2.2.5" % "test" ,
+  "io.swagger" %% "swagger-scala-module" % "1.0.2",
+  "io.swagger" % "swagger-core" % "1.5.9",
+  "io.swagger" % "swagger-annotations" % "1.5.9",
+  "io.swagger" % "swagger-models" % "1.5.9",
+  "io.swagger" % "swagger-jaxrs" % "1.5.9",
+  "org.scalatest" %% "scalatest" % "2.2.6" % "test" ,
   "org.json4s" %% "json4s-jackson" % "3.2.11" % "test",
   "org.json4s" %% "json4s-native" % "3.2.11" % "test",
   "joda-time" % "joda-time" % "2.8" % "test",
   "org.joda" % "joda-convert" % "1.7" % "test"
 )
 
-releaseSettings
-
 testOptions in Test += Tests.Argument("-oD")
 
 parallelExecution in Test := false
+logBuffered := false
 
 publishMavenStyle := true
 
-publishTo <<= version { (v: String) =>
+publishTo := {
   val nexus = "https://oss.sonatype.org/"
-  if (v.trim.endsWith("SNAPSHOT"))
+  if (isSnapshot.value)
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
@@ -65,7 +55,7 @@ homepage := Some(url("https://github.com/swagger-spray/swagger-spray"))
 
 licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
-publishArtifactsAction := PgpKeys.publishSigned.value
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 pomExtra := (
   <scm>
