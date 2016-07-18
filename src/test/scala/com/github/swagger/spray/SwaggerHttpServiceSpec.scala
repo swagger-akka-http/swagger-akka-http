@@ -3,7 +3,8 @@ package com.github.swagger.spray
 import com.github.swagger.spray.model.{License, Contact, Info}
 import com.github.swagger.spray.samples._
 import akka.actor.ActorRefFactory
-import io.swagger.jaxrs.config.ReaderConfig
+import io.swagger.models.ExternalDocs
+import io.swagger.models.auth.BasicAuthDefinition
 import org.json4s._
 import org.json4s.jackson.Serialization
 import org.scalatest.{Matchers, WordSpec}
@@ -36,6 +37,9 @@ class SwaggerHttpServiceSpec
       termsOfService = "Lenient",
       contact = Some(Contact("James T. Kirk", "http://startrek.com", "captain@kirk.com")),
       license = Some(License("Apache", "http://license.apache.com")))
+      
+    override val externalDocs = Some(new ExternalDocs("my docs", "http://com.example.com/about"))
+    override val securitySchemeDefinitions = Map("basicAuth" -> new BasicAuthDefinition())
 
     implicit def actorRefFactory: ActorRefFactory = system
   }
@@ -70,12 +74,12 @@ class SwaggerHttpServiceSpec
       "return the basic set of api info" in {
         Get("http://some.domain.com/api-doc/swagger.json") ~> swaggerService.routes ~> check {
           handled shouldBe true
-          status.intValue should be (200)
-          contentType should be (ContentTypes.`application/json`)
+          status.intValue shouldBe 200
+          contentType shouldBe ContentTypes.`application/json`
           val resp: JValue = responseAs[JValue]
-          (resp \ "swagger").extract[String] should equal ("2.0")
-          (resp \ "host").extract[String] should equal (swaggerService.host)
-          (resp \ "basePath").extract[String] should equal (s"/${swaggerService.basePath}")
+          (resp \ "swagger").extract[String] shouldEqual "2.0"
+          (resp \ "host").extract[String] shouldEqual swaggerService.host
+          (resp \ "basePath").extract[String] shouldEqual s"/${swaggerService.basePath}"
           val paths = (resp \ "paths")
           paths.children.size shouldEqual 4
           val petPath = (paths \ "/pet")
@@ -87,9 +91,9 @@ class SwaggerHttpServiceSpec
           // Includes Function1RequestContextBoxedUnit which is an error at some level
           definitions.children.size shouldEqual (4)
           val pet = (definitions \ "Pet")
-          (pet \ "properties" \ "name" \ "type").extract[String] shouldEqual ("string")
+          (pet \ "properties" \ "name" \ "type").extract[String] shouldEqual "string"
           val user = (definitions \ "User")
-          (user \ "properties" \ "username" \ "type").extract[String] shouldEqual ("string")
+          (user \ "properties" \ "username" \ "type").extract[String] shouldEqual "string"
           val petIdPath = (paths \ "/pet/{petId}")
           val delPetParams = (petIdPath \ "delete" \ "parameters")
           delPetParams.children should have size (1)
@@ -97,11 +101,23 @@ class SwaggerHttpServiceSpec
             (pp \ "name").extract[String] == "petId"
           })
           petIdOpt should be ('defined)
-          (petIdOpt.get \ "in").extract[String] shouldEqual ("path")
+          (petIdOpt.get \ "in").extract[String] shouldEqual "path"
 
           // Check for the owner sub-resource
           val ownerPath = (paths \ "/pet/{petId}/owner")
-          (ownerPath \ "get" \ "operationId").extract[String] should equal ("readOwner")
+          (ownerPath \ "get" \ "operationId").extract[String] shouldEqual "readOwner"
+          
+          val ed = swaggerService.externalDocs.getOrElse(throw new IllegalArgumentException("missing external docs"))
+          (resp \ "externalDocs").extract[Map[String, String]] shouldEqual Map(
+              "description" -> ed.getDescription, "url" -> ed.getUrl)
+          (resp \ "securityDefinitions" \ "basicAuth").extract[Map[String, String]] shouldEqual Map("type" -> "basic")
+          
+          (resp \ "info" \ "description").extract[String] shouldEqual swaggerService.info.description
+          (resp \ "info" \ "title").extract[String] shouldEqual swaggerService.info.title
+          (resp \ "info" \ "termsOfService").extract[String] shouldEqual swaggerService.info.termsOfService
+          (resp \ "info" \ "version").extract[String] shouldEqual swaggerService.info.version
+          (resp \ "info" \ "contact").extract[Option[Contact]] shouldEqual swaggerService.info.contact
+          (resp \ "info" \ "license").extract[Option[License]] shouldEqual swaggerService.info.license
         }
       }
     }

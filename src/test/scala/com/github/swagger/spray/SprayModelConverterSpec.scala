@@ -16,7 +16,6 @@
 package com.github.swagger.spray
 
 import io.swagger.converter.{ModelConverter, ModelConverterContextImpl, ModelConverters}
-import io.swagger.models.ModelImpl
 import io.swagger.models.properties.{RefProperty, DateProperty, ArrayProperty, StringProperty}
 import org.scalatest.{Matchers, WordSpec}
 import scala.collection.JavaConverters._
