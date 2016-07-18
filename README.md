@@ -17,7 +17,7 @@ The [swagger spec](http://swagger.io/specification/) is helpful for understandin
 
 The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.11. Snapshot releases are also hosted on sonatype. 
 
-```
+```sbt
 libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.7.1"
 ```
 
@@ -41,7 +41,7 @@ The service requires a set of `apiTypes` and `modelTypes` you want to expose via
 
 Here's an example `SwaggerHttpService` snippet which exposes [Wordnik's PetStore](http://petstore.swagger.io/) resources, `Pet`, `User` and `Store`. The routes property can be concatenated to your other route definitions:
 
-```
+```scala
 class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService with HasActorSystem {
   override implicit val actorSystem: ActorSystem = system
   override implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -76,7 +76,7 @@ The general pattern for resource definitions and akka-http routes:
 
 Here's what Swagger's *pet* resource would look like:
 
-```
+```scala
 @Api(value = "/pet", description = "Operations about pets")
 trait PetHttpService extends HttpService {
 
@@ -99,7 +99,7 @@ Notice the use of `ApiImplicitParams`. This is the best way to apply parameter i
 
 Model definitions are fairly self-explanatory. Attributes are applied to case class entities and their respective properties. A simplified Pet model:
 
-```
+```scala
 @ApiModel(description = "A pet object")
 case class Pet(
   @(ApiModelProperty @field)(value = "unique identifier for the pet")
@@ -115,7 +115,7 @@ This library does not include [Swagger's UI](http://petstore.swagger.io/) only t
 
 To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a `swagger` route hosting files from the `resources/swagger/` directory: 
 
-```
+```scala
 trait Site extends Directives {
   val site =
     path("swagger") { getFromResource("swagger/index.html") } ~
