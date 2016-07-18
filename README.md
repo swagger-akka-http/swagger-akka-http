@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/swagger-akka-http/swagger-akka-http.svg?branch=master)](https://travis-ci.org/swagger-akka-http/swagger-akka-http)
 
-Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka/2.4.8/scala/http/) Apis. The included ```SwaggerHttpService``` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
+Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka/2.4.8/scala/http/) Apis. The included `SwaggerHttpService` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
 
 This project was featured in a blog entry on [codecentric](https://blog.codecentric.de/en/2016/04/swagger-akka-http/).
 
@@ -29,17 +29,17 @@ https://github.com/pjfanning/swagger-akka-http-sample is a simple sample using t
 
 [mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with the original spray-swagger support and a Swagger UI.
 
-The ```/test``` directory includes an ```HttpSwaggerServiceSpec``` which leverages ```akka-http.testkit``` to test the API. It uses a ```PetHttpService``` and ```UserHttpService``` declared in the ```/samples``` folder. 
+The `/test` directory includes an `HttpSwaggerServiceSpec` which leverages `akka-http.testkit` to test the API. It uses a `PetHttpService` and `UserHttpService` declared in the `/samples` folder. 
 
 ## SwaggerHttpService
 
-The ```SwaggerHttpService``` is a trait extending Akka-Http's ```HttpService```. It will generate the appropriate Swagger json schema based on a set of inputs declaring your Api and the types you want to expose.
+The `SwaggerHttpService` is a trait extending Akka-Http's `HttpService`. It will generate the appropriate Swagger json schema based on a set of inputs declaring your Api and the types you want to expose.
 
-The  ```SwaggerHttpService``` will contain a ```routes``` property you can concatenate along with your existing akka-http routes. This will expose an endpoint at ```<baseUrl>/<specPath>/<resourcePath>``` with the specified ```apiVersion```, ```swaggerVersion``` and resource listing.
+The  `SwaggerHttpService` will contain a `routes` property you can concatenate along with your existing akka-http routes. This will expose an endpoint at `<baseUrl>/<specPath>/<resourcePath>` with the specified `apiVersion`, `swaggerVersion` and resource listing.
 
-The service requires a set of ```apiTypes``` and ```modelTypes``` you want to expose via Swagger. These types include the appropriate Swagger annotations for describing your api. The ```SwaggerHttpService``` will inspect these annotations and build the approrpiate Swagger response.
+The service requires a set of `apiTypes` and `modelTypes` you want to expose via Swagger. These types include the appropriate Swagger annotations for describing your api. The `SwaggerHttpService` will inspect these annotations and build the approrpiate Swagger response.
 
-Here's an example ```SwaggerHttpService``` snippet which exposes [Wordnik's PetStore](http://petstore.swagger.io/) resources, ```Pet```, ```User``` and ```Store```. The routes property can be concatenated to your other route definitions:
+Here's an example `SwaggerHttpService` snippet which exposes [Wordnik's PetStore](http://petstore.swagger.io/) resources, `Pet`, `User` and `Store`. The routes property can be concatenated to your other route definitions:
 
 ```
 class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService with HasActorSystem {
@@ -59,18 +59,18 @@ Akka-Http routing works by concatenating various routes, built up by directives,
 
 A simple solution is to break apart a akka-http routing application into various resource traits, with methods for specific api operations, joined by route concatentation into a route property. These traits with can then be joined together by their own route properties into a complete api. Despite losing the completeness of an entire api the result is a more modular application with a succint resource list. The balance is up to the developer but for a reasonably-sized applicaiton organizing routes across various traits is probably a good idea.
 
-With this structure you can apply ```@Api``` annotations to these individual traits and ```@ApiOperation``` annotations to methods.
+With this structure you can apply `@Api` annotations to these individual traits and `@ApiOperation` annotations to methods.
 
-You can also use jax-rs ```@Path``` annotations alongside ```@ApiOperation```s if you need fine-grained control over path specifications or if you want to support multiple paths per operation. The functionality is the same as swagger-core.
+You can also use jax-rs `@Path` annotations alongside `@ApiOperation`s if you need fine-grained control over path specifications or if you want to support multiple paths per operation. The functionality is the same as swagger-core.
 
 ### Resource Definitions
 
 The general pattern for resource definitions and akka-http routes:
 
 * Place an individual resource in its own trait
-* Annotate the trait with ```@Api``` to describe the resource
-* Define specific api operations with ```def``` methods which produce a route
-* Annotate these methods with ```@ApiOperation```, ```@ApiImplictParams``` and ```@ApiResponse``` accordingly
+* Annotate the trait with `@Api` to describe the resource
+* Define specific api operations with `def` methods which produce a route
+* Annotate these methods with `@ApiOperation`, `@ApiImplictParams` and `@ApiResponse` accordingly
 * Concatenate operations together into a single routes property, wrapped with a path directive for that resource
 * Concatenate all resource traits together on their routes property to produce the final route structure for your application.
 
@@ -93,7 +93,7 @@ trait PetHttpService extends HttpService {
 }
 ```
 
-Notice the use of ```ApiImplicitParams```. This is the best way to apply parameter information. The ```paramType``` can be used to specify ```path```, ```body```, ```header```, ```query``` or ```form```. If the dataType value is not of the basic types, ```swagger-akka-http``` will try and find the type in the ```modelTypes``` sequence. Refer to *swagger-core* for other attribute information.
+Notice the use of `ApiImplicitParams`. This is the best way to apply parameter information. The `paramType` can be used to specify `path`, `body`, `header`, `query` or `form`. If the dataType value is not of the basic types, `swagger-akka-http` will try and find the type in the `modelTypes` sequence. Refer to *swagger-core* for other attribute information.
 
 ### Model Definitions
 
