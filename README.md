@@ -4,12 +4,12 @@
 
 Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka/2.4.8/scala/http/) Apis. The included `SwaggerHttpService` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
 
-This project was featured in a blog entry on [codecentric](https://blog.codecentric.de/en/2016/04/swagger-akka-http/).
+This project was featured in a [blog entry](https://blog.codecentric.de/en/2016/04/swagger-akka-http/) on codecentric.
 
-This is a fork of https://github.com/gettyimages/spray-swagger which has been extended to include pull requests to support the latest swagger.io annotations.
-https://github.com/swagger-spray/swagger-spray is an actively maintained Spray equivalent.
+This is a fork of [gettyimages/spray-swagger](https://github.com/gettyimages/spray-swagger) which has been extended to include pull requests to support the latest swagger.io annotations.
+[swagger-spray/swagger-spray](https://github.com/swagger-spray/swagger-spray) is an actively maintained Spray equivalent.
 
-The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
+The [swagger spec](http://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
 
 ## Getting Swagger-Akka-Http
 
@@ -25,7 +25,7 @@ Scala 2.10 support for akka-http 2.0.3 requires swagger-akka-http 0.6.2.
 
 ## Examples
 
-https://github.com/pjfanning/swagger-akka-http-sample is a simple sample using this project.
+[pjfanning/swagger-akka-http-sample](https://github.com/pjfanning/swagger-akka-http-sample) is a simple sample using this project.
 
 [mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with the original spray-swagger support and a Swagger UI.
 
