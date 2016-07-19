@@ -3,8 +3,7 @@ package com.github.swagger.akka
 import scala.reflect.runtime.universe._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
-import org.scalatest.Matchers
-import org.scalatest.WordSpec
+import org.scalatest.{Matchers, WordSpec}
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
 import akka.actor.ActorSystem
