@@ -7,7 +7,7 @@ Swagger-Spray brings [Swagger](http://swagger.io/swagger-core/) support for [Spr
 This is a fork of https://github.com/gettyimages/spray-swagger which has been extended to include pull requests to support the latest swagger.io annotations.
 https://github.com/swagger-akka-http/swagger-akka-http is an actively maintained Akka-Http equivalent.
 
-The swagger spec [swagger spec](http://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
+The  [Swagger Spec](http://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
 
 ## Getting Swagger-Spray
 
