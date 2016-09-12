@@ -4,19 +4,23 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.11.8"
 
+val swaggerVersion = "1.5.10"
+
+val akkaVersion = "2.4.10"
+
 checksums in update := Nil
 
 EclipseKeys.withSource := true
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-http-experimental" % "2.4.8", 
-  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.8",
-  "com.typesafe.akka" %% "akka-http-testkit" % "2.4.8" % "test",
+  "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % "test",
   "io.swagger" %% "swagger-scala-module" % "1.0.2",
-  "io.swagger" % "swagger-core" % "1.5.9",
-  "io.swagger" % "swagger-annotations" % "1.5.9",
-  "io.swagger" % "swagger-models" % "1.5.9",
-  "io.swagger" % "swagger-jaxrs" % "1.5.9",
+  "io.swagger" % "swagger-core" % swaggerVersion,
+  "io.swagger" % "swagger-annotations" % swaggerVersion,
+  "io.swagger" % "swagger-models" % swaggerVersion,
+  "io.swagger" % "swagger-jaxrs" % swaggerVersion,
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "org.json4s" %% "json4s-jackson" % "3.2.11" % "test",
   "joda-time" % "joda-time" % "2.8" % "test",
