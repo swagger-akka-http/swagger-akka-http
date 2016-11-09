@@ -81,10 +81,11 @@ trait SwaggerHttpService extends Directives with SprayJsonSupport {
   
   def toJsonString(s: Swagger): String = Json.mapper().writeValueAsString(s)
   
-  val routes: Route = get {
+  lazy val routes: Route =
     path(removeInitialSlashIfNecessary(apiDocsPath) / "swagger.json") {
-      complete(toJsonString(swagger).parseJson.asJsObject)
+      get {
+        complete(toJsonString(swagger).parseJson.asJsObject)
+      }
     }
-  }
 
 }

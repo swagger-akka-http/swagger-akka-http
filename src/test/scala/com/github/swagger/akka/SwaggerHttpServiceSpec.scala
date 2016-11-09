@@ -14,6 +14,8 @@ import akka.http.scaladsl.client.RequestBuilding._
 import akka.http.scaladsl.marshalling._
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers._
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit._
 import akka.http.scaladsl.unmarshalling._
 import akka.stream.ActorMaterializer
@@ -75,6 +77,20 @@ class SwaggerHttpServiceSpec
           (response \ "info" \ "version").extract[String] shouldEqual swaggerService.info.version
           (response \ "info" \ "contact").extract[Option[Contact]] shouldEqual swaggerService.info.contact
           (response \ "info" \ "license").extract[Option[License]] shouldEqual swaggerService.info.license
+        }
+      }
+    }
+
+    "concatenated with other route" should {
+      "not affect matching" in {
+        val myRoute = path("p1" / "p2") {
+          delete {
+            complete("ok")
+          }
+        }
+        Delete("/p1/wrong") ~> Route.seal(myRoute ~ swaggerService.routes) ~> check {
+          status shouldNot be(StatusCodes.MethodNotAllowed)
+          status shouldBe StatusCodes.NotFound
         }
       }
     }
