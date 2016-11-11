@@ -20,7 +20,7 @@ The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Mave
 ```sbt
 libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.7.3"
 ```
-swagger-akka-http 0.8.0-SNAPSHOT os available in sonatype snapshots repository and it targets Akka Http 3.0.0-RC1.
+swagger-akka-http 0.8.0-SNAPSHOT is available in sonatype snapshots repository and it targets Akka Http 3.0.0-RC1.
 
 Scala 2.10 support for akka-http 2.0.3 requires swagger-akka-http 0.6.2.
 
