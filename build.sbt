@@ -6,16 +6,17 @@ scalaVersion := "2.11.8"
 
 val swaggerVersion = "1.5.10"
 
-val akkaHttpVersion = "2.4.11"
+val akkaHttpVersion = "3.0.0-RC1"
 
 checksums in update := Nil
 
 EclipseKeys.withSource := true
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-http-experimental" % akkaHttpVersion,
-  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaHttpVersion,
+  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
+  "com.typesafe.akka" %% "akka-testkit" % "2.4.12" % "test",
   "io.swagger" %% "swagger-scala-module" % "1.0.2",
   "io.swagger" % "swagger-core" % swaggerVersion,
   "io.swagger" % "swagger-annotations" % swaggerVersion,
