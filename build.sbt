@@ -17,6 +17,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
   "com.typesafe.akka" %% "akka-testkit" % "2.4.12" % "test",
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.4",
   "io.swagger" %% "swagger-scala-module" % "1.0.2",
   "io.swagger" % "swagger-core" % swaggerVersion,
   "io.swagger" % "swagger-annotations" % swaggerVersion,
