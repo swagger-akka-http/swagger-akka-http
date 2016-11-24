@@ -6,7 +6,7 @@ scalaVersion := "2.11.8"
 
 val swaggerVersion = "1.5.10"
 
-val akkaHttpVersion = "10.0.0-RC2"
+val akkaHttpVersion = "10.0.0"
 
 checksums in update := Nil
 
