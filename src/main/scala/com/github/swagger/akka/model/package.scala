@@ -1,6 +1,7 @@
 package com.github.swagger.akka
 
 import scala.collection.JavaConverters._
+import scala.language.implicitConversions
 import io.swagger.models.{
 Info ⇒ SwaggerInfo,
 Contact ⇒ SwaggerContact,

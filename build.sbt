@@ -14,7 +14,7 @@ EclipseKeys.withSource := true
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-  "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
+  "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % "test",
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
   "io.swagger" %% "swagger-scala-module" % "1.0.2",
   "io.swagger" % "swagger-core" % swaggerVersion,

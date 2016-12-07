@@ -2,13 +2,11 @@ package com.github.swagger.akka
 
 import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe.Type
-
 import com.github.swagger.akka.model.Info
 import com.github.swagger.akka.model.scala2swagger
-
 import akka.actor.ActorSystem
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.marshalling.ToResponseMarshallable.apply
+import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.Directive.addByNameNullaryApply
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.stream.ActorMaterializer
@@ -17,7 +15,6 @@ import io.swagger.jaxrs.config.ReaderConfig
 import io.swagger.models.{ExternalDocs, Scheme, Swagger}
 import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.util.Json
-import spray.json.pimpString
 
 /**
  * @author rleibman
@@ -29,8 +26,8 @@ trait HasActorSystem {
 
 object SwaggerHttpService {
   val readerConfig = new ReaderConfig {
-    def getIgnoredRoutes(): java.util.Collection[String] = List().asJavaCollection
-    def isScanAllResources(): Boolean = false
+    def getIgnoredRoutes: java.util.Collection[String] = List().asJavaCollection
+    def isScanAllResources: Boolean = false
   }
   
   def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] ={
@@ -43,14 +40,14 @@ object SwaggerHttpService {
     if (typeSymbol.isModuleClass) {
       val idx = fullName.lastIndexOf('.')
       if (idx >=0) {
-        val mangledName = s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1,fullName.size)}$$"
+        val mangledName = s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1, fullName.length)}$$"
         mangledName
       } else fullName
     } else fullName
   }
 }
 
-trait SwaggerHttpService extends Directives with SprayJsonSupport {
+trait SwaggerHttpService extends Directives {
   this: HasActorSystem ⇒
 
   import SwaggerHttpService._
@@ -84,7 +81,7 @@ trait SwaggerHttpService extends Directives with SprayJsonSupport {
   lazy val routes: Route =
     path(removeInitialSlashIfNecessary(apiDocsPath) / "swagger.json") {
       get {
-        complete(toJsonString(swagger).parseJson.asJsObject)
+        complete(HttpEntity(MediaTypes.`application/json`, toJsonString(swagger)))
       }
     }
 
