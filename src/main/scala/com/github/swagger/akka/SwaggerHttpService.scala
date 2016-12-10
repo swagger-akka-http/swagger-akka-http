@@ -15,6 +15,7 @@ import io.swagger.jaxrs.config.ReaderConfig
 import io.swagger.models.{ExternalDocs, Scheme, Swagger}
 import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.util.Json
+import org.slf4j.LoggerFactory
 
 /**
  * @author rleibman
@@ -25,15 +26,18 @@ trait HasActorSystem {
 }
 
 object SwaggerHttpService {
+
+  val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
+
   val readerConfig = new ReaderConfig {
     def getIgnoredRoutes: java.util.Collection[String] = List().asJavaCollection
     def isScanAllResources: Boolean = false
   }
-  
+
   def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] ={
     apiTypes.map(t => Class.forName(getClassNameForType(t))).toSet
   }
-    
+
   def getClassNameForType(t: Type): String ={
     val typeSymbol = t.typeSymbol
     val fullName = typeSymbol.fullName
@@ -71,18 +75,26 @@ trait SwaggerHttpService extends Directives {
   }
 
   def reader = new Reader(swaggerConfig, readerConfig)
-  def swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
-  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path" 
+  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
   def removeInitialSlashIfNecessary(path: String): String =
-    if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path 
-  
-  def toJsonString(s: Swagger): String = Json.mapper().writeValueAsString(s)
-  
+    if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
+
+  def generateSwaggerDocs: String = {
+    try {
+      val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
+      Json.mapper().writeValueAsString(swagger)
+    } catch {
+      case t: Throwable => {
+        logger.error("Issue with creating swagger.json", t)
+        throw t
+      }
+    }
+  }
+
   lazy val routes: Route =
     path(removeInitialSlashIfNecessary(apiDocsPath) / "swagger.json") {
       get {
-        complete(HttpEntity(MediaTypes.`application/json`, toJsonString(swagger)))
+        complete(HttpEntity(MediaTypes.`application/json`, generateSwaggerDocs))
       }
     }
-
 }

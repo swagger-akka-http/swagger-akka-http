@@ -5,8 +5,8 @@ name := "swagger-akka-http"
 scalaVersion := "2.11.8"
 
 val swaggerVersion = "1.5.10"
-
 val akkaHttpVersion = "10.0.0"
+val slf4jVersion = "1.7.7"
 
 checksums in update := Nil
 
@@ -21,11 +21,12 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-annotations" % swaggerVersion,
   "io.swagger" % "swagger-models" % swaggerVersion,
   "io.swagger" % "swagger-jaxrs" % swaggerVersion,
+  "org.slf4j" % "slf4j-api" % slf4jVersion,
   "org.scalatest" %% "scalatest" % "3.0.1" % "test",
   "org.json4s" %% "json4s-native" % "3.4.2" % "test",
   "joda-time" % "joda-time" % "2.8" % "test",
   "org.joda" % "joda-convert" % "1.7" % "test",
-  "org.slf4j" % "slf4j-simple" % "1.7.7" % "test"
+  "org.slf4j" % "slf4j-simple" % slf4jVersion % "test"
 )
 
 testOptions in Test += Tests.Argument("-oD")
