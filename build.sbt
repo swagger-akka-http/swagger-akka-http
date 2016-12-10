@@ -4,7 +4,9 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.11.8"
 
-val swaggerVersion = "1.5.10"
+resolvers += "jitpack" at "https://jitpack.io"
+
+val swaggerVersion = "v1.5.11-jackson-2.8-0.2"
 val akkaHttpVersion = "10.0.0"
 val slf4jVersion = "1.7.7"
 
@@ -16,10 +18,10 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % "test",
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
-  "io.swagger" % "swagger-core" % swaggerVersion,
-  "io.swagger" % "swagger-annotations" % swaggerVersion,
-  "io.swagger" % "swagger-models" % swaggerVersion,
-  "io.swagger" % "swagger-jaxrs" % swaggerVersion,
+  "com.github.pjfanning.swagger-core" % "swagger-core" % swaggerVersion,
+  "com.github.pjfanning.swagger-core" % "swagger-annotations" % swaggerVersion,
+  "com.github.pjfanning.swagger-core" % "swagger-models" % swaggerVersion,
+  "com.github.pjfanning.swagger-core" % "swagger-jaxrs" % swaggerVersion,
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.4",
   "org.scalatest" %% "scalatest" % "3.0.1" % "test",
