@@ -24,7 +24,7 @@ swagger-akka-http 0.8.0 is available in sonatype repository and it targets Akka 
 
 Scala 2.10 support for akka-http 2.0.3 requires swagger-akka-http 0.6.2.
 
-Scala 2.12 is not yet supported. One issue is that swagger-scala-module support for 2.12 is not yet released.
+Scala 2.12 is supported in 0.8.2-SNAPSHOT. This snapshot requires some patches to the core swagger code.
 
 ## Examples
 
