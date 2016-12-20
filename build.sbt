@@ -6,8 +6,9 @@ scalaVersion := "2.11.8"
 
 resolvers += "jitpack" at "https://jitpack.io"
 
-val swaggerVersion = "v1.5.11-jackson-2.8-0.2"
+val swaggerVersion = "v1.5.10.1"
 val akkaHttpVersion = "10.0.0"
+val jacksonVersion = "2.8.4"
 val slf4jVersion = "1.7.7"
 
 checksums in update := Nil
@@ -23,7 +24,11 @@ libraryDependencies ++= Seq(
   "com.github.pjfanning.swagger-core" % "swagger-models" % swaggerVersion,
   "com.github.pjfanning.swagger-core" % "swagger-jaxrs" % swaggerVersion,
   "org.slf4j" % "slf4j-api" % slf4jVersion,
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.4",
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
+  "com.fasterxml.jackson.jaxrs" % "jackson-jaxrs-json-provider" % jacksonVersion,
+  "com.fasterxml.jackson.dataformat" % "jackson-dataformat-xml" % jacksonVersion,
+  "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % jacksonVersion,
   "org.scalatest" %% "scalatest" % "3.0.1" % "test",
   "org.json4s" %% "json4s-native" % "3.4.2" % "test",
   "joda-time" % "joda-time" % "2.8" % "test",
