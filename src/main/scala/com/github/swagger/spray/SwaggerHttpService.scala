@@ -2,6 +2,7 @@ package com.github.swagger.spray
 
 import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe.Type
+
 import com.github.swagger.spray.model._
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
@@ -9,7 +10,7 @@ import io.swagger.models.{ExternalDocs, Scheme, Swagger}
 import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.util.Json
 import spray.http.MediaTypes
-import spray.routing.{ HttpService, Route }
+import spray.routing.{HttpService, PathMatcher0, Route}
 
 object SwaggerHttpService {
   val readerConfig = new ReaderConfig {
@@ -60,7 +61,8 @@ trait SwaggerHttpService extends HttpService {
 
   def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path" 
   def removeInitialSlashIfNecessary(path: String): String =
-    if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path 
+    if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
+  def splitOnSlash(path:String): PathMatcher0 = path.split("/").map(segmentStringToPathMatcher).reduceLeft(_ / _)
 
   def reader: Reader = new Reader(swaggerConfig, readerConfig)
   def swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
@@ -70,7 +72,7 @@ trait SwaggerHttpService extends HttpService {
   lazy val routes: Route = get {
     import MediaTypes._
 
-    path(removeInitialSlashIfNecessary(apiDocsPath) / "swagger.json") {
+    path(splitOnSlash(removeInitialSlashIfNecessary(apiDocsPath)) / "swagger.json") {
       respondWithMediaType(`application/json`) {
         complete(toJsonString(swagger))
       }
