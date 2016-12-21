@@ -6,7 +6,7 @@ scalaVersion := "2.11.8"
 
 resolvers += "jitpack" at "https://jitpack.io"
 
-val swaggerVersion = "v1.5.10.2"
+val swaggerVersion = "v1.5.10.5"
 val akkaHttpVersion = "10.0.0"
 val jacksonVersion = "2.8.4"
 val slf4jVersion = "1.7.7"
