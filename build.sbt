@@ -14,16 +14,16 @@ scalaVersion := "2.11.8"
 checksums in update := Nil
 
 libraryDependencies ++= Seq(
-  "io.spray" %% "spray-routing" % "1.3.3",
-  "io.spray" %% "spray-testkit" % "1.3.3" % "test",
+  "io.spray" %% "spray-routing" % "1.3.4",
+  "io.spray" %% "spray-testkit" % "1.3.4" % "test",
   "io.spray" %% "spray-json" % "1.3.2",
   "com.typesafe.akka" %% "akka-actor" % "2.3.11",
   "io.swagger" %% "swagger-scala-module" % "1.0.2",
-  "io.swagger" % "swagger-core" % "1.5.9",
-  "io.swagger" % "swagger-annotations" % "1.5.9",
-  "io.swagger" % "swagger-models" % "1.5.9",
-  "io.swagger" % "swagger-jaxrs" % "1.5.9",
-  "org.scalatest" %% "scalatest" % "2.2.6" % "test" ,
+  "io.swagger" % "swagger-core" % "1.5.10",
+  "io.swagger" % "swagger-annotations" % "1.5.10",
+  "io.swagger" % "swagger-models" % "1.5.10",
+  "io.swagger" % "swagger-jaxrs" % "1.5.10",
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test" ,
   "org.json4s" %% "json4s-jackson" % "3.2.11" % "test",
   "org.json4s" %% "json4s-native" % "3.2.11" % "test",
   "joda-time" % "joda-time" % "2.8" % "test",
