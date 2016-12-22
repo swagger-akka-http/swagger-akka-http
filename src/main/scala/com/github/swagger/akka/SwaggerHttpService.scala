@@ -13,6 +13,7 @@ import io.swagger.jaxrs.config.ReaderConfig
 import io.swagger.models.{ExternalDocs, Scheme, Swagger}
 import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.util.Json
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 
 /**
@@ -57,7 +58,7 @@ trait SwaggerHttpService extends Directives {
 
   import SwaggerHttpService._
   val apiTypes: Seq[Type]
-  val host: String = "localhost"
+  val host: String = ""
   val basePath: String = "/"
   val apiDocsPath: String = "api-docs"
   val info: Info = Info()
@@ -67,7 +68,8 @@ trait SwaggerHttpService extends Directives {
 
   def swaggerConfig: Swagger = {
     val modifiedPath = prependSlashIfNecessary(basePath)
-    val swagger = new Swagger().basePath(modifiedPath).host(host).info(info).scheme(scheme)
+    val swagger = new Swagger().basePath(modifiedPath).info(info).scheme(scheme)
+    if(StringUtils.isNotBlank(host)) swagger.host(host)
     swagger.setSecurityDefinitions(securitySchemeDefinitions.asJava)
     externalDocs match {
       case Some(ed) => swagger.externalDocs(ed)
