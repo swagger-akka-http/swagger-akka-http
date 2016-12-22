@@ -1,6 +1,6 @@
 package com.github.swagger.spray
 
-import com.github.swagger.spray.model.{License, Contact, Info}
+import com.github.swagger.spray.model.{Contact, Info, License}
 import com.github.swagger.spray.samples._
 import akka.actor.ActorRefFactory
 import io.swagger.models.ExternalDocs
@@ -10,6 +10,7 @@ import org.json4s.jackson.Serialization
 import org.scalatest.{Matchers, WordSpec}
 import spray.http._
 import spray.httpx.Json4sJacksonSupport
+import spray.routing.HttpService
 import spray.testkit._
 import scala.collection.JavaConversions._
 import scala.reflect.runtime.universe._
@@ -68,6 +69,29 @@ class SwaggerHttpServiceSpec
       }
       "removeInitialSlashIfNecessary does not need to remove a slash" in {
         swaggerService.removeInitialSlashIfNecessary("api-doc") should equal ("api-doc")
+      }
+      def handle(tp: String, handle: Boolean, split: Boolean = true): Unit = {
+        val routes = new HttpService {
+          implicit def actorRefFactory: ActorRefFactory = system
+          lazy val routes =
+            if (split) path(swaggerService.splitOnSlash(tp) / "swagger.json") { get { complete("OK") } }
+            else path(tp / "swagger.json") { get { complete("OK") } }
+        }.routes
+        Get(s"/$tp/swagger.json") ~> routes ~> check {
+          if (!handle) handled should equal (false)
+          else response.entity.asString should equal("\"OK\"")
+        }
+      }
+      "splitOnSlash works without a slash" in {
+        handle("api-doc", true)
+        handle("/api-doc/post", false)
+        handle("/api-doc-post", false)
+        handle("/pre/api-doc", false)
+        handle("/pre-api-doc", false)
+      }
+      "splitOnSlash works with a slash (and we don't match the path without it)" in {
+        handle("v1/api-doc", true)
+        handle("v1/api-doc", false, false)
       }
     }
     "accessing the root doc path" should {
