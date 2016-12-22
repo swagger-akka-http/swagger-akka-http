@@ -1,35 +1,28 @@
 package com.github.swagger.akka
 
-import scala.reflect.runtime.universe._
+import scala.reflect.runtime.universe.typeOf
 import org.json4s._
 import org.json4s.native.JsonMethods._
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
-import akka.actor.ActorSystem
-import akka.http._
-import akka.http.scaladsl._
-import akka.http.scaladsl.client._
-import akka.http.scaladsl.client.RequestBuilding._
-import akka.http.scaladsl.marshalling._
+import akka.actor.{ActorRefFactory, ActorSystem}
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.model.headers._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.testkit._
-import akka.http.scaladsl.unmarshalling._
+import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.stream.ActorMaterializer
 import io.swagger.models.{ExternalDocs, Scheme}
 import io.swagger.models.auth.BasicAuthDefinition
-import spray.json._
-import spray.json.DefaultJsonProtocol._
 
 class SwaggerHttpServiceSpec
-    extends WordSpec
-    with Matchers
-    with ScalatestRouteTest {
+    extends WordSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest {
 
   val myMaterializer = materializer
+
+  override def afterAll {
+    system.terminate()
+  }
 
   val swaggerService = new SwaggerHttpService with HasActorSystem {
     override implicit val actorSystem: ActorSystem = system
@@ -94,6 +87,83 @@ class SwaggerHttpServiceSpec
         }
       }
     }
-  }
 
+    "defining a derived service" should {
+      "set the basePath" in {
+        swaggerService.basePath should equal ("api")
+      }
+      "set the apiDocsPath" in {
+        swaggerService.apiDocsPath should equal ("api-doc")
+      }
+      "prependSlashIfNecessary adds a slash" in {
+        swaggerService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
+      }
+      "prependSlashIfNecessary does not need to add a slash" in {
+        swaggerService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
+      }
+      "removeInitialSlashIfNecessary removes a slash" in {
+        SwaggerHttpService.removeInitialSlashIfNecessary("/api-doc") should equal ("api-doc")
+      }
+      "removeInitialSlashIfNecessary does not need to remove a slash" in {
+        SwaggerHttpService.removeInitialSlashIfNecessary("api-doc") should equal ("api-doc")
+      }
+    }
+
+    "defining an apiDocsPath" should {
+      def swaggerService(testPath: String) = new SwaggerHttpService with HasActorSystem {
+        override implicit val actorSystem: ActorSystem = system
+        override implicit val materializer: ActorMaterializer = myMaterializer
+        override val apiTypes = Seq(typeOf[UserHttpService])
+        override val apiDocsPath = testPath
+      }
+      def performGet(testPath: String) = {
+        Get(s"/${SwaggerHttpService.removeInitialSlashIfNecessary(testPath)}/swagger.json") ~> swaggerService(testPath).routes ~> check {
+          handled shouldBe true
+          contentType shouldBe ContentTypes.`application/json`
+        }
+      }
+      "support root slash" in {
+        performGet("/arbitrary")
+      }
+      "support root slash and path elements" in {
+        performGet("/arbitrary/path/to/docs")
+      }
+      "support no root slash" in {
+        performGet("arbitrary")
+      }
+      "support no root slash and path elements" in {
+        performGet("arbitrary/path/to/docs")
+      }
+    }
+
+    "not defining a host" should {
+      val swaggerService = new SwaggerHttpService with HasActorSystem {
+        override implicit val actorSystem: ActorSystem = system
+        override implicit val materializer: ActorMaterializer = myMaterializer
+        override val apiTypes = Seq(typeOf[UserHttpService])
+      }
+      "have swagger config with null host" in {
+        swaggerService.swaggerConfig.getHost shouldBe null
+      }
+    }
+
+    "defining a host" should {
+      def swaggerService(testHost: String) = new SwaggerHttpService with HasActorSystem {
+        override implicit val actorSystem: ActorSystem = system
+        override implicit val materializer: ActorMaterializer = myMaterializer
+        override val apiTypes = Seq(typeOf[UserHttpService])
+        override val host = testHost
+      }
+      "support empty host resulting in swagger config with null host" in {
+        swaggerService("").swaggerConfig.getHost shouldBe null
+      }
+      "support host with no port" in {
+        swaggerService("host.com").swaggerConfig.getHost shouldBe "host.com"
+      }
+      "support host with port" in {
+        swaggerService("host.com:98765").swaggerConfig.getHost shouldBe "host.com:98765"
+      }
+    }
+
+  }
 }
