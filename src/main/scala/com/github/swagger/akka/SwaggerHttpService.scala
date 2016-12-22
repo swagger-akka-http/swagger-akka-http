@@ -5,10 +5,8 @@ import scala.reflect.runtime.universe.Type
 import com.github.swagger.akka.model.Info
 import com.github.swagger.akka.model.scala2swagger
 import akka.actor.ActorSystem
-import akka.http.scaladsl.marshalling.ToResponseMarshallable.apply
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
-import akka.http.scaladsl.server.Directive.addByNameNullaryApply
-import akka.http.scaladsl.server.{Directives, Route}
+import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
 import akka.stream.ActorMaterializer
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
@@ -49,6 +47,9 @@ object SwaggerHttpService {
       } else fullName
     } else fullName
   }
+
+  def removeInitialSlashIfNecessary(path: String): String =
+    if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
 }
 
 trait SwaggerHttpService extends Directives {
@@ -76,8 +77,6 @@ trait SwaggerHttpService extends Directives {
 
   def reader = new Reader(swaggerConfig, readerConfig)
   def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
-  def removeInitialSlashIfNecessary(path: String): String =
-    if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
 
   def generateSwaggerDocs: String = {
     try {
@@ -92,7 +91,7 @@ trait SwaggerHttpService extends Directives {
   }
 
   lazy val routes: Route =
-    path(removeInitialSlashIfNecessary(apiDocsPath) / "swagger.json") {
+    path(PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(apiDocsPath)) / "swagger.json") {
       get {
         complete(HttpEntity(MediaTypes.`application/json`, generateSwaggerDocs))
       }
