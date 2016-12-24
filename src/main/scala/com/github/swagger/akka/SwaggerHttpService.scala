@@ -1,7 +1,21 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.swagger.akka
 
 import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe.Type
+import scala.util.control.NonFatal
 import com.github.swagger.akka.model.Info
 import com.github.swagger.akka.model.scala2swagger
 import akka.actor.ActorSystem
@@ -12,7 +26,7 @@ import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
 import io.swagger.models.{ExternalDocs, Scheme, Swagger}
 import io.swagger.models.auth.SecuritySchemeDefinition
-import io.swagger.util.Json
+import io.swagger.util.{Json, Yaml}
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 
@@ -42,7 +56,7 @@ object SwaggerHttpService {
     val fullName = typeSymbol.fullName
     if (typeSymbol.isModuleClass) {
       val idx = fullName.lastIndexOf('.')
-      if (idx >=0) {
+      if (idx >= 0) {
         val mangledName = s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1, fullName.length)}$$"
         mangledName
       } else fullName
@@ -80,22 +94,41 @@ trait SwaggerHttpService extends Directives {
   def reader = new Reader(swaggerConfig, readerConfig)
   def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
 
-  def generateSwaggerDocs: String = {
+  def generateSwaggerJson: String = {
     try {
       val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
-      Json.mapper().writeValueAsString(swagger)
+      Json.pretty().writeValueAsString(swagger)
     } catch {
-      case t: Throwable => {
+      case NonFatal(t) => {
         logger.error("Issue with creating swagger.json", t)
         throw t
       }
     }
   }
 
+  def generateSwaggerYaml: String = {
+    try {
+      val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
+      Yaml.pretty().writeValueAsString(swagger)
+    } catch {
+      case NonFatal(t) => {
+        logger.error("Issue with creating swagger.yaml", t)
+        throw t
+      }
+    }
+  }
+
+  lazy val apiDocsBase = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(apiDocsPath))
+
   lazy val routes: Route =
-    path(PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(apiDocsPath)) / "swagger.json") {
+    path(apiDocsBase / "swagger.json") {
       get {
-        complete(HttpEntity(MediaTypes.`application/json`, generateSwaggerDocs))
+        complete(HttpEntity(MediaTypes.`application/json`, generateSwaggerJson))
+      }
+    } ~
+    path(apiDocsBase / "swagger.yaml") {
+      get {
+        complete(HttpEntity(CustomMediaTypes.`text/vnd.yaml`, generateSwaggerYaml))
       }
     }
 }

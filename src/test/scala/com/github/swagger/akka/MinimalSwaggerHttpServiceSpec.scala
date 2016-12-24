@@ -1,9 +1,11 @@
 package com.github.swagger.akka
 
+import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe.typeOf
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
+import org.yaml.snakeyaml.Yaml
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
 import akka.actor.ActorSystem
@@ -52,6 +54,16 @@ class MinimalSwaggerHttpServiceSpec
           (response \ "info" \ "version").extract[String] shouldEqual ""
           (response \ "info" \ "contact").extract[Option[Contact]] shouldEqual None
           (response \ "info" \ "license").extract[Option[License]] shouldEqual None
+        }
+      }
+      "return the basic set of api info in yaml" in {
+        Get(s"/${swaggerService.apiDocsPath}/swagger.yaml") ~> swaggerService.routes ~> check {
+          handled shouldBe true
+          contentType shouldBe CustomMediaTypes.`text/vnd.yaml`.toContentType
+          val str = responseAs[String]
+          val yamlMap = new Yaml().load(str).asInstanceOf[java.util.Map[String, Object]].asScala
+          yamlMap.getOrElse("swagger", "-1.0") shouldEqual "2.0"
+          yamlMap.contains("host") shouldBe false
         }
       }
     }
