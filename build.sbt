@@ -5,11 +5,9 @@ name := "swagger-akka-http"
 scalaVersion := "2.11.8"
 
 resolvers += Resolver.sonatypeRepo("public")
-resolvers += Resolver.sonatypeRepo("snapshots")
 resolvers += DefaultMavenRepository
-//resolvers += "jitpack" at "https://jitpack.io"
 
-val swaggerVersion = "1.5.11-SNAPSHOT"
+val swaggerVersion = "1.5.12"
 val akkaHttpVersion = "10.0.0"
 val jacksonVersion = "2.8.4"
 val slf4jVersion = "1.7.7"
