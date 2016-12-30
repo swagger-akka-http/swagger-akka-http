@@ -57,7 +57,7 @@ object SwaggerHttpService {
     if (typeSymbol.isModuleClass) {
       val idx = fullName.lastIndexOf('.')
       if (idx >= 0) {
-        val mangledName = s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1, fullName.length)}$$"
+        val mangledName = s"${fullName.slice(0, idx)}.${fullName.slice(idx+1, fullName.length)}$$"
         mangledName
       } else fullName
     } else fullName
