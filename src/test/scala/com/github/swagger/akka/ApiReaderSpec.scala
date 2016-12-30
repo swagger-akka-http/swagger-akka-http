@@ -357,6 +357,20 @@ private def objectType(objectClass: Class[_]) = runtimeMirror(objectClass.getCla
         }
       }
     }
+
+    "passed an object that does not extend an HttpService" should {
+      val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
+      val reader = new Reader(swaggerConfig, readerConfig)
+      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(objectType(TestApiWithObject.getClass))))
+      "build the Swagger definition anyway" in {
+        swagger.getPaths() should have size (1)
+
+        swagger.getPaths().get("/test") should not be (null)
+
+        val getOperation = swagger.getPaths().get("/test").getGet()
+        getOperation should not be (null)
+      }
+    }
   }
 
 }

@@ -133,5 +133,6 @@ abstract class TestApiWithApiResponse {
 @Api(value = "/test")
 @Path("/test")
 object TestApiWithObject {
-
+  @ApiOperation(value = "testApiOperation", httpMethod = "GET")
+  def testOperation = {}
 }
