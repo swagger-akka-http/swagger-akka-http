@@ -74,6 +74,22 @@ class SwaggerHttpServiceSpec
       }
     }
 
+    "defining an HttpService on an inner object" should {
+      "return the basic set of api info" in {
+        val svc = new NestedService(system)
+
+        Get(s"/${svc.swaggerService.apiDocsPath}/swagger.json") ~> svc.swaggerService.routes ~> check {
+          handled shouldBe true
+          status.intValue shouldBe 200
+          contentType shouldBe ContentTypes.`application/json`
+          val str = responseAs[String]
+          val response = parse(str)
+          (response \ "swagger").extract[String] shouldEqual "2.0"
+          (response \ "paths" \ "/dogs" \ "get" \ "operationId").extract[String] shouldEqual "getDogs"
+        }
+      }
+    }
+
     "concatenated with other route" should {
       "not affect matching" in {
         val myRoute = path("p1" / "p2") {
