@@ -130,3 +130,8 @@ abstract class TestApiWithApiResponse {
   def testOperation
 }
 
+@Api(value = "/test")
+@Path("/test")
+object TestApiWithObject {
+
+}
