@@ -17,21 +17,36 @@ object SwaggerHttpService {
     def getIgnoredRoutes(): java.util.Collection[String] = List[String]().asJavaCollection
     def isScanAllResources(): Boolean = false
   }
-  
-  def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] ={
+
+  def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] = {
     apiTypes.map(t => Class.forName(getClassNameForType(t))).toSet
   }
 
-  def getClassNameForType(t: Type): String ={
+  def getClassNameForType(t: Type): String = {
+    def canFindClass(className: String): Boolean = {
+      try {
+        Class.forName(className) != null
+      } catch {
+        case t: Throwable => false
+      }
+    }
     val typeSymbol = t.typeSymbol
     val fullName = typeSymbol.fullName
     if (typeSymbol.isModuleClass) {
       val idx = fullName.lastIndexOf('.')
-      if (idx >=0) {
-        val mangledName = s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1,fullName.size)}$$"
-        mangledName
-      } else fullName
-    } else fullName
+      if (idx >= 0) {
+        val mangledName = s"${fullName.slice(0, idx)}.${fullName.slice(idx+1, fullName.length)}$$"
+        if(canFindClass(mangledName)) {
+          mangledName
+        } else {
+          s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1,fullName.size)}$$"
+        }
+      } else {
+        fullName
+      }
+    } else {
+      fullName
+    }
   }
 }
 
@@ -59,7 +74,7 @@ trait SwaggerHttpService extends HttpService {
     }
   }
 
-  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path" 
+  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
   def removeInitialSlashIfNecessary(path: String): String =
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
   def splitOnSlash(path:String): PathMatcher0 = path.split("/").map(segmentStringToPathMatcher).reduceLeft(_ / _)

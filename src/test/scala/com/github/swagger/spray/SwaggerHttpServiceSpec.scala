@@ -38,7 +38,7 @@ class SwaggerHttpServiceSpec
       termsOfService = "Lenient",
       contact = Some(Contact("James T. Kirk", "http://startrek.com", "captain@kirk.com")),
       license = Some(License("Apache", "http://license.apache.com")))
-      
+
     override val externalDocs = Some(new ExternalDocs("my docs", "http://com.example.com/about"))
     override val securitySchemeDefinitions = Map("basicAuth" -> new BasicAuthDefinition())
 
@@ -48,7 +48,6 @@ class SwaggerHttpServiceSpec
   implicit val formats = org.json4s.DefaultFormats
 
   implicit val json4sJacksonFormats: Formats = Serialization.formats(NoTypeHints)
-
 
   "The SwaggerHttpService" when {
     "defining a derived service" should {
@@ -130,12 +129,12 @@ class SwaggerHttpServiceSpec
           // Check for the owner sub-resource
           val ownerPath = (paths \ "/pet/{petId}/owner")
           (ownerPath \ "get" \ "operationId").extract[String] shouldEqual "readOwner"
-          
+
           val ed = swaggerService.externalDocs.getOrElse(throw new IllegalArgumentException("missing external docs"))
           (resp \ "externalDocs").extract[Map[String, String]] shouldEqual Map(
               "description" -> ed.getDescription, "url" -> ed.getUrl)
           (resp \ "securityDefinitions" \ "basicAuth").extract[Map[String, String]] shouldEqual Map("type" -> "basic")
-          
+
           (resp \ "info" \ "description").extract[String] shouldEqual swaggerService.info.description
           (resp \ "info" \ "title").extract[String] shouldEqual swaggerService.info.title
           (resp \ "info" \ "termsOfService").extract[String] shouldEqual swaggerService.info.termsOfService
@@ -152,11 +151,11 @@ class SwaggerHttpServiceSpec
 
         Get("http://some.domain.com/api-doc/swagger.json") ~> svc.swaggerService.routes ~> check {
           handled shouldBe true
-          status.intValue should be (200)
-          contentType should be (ContentTypes.`application/json`)
+          status.intValue shouldBe 200
+          contentType shouldBe ContentTypes.`application/json`
           val resp: JValue = responseAs[JValue]
-          (resp \ "swagger").extract[String] should equal ("2.0")
-          (resp \ "paths" \ "/dogs" \ "get" \ "operationId").extract[String] shouldEqual ("getDogs")
+          (resp \ "swagger").extract[String] shouldEqual "2.0"
+          (resp \ "paths" \ "/dogs" \ "get" \ "operationId").extract[String] shouldEqual "getDogs"
         }
       }
     }

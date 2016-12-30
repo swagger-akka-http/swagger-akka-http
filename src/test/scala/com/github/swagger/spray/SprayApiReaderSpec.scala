@@ -39,6 +39,9 @@ class SprayApiReaderSpec
 
   val swaggerInfo = new Info().version(API_VERSION)
 
+  private def objectType(objectClass: Class[_]) =
+    runtimeMirror(objectClass.getClassLoader).classSymbol(objectClass).toType
+
   "The Reader object" when {
     "passed an api with no annotation" should {
       "product a Swagger instance without any paths" in {
@@ -341,6 +344,30 @@ class SprayApiReaderSpec
         ops should have size (1)
         val resp200 = ops.head.getResponses().get("200")
         resp200 should not be (null)
+      }
+    }
+
+    "passed an object as service" should {
+      val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
+      val reader = new Reader(swaggerConfig, readerConfig)
+      "build the Swagger definition without errors" in {
+        noException should be thrownBy {
+          reader.read(toJavaTypeSet(Seq(objectType(TestApiWithObject.getClass))))
+        }
+      }
+    }
+
+    "passed an object that does not extend an HttpService" should {
+      val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
+      val reader = new Reader(swaggerConfig, readerConfig)
+      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(objectType(TestApiWithObject.getClass))))
+      "build the Swagger definition anyway" in {
+        swagger.getPaths() should have size (1)
+
+        swagger.getPaths().get("/test") should not be (null)
+
+        val getOperation = swagger.getPaths().get("/test").getGet()
+        getOperation should not be (null)
       }
     }
   }

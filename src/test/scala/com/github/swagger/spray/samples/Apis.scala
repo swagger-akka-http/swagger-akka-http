@@ -131,3 +131,9 @@ abstract class TestApiWithApiResponse extends HttpService {
   def testOperation
 }
 
+@Api(value = "/test")
+@Path("/test")
+object TestApiWithObject {
+  @ApiOperation(value = "testApiOperation", httpMethod = "GET")
+  def testOperation = {}
+}
