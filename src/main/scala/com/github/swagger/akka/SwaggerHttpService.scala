@@ -51,8 +51,9 @@ object SwaggerHttpService {
     apiTypes.map(t => getClassForType(t)).toSet
   }
 
+  private lazy val mirror = scala.reflect.runtime.universe.runtimeMirror(getClass.getClassLoader)
+
   def getClassForType(t: Type): Class[_] = {
-    val mirror = scala.reflect.runtime.universe.runtimeMirror(getClass.getClassLoader)
     mirror.runtimeClass(t.typeSymbol.asClass)
   }
 
