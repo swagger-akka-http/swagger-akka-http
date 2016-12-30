@@ -18,13 +18,13 @@ The [swagger spec](http://swagger.io/specification/) is helpful for understandin
 The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.11. Snapshot releases are also hosted on sonatype. 
 
 ```sbt
-libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.8.1"
+libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.8.2"
 ```
-swagger-akka-http 0.8.0 is available in sonatype repository and it targets Akka Http 10.0.0.
+swagger-akka-http 0.8.2 is available in sonatype repository and it targets Akka Http 10.0.0.
 
 Scala 2.10 support for akka-http 2.0.3 requires swagger-akka-http 0.6.2.
 
-Scala 2.12 is supported in 0.8.2-SNAPSHOT. This snapshot requires some patches to the core swagger code.
+Scala 2.12 is supported in 0.9.0-SNAPSHOT. This snapshot requires some patches to the core swagger code.
 
 ## Examples
 
