@@ -30,24 +30,24 @@ class SwaggerModelConverterSpec
   "The ModelConverter object" when {
     "passed an annotated scala class" should {
       "produce a Swagger Model" in {
-          val schemas = ModelConverters.getInstance().readAll(classOf[ModelBase])
-          val userSchema = schemas.get ("ModelBase")
-          userSchema.getDescription() should equal (ModelBaseDescription)
-          val name = userSchema.getProperties().get("name")
-          name.isInstanceOf[StringProperty] should be (true)
-          name.getDescription() should equal ("name123")
-        }
+        val schemas = ModelConverters.getInstance().readAll(classOf[ModelBase])
+        val userSchema = schemas.get ("ModelBase")
+        userSchema.getDescription() should equal (ModelBaseDescription)
+        val name = userSchema.getProperties().get("name")
+        name.isInstanceOf[StringProperty] should be (true)
+        name.getDescription() should equal ("name123")
+      }
       "include the base class details in the Swagger Model" in {
-          val schemas = ModelConverters.getInstance().readAll(classOf[ModelExtension])
-          val userSchema = schemas.get ("ModelExtension")
-          userSchema.getDescription() should equal (ModelExtensionDescription)
-          val name = userSchema.getProperties().get("name")
-          name.getDescription() should equal (NameDescription)
-          val date = userSchema.getProperties().get("date")
-          date.getDescription() should equal (EndDateDescription)
-        }
+        val schemas = ModelConverters.getInstance().readAll(classOf[ModelExtension])
+        val userSchema = schemas.get ("ModelExtension")
+        userSchema.getDescription() should equal (ModelExtensionDescription)
+        val name = userSchema.getProperties().get("name")
+        name.getDescription() should equal (NameDescription)
+        val date = userSchema.getProperties().get("date")
+        date.getDescription() should equal (EndDateDescription)
+      }
       //@ApiOperation position is deprecated and ignored in Swagger 1.5.X
-	    "order fields by position in the Swagger Model" ignore {
+      "order fields by position in the Swagger Model" ignore {
         val schemas = ModelConverters.getInstance().readAll(classOf[TestModelPositions])
         val userSchema = schemas.get ("TestModelPositions")
         userSchema should not be (null)
