@@ -2,6 +2,7 @@ package com.github.swagger.spray
 
 import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe.Type
+import scala.util.control.NonFatal
 
 import com.github.swagger.spray.model._
 import io.swagger.jaxrs.Reader
@@ -9,44 +10,27 @@ import io.swagger.jaxrs.config.ReaderConfig
 import io.swagger.models.{ExternalDocs, Scheme, Swagger}
 import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.util.Json
+import org.slf4j.LoggerFactory
 import spray.http.MediaTypes
 import spray.routing.{HttpService, PathMatcher0, Route}
 
 object SwaggerHttpService {
+
+  val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
+
   val readerConfig = new ReaderConfig {
-    def getIgnoredRoutes(): java.util.Collection[String] = List[String]().asJavaCollection
-    def isScanAllResources(): Boolean = false
+    def getIgnoredRoutes: java.util.Collection[String] = List[String]().asJavaCollection
+    def isScanAllResources: Boolean = false
   }
 
   def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] = {
-    apiTypes.map(t => Class.forName(getClassNameForType(t))).toSet
+    apiTypes.map(t => getClassForType(t)).toSet
   }
 
-  def getClassNameForType(t: Type): String = {
-    def canFindClass(className: String): Boolean = {
-      try {
-        Class.forName(className) != null
-      } catch {
-        case t: Throwable => false
-      }
-    }
-    val typeSymbol = t.typeSymbol
-    val fullName = typeSymbol.fullName
-    if (typeSymbol.isModuleClass) {
-      val idx = fullName.lastIndexOf('.')
-      if (idx >= 0) {
-        val mangledName = s"${fullName.slice(0, idx)}.${fullName.slice(idx+1, fullName.length)}$$"
-        if(canFindClass(mangledName)) {
-          mangledName
-        } else {
-          s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1,fullName.size)}$$"
-        }
-      } else {
-        fullName
-      }
-    } else {
-      fullName
-    }
+  private lazy val mirror = scala.reflect.runtime.universe.runtimeMirror(getClass.getClassLoader)
+
+  def getClassForType(t: Type): Class[_] = {
+    mirror.runtimeClass(t.typeSymbol.asClass)
   }
 }
 
@@ -80,16 +64,25 @@ trait SwaggerHttpService extends HttpService {
   def splitOnSlash(path:String): PathMatcher0 = path.split("/").map(segmentStringToPathMatcher).reduceLeft(_ / _)
 
   def reader: Reader = new Reader(swaggerConfig, readerConfig)
-  def swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
 
-  def toJsonString(s: Swagger): String = Json.mapper().writeValueAsString(s)
+  def generateSwaggerJson: String = {
+    try {
+      val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
+      Json.pretty().writeValueAsString(swagger)
+    } catch {
+      case NonFatal(t) => {
+        logger.error("Issue with creating swagger.json", t)
+        throw t
+      }
+    }
+  }
 
   lazy val routes: Route = get {
     import MediaTypes._
 
     path(splitOnSlash(removeInitialSlashIfNecessary(apiDocsPath)) / "swagger.json") {
       respondWithMediaType(`application/json`) {
-        complete(toJsonString(swagger))
+        complete(generateSwaggerJson)
       }
     }
   }
