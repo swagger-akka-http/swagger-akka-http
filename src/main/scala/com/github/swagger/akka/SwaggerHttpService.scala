@@ -47,20 +47,35 @@ object SwaggerHttpService {
     def isScanAllResources: Boolean = false
   }
 
-  def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] ={
+  def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] = {
     apiTypes.map(t => Class.forName(getClassNameForType(t))).toSet
   }
 
-  def getClassNameForType(t: Type): String ={
+  def getClassNameForType(t: Type): String = {
+    def canFindClass(className: String): Boolean = {
+      try {
+        Class.forName(className) != null
+      } catch {
+        case t: Throwable => false
+      }
+    }
     val typeSymbol = t.typeSymbol
     val fullName = typeSymbol.fullName
     if (typeSymbol.isModuleClass) {
       val idx = fullName.lastIndexOf('.')
       if (idx >= 0) {
         val mangledName = s"${fullName.slice(0, idx)}.${fullName.slice(idx+1, fullName.length)}$$"
-        mangledName
-      } else fullName
-    } else fullName
+        if(canFindClass(mangledName)) {
+          mangledName
+        } else {
+          s"${fullName.slice(0, idx)}$$${fullName.slice(idx+1,fullName.size)}$$"
+        }
+      } else {
+        fullName
+      }
+    } else {
+      fullName
+    }
   }
 
   def removeInitialSlashIfNecessary(path: String): String =
