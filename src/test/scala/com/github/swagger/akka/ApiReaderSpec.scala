@@ -29,7 +29,6 @@ import javax.ws.rs.Path
 import scala.reflect.runtime.universe
 import com.github.swagger.akka.samples._
 
-
 class ApiReaderSpec
     extends WordSpec
     with Matchers {
@@ -41,7 +40,9 @@ class ApiReaderSpec
   val HOST = "www.example.com"
 
   val swaggerInfo = new Info().version(API_VERSION)
-private def objectType(objectClass: Class[_]) = runtimeMirror(objectClass.getClassLoader).classSymbol(objectClass).toType
+
+  private def objectType(objectClass: Class[_]) =
+    runtimeMirror(objectClass.getClassLoader).classSymbol(objectClass).toType
 
   "The Reader object" when {
     "passed an api with no annotation" should {
@@ -261,7 +262,7 @@ private def objectType(objectClass: Class[_]) = runtimeMirror(objectClass.getCla
     }
 
     //@ApiOperation position is deprecated and ignored in Swagger 1.5.X
-	  "passed a service with operations defined by position" ignore {
+    "passed a service with operations defined by position" ignore {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
       val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiWithOperationPositions])))
