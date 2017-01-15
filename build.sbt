@@ -4,26 +4,28 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.11.8"
 
-val swaggerVersion = "1.5.10"
-val akkaHttpVersion = "10.0.0"
+val swaggerVersion = "1.5.12"
+val akkaHttpVersion = "10.0.1"
+val jacksonVersion = "2.8.4"
 val slf4jVersion = "1.7.7"
 
 checksums in update := Nil
 
-EclipseKeys.withSource := true
+//EclipseKeys.withSource := true
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % "test",
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
-  "io.swagger" %% "swagger-scala-module" % "1.0.2",
   "io.swagger" % "swagger-core" % swaggerVersion,
   "io.swagger" % "swagger-annotations" % swaggerVersion,
   "io.swagger" % "swagger-models" % swaggerVersion,
   "io.swagger" % "swagger-jaxrs" % swaggerVersion,
   "org.slf4j" % "slf4j-api" % slf4jVersion,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
+  "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
   "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-  "org.json4s" %% "json4s-native" % "3.4.2" % "test",
+  "org.json4s" %% "json4s-native" % "3.5.0" % "test",
   "joda-time" % "joda-time" % "2.8" % "test",
   "org.joda" % "joda-convert" % "1.7" % "test",
   "org.slf4j" % "slf4j-simple" % slf4jVersion % "test"
