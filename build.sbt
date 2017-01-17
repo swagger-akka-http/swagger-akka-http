@@ -6,7 +6,7 @@ scalaVersion := "2.11.8"
 
 val swaggerVersion = "1.5.12"
 val akkaHttpVersion = "10.0.1"
-val jacksonVersion = "2.8.4"
+val jacksonVersion = "2.8.6"
 val slf4jVersion = "1.7.7"
 
 checksums in update := Nil
