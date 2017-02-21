@@ -2,10 +2,12 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.1"
+
+crossScalaVersions := Seq("2.11.8", "2.12.1")
 
 val swaggerVersion = "1.5.12"
-val akkaHttpVersion = "10.0.2"
+val akkaHttpVersion = "10.0.3"
 val jacksonVersion = "2.8.6"
 val slf4jVersion = "1.7.7"
 
