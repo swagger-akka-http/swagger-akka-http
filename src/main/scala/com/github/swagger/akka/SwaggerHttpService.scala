@@ -23,7 +23,7 @@ import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
 import akka.stream.ActorMaterializer
 import io.swagger.jaxrs.Reader
-import io.swagger.jaxrs.config.ReaderConfig
+import io.swagger.jaxrs.config.DefaultReaderConfig
 import io.swagger.models.{ExternalDocs, Scheme, Swagger}
 import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.util.{Json, Yaml}
@@ -41,11 +41,7 @@ trait HasActorSystem {
 object SwaggerHttpService {
 
   val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
-
-  val readerConfig = new ReaderConfig {
-    def getIgnoredRoutes: java.util.Collection[String] = List().asJavaCollection
-    def isScanAllResources: Boolean = false
-  }
+  val readerConfig = new DefaultReaderConfig
 
   def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] = {
     apiTypes.map(t => getClassForType(t)).toSet
