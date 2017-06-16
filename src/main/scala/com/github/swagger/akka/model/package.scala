@@ -84,4 +84,8 @@ package object model {
     ret.getVendorExtensions.putAll(convertMe.vendorExtensions.asJava)
     ret
   }
+
+  def untestedFunction(input: String): Unit = {
+    org.slf4j.LoggerFactory.getLogger(getClass).info("should have unit tests")
+  }
 }
