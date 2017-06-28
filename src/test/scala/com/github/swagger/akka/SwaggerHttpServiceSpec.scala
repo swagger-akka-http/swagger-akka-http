@@ -1,6 +1,7 @@
 package com.github.swagger.akka
 
 import scala.reflect.runtime.universe.typeOf
+import scala.collection.immutable.ListMap
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
@@ -178,6 +179,29 @@ class SwaggerHttpServiceSpec
       }
       "support host with port" in {
         swaggerService("host.com:98765").swaggerConfig.getHost shouldBe "host.com:98765"
+      }
+    }
+
+    "defining vendor extensions" should {
+      val swaggerService = new SwaggerHttpService with HasActorSystem {
+        override implicit val actorSystem: ActorSystem = system
+        override implicit val materializer: ActorMaterializer = myMaterializer
+        override val apiTypes = Seq(typeOf[UserHttpService])
+        override val apiDocsPath = "api-doc"
+        override val vendorExtensions = ListMap("x-service-name" -> "ums",
+                                                "x-service-version" -> "v1",
+                                                "x-service-interface" -> "rest")
+      }
+      "return all vendor extensions" in {
+        Get(s"/${swaggerService.apiDocsPath}/swagger.json") ~> swaggerService.routes ~> check {
+          handled shouldBe true
+          contentType shouldBe ContentTypes.`application/json`
+          val str = responseAs[String]
+          val response = parse(str)
+          (response \ "x-service-name").extract[String] shouldEqual "ums"
+          (response \ "x-service-version").extract[String] shouldEqual "v1"
+          (response \ "x-service-interface").extract[String] shouldEqual "rest"
+        }
       }
     }
 

@@ -69,6 +69,7 @@ trait SwaggerHttpService extends Directives {
   val scheme: Scheme = Scheme.HTTP
   val securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map()
   val externalDocs: Option[ExternalDocs] = None
+  val vendorExtensions: Map[String, Object] = Map.empty
 
   def swaggerConfig: Swagger = {
     val modifiedPath = prependSlashIfNecessary(basePath)
@@ -79,6 +80,7 @@ trait SwaggerHttpService extends Directives {
       case Some(ed) => swagger.externalDocs(ed)
       case None => swagger
     }
+    swagger.vendorExtensions(vendorExtensions.asJava)
   }
 
   def reader = new Reader(swaggerConfig, readerConfig)
