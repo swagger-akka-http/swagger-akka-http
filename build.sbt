@@ -7,13 +7,11 @@ scalaVersion := "2.12.2"
 crossScalaVersions := Seq("2.11.11", "2.12.2")
 
 val swaggerVersion = "1.5.15"
-val akkaHttpVersion = "10.0.7"
+val akkaHttpVersion = "10.0.9"
 val jacksonVersion = "2.8.9"
 val slf4jVersion = "1.7.22"
 
 checksums in update := Nil
-
-//EclipseKeys.withSource := true
 
 resolvers += Resolver.sonatypeRepo("releases")
 
