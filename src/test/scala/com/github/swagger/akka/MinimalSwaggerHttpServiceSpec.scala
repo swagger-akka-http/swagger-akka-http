@@ -8,23 +8,18 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 import org.yaml.snakeyaml.Yaml
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
-import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ContentTypes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import akka.stream.ActorMaterializer
 
 class MinimalSwaggerHttpServiceSpec
     extends WordSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest {
 
-  val myMaterializer = materializer
-
-  override def afterAll {
+  override def afterAll: Unit = {
+    super.afterAll()
     system.terminate()
   }
 
-  val swaggerService = new SwaggerHttpService with HasActorSystem {
-    override implicit val actorSystem: ActorSystem = system
-    override implicit val materializer: ActorMaterializer = myMaterializer
+  val swaggerService = new SwaggerHttpService {
     override val apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
   }
 

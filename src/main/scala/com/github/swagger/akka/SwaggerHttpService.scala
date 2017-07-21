@@ -18,10 +18,8 @@ import scala.reflect.runtime.universe.Type
 import scala.util.control.NonFatal
 import com.github.swagger.akka.model.Info
 import com.github.swagger.akka.model.scala2swagger
-import akka.actor.ActorSystem
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
-import akka.stream.ActorMaterializer
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.DefaultReaderConfig
 import io.swagger.models.{ExternalDocs, Scheme, Swagger}
@@ -29,14 +27,6 @@ import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.util.{Json, Yaml}
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
-
-/**
- * @author rleibman
- */
-trait HasActorSystem {
-  implicit val actorSystem: ActorSystem
-  implicit val materializer: ActorMaterializer
-}
 
 object SwaggerHttpService {
 
@@ -58,7 +48,6 @@ object SwaggerHttpService {
 }
 
 trait SwaggerHttpService extends Directives {
-  this: HasActorSystem ⇒
 
   import SwaggerHttpService._
   val apiTypes: Seq[Type]

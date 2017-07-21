@@ -7,27 +7,22 @@ import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
-import akka.actor.{ActorRefFactory, ActorSystem}
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import akka.stream.ActorMaterializer
 import io.swagger.models.{ExternalDocs, Scheme}
 import io.swagger.models.auth.BasicAuthDefinition
 
 class SwaggerHttpServiceSpec
     extends WordSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest {
 
-  val myMaterializer = materializer
-
-  override def afterAll {
+  override def afterAll: Unit = {
+    super.afterAll()
     system.terminate()
   }
 
-  val swaggerService = new SwaggerHttpService with HasActorSystem {
-    override implicit val actorSystem: ActorSystem = system
-    override implicit val materializer: ActorMaterializer = myMaterializer
+  val swaggerService = new SwaggerHttpService {
     override val apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
     override val basePath = "api"
     override val apiDocsPath = "api-doc"
@@ -127,9 +122,7 @@ class SwaggerHttpServiceSpec
     }
 
     "defining an apiDocsPath" should {
-      def swaggerService(testPath: String) = new SwaggerHttpService with HasActorSystem {
-        override implicit val actorSystem: ActorSystem = system
-        override implicit val materializer: ActorMaterializer = myMaterializer
+      def swaggerService(testPath: String) = new SwaggerHttpService {
         override val apiTypes = Seq(typeOf[UserHttpService])
         override val apiDocsPath = testPath
       }
@@ -154,9 +147,7 @@ class SwaggerHttpServiceSpec
     }
 
     "not defining a host" should {
-      val swaggerService = new SwaggerHttpService with HasActorSystem {
-        override implicit val actorSystem: ActorSystem = system
-        override implicit val materializer: ActorMaterializer = myMaterializer
+      val swaggerService = new SwaggerHttpService {
         override val apiTypes = Seq(typeOf[UserHttpService])
       }
       "have swagger config with null host" in {
@@ -165,9 +156,7 @@ class SwaggerHttpServiceSpec
     }
 
     "defining a host" should {
-      def swaggerService(testHost: String) = new SwaggerHttpService with HasActorSystem {
-        override implicit val actorSystem: ActorSystem = system
-        override implicit val materializer: ActorMaterializer = myMaterializer
+      def swaggerService(testHost: String) = new SwaggerHttpService {
         override val apiTypes = Seq(typeOf[UserHttpService])
         override val host = testHost
       }
@@ -183,9 +172,7 @@ class SwaggerHttpServiceSpec
     }
 
     "defining vendor extensions" should {
-      val swaggerService = new SwaggerHttpService with HasActorSystem {
-        override implicit val actorSystem: ActorSystem = system
-        override implicit val materializer: ActorMaterializer = myMaterializer
+      val swaggerService = new SwaggerHttpService {
         override val apiTypes = Seq(typeOf[UserHttpService])
         override val apiDocsPath = "api-doc"
         override val vendorExtensions = ListMap("x-service-name" -> "ums",

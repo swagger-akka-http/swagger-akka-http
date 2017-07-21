@@ -16,23 +16,20 @@
 package com.github.swagger.akka.samples
 
 import javax.ws.rs.Path
+
+import scala.reflect.runtime.universe._
+
 import com.github.swagger.akka._
 import com.github.swagger.akka.model.{License, Contact, Info}
+
 import akka.actor.{ActorRefFactory, ActorSystem}
 import akka.http.scaladsl.server.Directives
-import akka.stream.ActorMaterializer
 import io.swagger.annotations._
-import io.swagger.jaxrs.config.ReaderConfig
-import scala.reflect.runtime.universe._
-import scala.collection.JavaConversions._
 
 case class Dog(breed: String)
 
 class NestedService(system: ActorSystem) {self =>
-  val swaggerService = new SwaggerHttpService with HasActorSystem {
-    implicit val actorSystem = system
-    implicit val materializer: ActorMaterializer = ActorMaterializer()
-
+  val swaggerService = new SwaggerHttpService {
     override val apiTypes = Seq(typeOf[Dogs.type])
     override val host = "some.domain.com"
     override val basePath = "api-doc"
