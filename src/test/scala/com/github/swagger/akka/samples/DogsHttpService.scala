@@ -17,14 +17,18 @@ package com.github.swagger.akka.samples
 
 import javax.ws.rs.Path
 
-import scala.reflect.runtime.universe._
-
-import com.github.swagger.akka._
-import com.github.swagger.akka.model.{License, Contact, Info}
-
 import akka.actor.{ActorRefFactory, ActorSystem}
-import akka.http.scaladsl.server.Directives
+import akka.http.scaladsl.model.ContentTypes.`application/json`
+import akka.http.scaladsl.model.HttpMethods.OPTIONS
+import akka.http.scaladsl.model.StatusCodes.OK
+import akka.http.scaladsl.model.headers.`Access-Control-Allow-Methods`
+import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
+import akka.http.scaladsl.server.{Directives, Route}
+import com.github.swagger.akka._
+import com.github.swagger.akka.model.{Contact, Info, License}
 import io.swagger.annotations._
+
+import scala.reflect.runtime.universe._
 
 case class Dog(breed: String)
 
@@ -33,6 +37,7 @@ class NestedService(system: ActorSystem) {self =>
     override val apiTypes = Seq(typeOf[Dogs.type])
     override val host = "some.domain.com"
     override val basePath = "api-doc"
+    override val unwantedDefinitions = Seq("Function1", "Function1RequestContextFutureRouteResult")
 
     override val info: Info = Info(
       description = "Dogs love APIs",
@@ -45,7 +50,7 @@ class NestedService(system: ActorSystem) {self =>
     implicit def actorRefFactory: ActorRefFactory = system
   }
 
-  @Api(value="/dogs", description="This is the dogs resource")
+  @Api(value="/dogs")
   @Path(value = "/dogs")
   object Dogs extends Directives {
 
@@ -66,6 +71,17 @@ class NestedService(system: ActorSystem) {self =>
     ))
     def getDogs = path("dogs"){
       complete("dogs")
+    }
+
+    @ApiOperation(value="Options for dogs",
+      notes = "dog notes",
+      response = classOf[Void],
+      httpMethod = "OPTIONS"
+    )
+    @ApiResponses(Array(new ApiResponse(code = 200, message = "OK")))
+    def optionsRoute: Route = (path("dogs") & options) {
+      complete(HttpResponse(OK, entity = HttpEntity.empty(`application/json`),
+        headers = List(`Access-Control-Allow-Methods`(OPTIONS))))
     }
   }
 }
