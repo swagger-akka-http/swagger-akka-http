@@ -19,7 +19,7 @@ class MinimalSwaggerHttpServiceSpec
   }
 
   val swaggerService = new SwaggerHttpService {
-    override val apiClasses = Set(classOf[PetHttpService], classOf[UserHttpService])
+    override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
   }
 
   implicit val formats = org.json4s.DefaultFormats

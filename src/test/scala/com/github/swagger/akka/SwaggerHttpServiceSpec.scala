@@ -25,7 +25,7 @@ class SwaggerHttpServiceSpec
   }
 
   val swaggerService = new SwaggerHttpService {
-    override val apiClasses = Set(classOf[PetHttpService], classOf[UserHttpService])
+    override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
     override val basePath = "api"
     override val apiDocsPath = "api-doc"
     override val scheme = Scheme.HTTPS
@@ -146,7 +146,7 @@ class SwaggerHttpServiceSpec
 
     "defining an apiDocsPath" should {
       def swaggerService(testPath: String) = new SwaggerHttpService {
-        override val apiClasses = Set(classOf[UserHttpService])
+        override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
         override val apiDocsPath = testPath
       }
       def performGet(testPath: String) = {
@@ -171,7 +171,7 @@ class SwaggerHttpServiceSpec
 
     "not defining a host" should {
       val swaggerService = new SwaggerHttpService {
-        override val apiClasses = Set(classOf[UserHttpService])
+        override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
       }
       "have swagger config with null host" in {
         swaggerService.swaggerConfig.getHost shouldBe null
@@ -180,7 +180,7 @@ class SwaggerHttpServiceSpec
 
     "defining a host" should {
       def swaggerService(testHost: String) = new SwaggerHttpService {
-        override val apiClasses = Set(classOf[UserHttpService])
+        override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
         override val host = testHost
       }
       "support empty host resulting in swagger config with null host" in {
@@ -196,7 +196,7 @@ class SwaggerHttpServiceSpec
 
     "defining vendor extensions" should {
       val swaggerService = new SwaggerHttpService {
-        override val apiClasses = Set(classOf[UserHttpService])
+        override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
         override val apiDocsPath = "api-doc"
         override val vendorExtensions = ListMap("x-service-name" -> "ums",
                                                 "x-service-version" -> "v1",
