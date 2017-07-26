@@ -14,7 +14,6 @@
 package com.github.swagger.akka
 
 import scala.collection.JavaConverters._
-import scala.reflect.runtime.universe.Type
 import scala.util.control.NonFatal
 import com.github.swagger.akka.model.Info
 import com.github.swagger.akka.model.scala2swagger
@@ -33,16 +32,6 @@ object SwaggerHttpService {
   val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
   val readerConfig = new DefaultReaderConfig
 
-  def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] = {
-    apiTypes.map(t => getClassForType(t)).toSet
-  }
-
-  private lazy val mirror = scala.reflect.runtime.universe.runtimeMirror(getClass.getClassLoader)
-
-  def getClassForType(t: Type): Class[_] = {
-    mirror.runtimeClass(t.typeSymbol.asClass)
-  }
-
   def removeInitialSlashIfNecessary(path: String): String =
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
 }
@@ -50,7 +39,7 @@ object SwaggerHttpService {
 trait SwaggerHttpService extends Directives {
 
   import SwaggerHttpService._
-  val apiTypes: Seq[Type]
+  def apiClasses: Set[Class[_]]
   val host: String = ""
   val basePath: String = "/"
   val apiDocsPath: String = "api-docs"
@@ -99,7 +88,7 @@ trait SwaggerHttpService extends Directives {
   }
 
   private def filteredSwagger: Swagger = {
-    val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
+    val swagger: Swagger = reader.read(apiClasses.asJava)
     swagger.setDefinitions(swagger.getDefinitions.asScala.filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
     swagger
   }
