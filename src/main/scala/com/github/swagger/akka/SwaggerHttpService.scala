@@ -29,26 +29,29 @@ import org.slf4j.LoggerFactory
 
 object SwaggerHttpService {
 
-  val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
   val readerConfig = new DefaultReaderConfig
 
   def removeInitialSlashIfNecessary(path: String): String =
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
+  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
+
+  private def apiDocsBase(path: String) = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(path))
+  private val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
 }
 
 trait SwaggerHttpService extends Directives {
 
   import SwaggerHttpService._
   def apiClasses: Set[Class[_]]
-  val host: String = ""
-  val basePath: String = "/"
-  val apiDocsPath: String = "api-docs"
-  val info: Info = Info()
-  val scheme: Scheme = Scheme.HTTP
-  val securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map()
-  val externalDocs: Option[ExternalDocs] = None
-  val vendorExtensions: Map[String, Object] = Map.empty
-  val unwantedDefinitions: Seq[String] = Seq.empty
+  def host: String = ""
+  def basePath: String = "/"
+  def apiDocsPath: String = "api-docs"
+  def info: Info = Info()
+  def scheme: Scheme = Scheme.HTTP
+  def securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map.empty
+  def externalDocs: Option[ExternalDocs] = None
+  def vendorExtensions: Map[String, Object] = Map.empty
+  def unwantedDefinitions: Seq[String] = Seq.empty
 
   def swaggerConfig: Swagger = {
     val modifiedPath = prependSlashIfNecessary(basePath)
@@ -63,7 +66,6 @@ trait SwaggerHttpService extends Directives {
   }
 
   def reader = new Reader(swaggerConfig, readerConfig)
-  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
 
   def generateSwaggerJson: String = {
     try {
@@ -93,17 +95,17 @@ trait SwaggerHttpService extends Directives {
     swagger
   }
 
-  lazy val apiDocsBase = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(apiDocsPath))
-
-  lazy val routes: Route =
-    path(apiDocsBase / "swagger.json") {
+  def routes: Route = {
+    val base = apiDocsBase(apiDocsPath)
+    path(base / "swagger.json") {
       get {
         complete(HttpEntity(MediaTypes.`application/json`, generateSwaggerJson))
       }
     } ~
-    path(apiDocsBase / "swagger.yaml") {
-      get {
-        complete(HttpEntity(CustomMediaTypes.`text/vnd.yaml`, generateSwaggerYaml))
+      path(base / "swagger.yaml") {
+        get {
+          complete(HttpEntity(CustomMediaTypes.`text/vnd.yaml`, generateSwaggerYaml))
+        }
       }
-    }
+  }
 }

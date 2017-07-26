@@ -131,10 +131,10 @@ class SwaggerHttpServiceSpec
         swaggerService.apiDocsPath should equal ("api-doc")
       }
       "prependSlashIfNecessary adds a slash" in {
-        swaggerService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
+        SwaggerHttpService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
       }
       "prependSlashIfNecessary does not need to add a slash" in {
-        swaggerService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
+        SwaggerHttpService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
       }
       "removeInitialSlashIfNecessary removes a slash" in {
         SwaggerHttpService.removeInitialSlashIfNecessary("/api-doc") should equal ("api-doc")
