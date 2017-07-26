@@ -1,10 +1,13 @@
 package com.github.swagger.akka
 
+import java.util
+import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe.typeOf
 import scala.collection.immutable.ListMap
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
+import org.yaml.snakeyaml.Yaml
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
 import akka.http.scaladsl.model._
@@ -82,6 +85,27 @@ class SwaggerHttpServiceSpec
           val response = parse(str)
           (response \ "swagger").extract[String] shouldEqual "2.0"
           (response \ "paths" \ "/dogs" \ "get" \ "operationId").extract[String] shouldEqual "getDogs"
+        }
+      }
+      "return correct definitions in swagger json" in {
+        val svc = new NestedService(system)
+
+        Get(s"/${svc.swaggerService.apiDocsPath}/swagger.json") ~> svc.swaggerService.routes ~> check {
+          handled shouldBe true
+          status.intValue shouldBe 200
+          val definitions = (parse(responseAs[String]) \ "definitions").values.asInstanceOf[Map[String, String]].keys
+          definitions shouldBe Set("ListReply")
+        }
+      }
+      "return correct definitions in swagger yaml" in {
+        val svc = new NestedService(system)
+
+        Get(s"/${svc.swaggerService.apiDocsPath}/swagger.yaml") ~> svc.swaggerService.routes ~> check {
+          handled shouldBe true
+          status.intValue shouldBe 200
+          val yaml = new Yaml().load(responseAs[String]).asInstanceOf[util.Map[String, Object]].asScala
+          val definitions = yaml.get("definitions").map(_.asInstanceOf[util.LinkedHashMap[String, String]].asScala.keys)
+          definitions shouldBe Some(Set("ListReply"))
         }
       }
     }

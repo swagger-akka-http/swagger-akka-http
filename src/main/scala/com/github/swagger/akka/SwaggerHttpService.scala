@@ -59,6 +59,7 @@ trait SwaggerHttpService extends Directives {
   val securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map()
   val externalDocs: Option[ExternalDocs] = None
   val vendorExtensions: Map[String, Object] = Map.empty
+  val unwantedDefinitions: Seq[String] = Seq.empty
 
   def swaggerConfig: Swagger = {
     val modifiedPath = prependSlashIfNecessary(basePath)
@@ -77,8 +78,7 @@ trait SwaggerHttpService extends Directives {
 
   def generateSwaggerJson: String = {
     try {
-      val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
-      Json.pretty().writeValueAsString(swagger)
+      Json.pretty().writeValueAsString(filteredSwagger)
     } catch {
       case NonFatal(t) => {
         logger.error("Issue with creating swagger.json", t)
@@ -89,14 +89,19 @@ trait SwaggerHttpService extends Directives {
 
   def generateSwaggerYaml: String = {
     try {
-      val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
-      Yaml.pretty().writeValueAsString(swagger)
+      Yaml.pretty().writeValueAsString(filteredSwagger)
     } catch {
       case NonFatal(t) => {
         logger.error("Issue with creating swagger.yaml", t)
         throw t
       }
     }
+  }
+
+  private def filteredSwagger: Swagger = {
+    val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
+    swagger.setDefinitions(swagger.getDefinitions.asScala.filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
+    swagger
   }
 
   lazy val apiDocsBase = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(apiDocsPath))
