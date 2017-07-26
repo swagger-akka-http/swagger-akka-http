@@ -16,17 +16,11 @@
 package com.github.swagger.akka
 
 import io.swagger.jaxrs.Reader
-import io.swagger.jaxrs.config.ReaderConfig
 import io.swagger.models.parameters.BodyParameter
 import io.swagger.models.properties.{RefProperty, StringProperty}
 import io.swagger.models._
-import io.swagger.config._
-import io.swagger.annotations.Api
 import org.scalatest.{Matchers, WordSpec}
-import scala.reflect.runtime.universe._
 import scala.collection.JavaConverters._
-import javax.ws.rs.Path
-import scala.reflect.runtime.universe
 import com.github.swagger.akka.samples._
 
 class ApiReaderSpec
@@ -41,15 +35,12 @@ class ApiReaderSpec
 
   val swaggerInfo = new Info().version(API_VERSION)
 
-  private def objectType(objectClass: Class[_]) =
-    runtimeMirror(objectClass.getClassLoader).classSymbol(objectClass).toType
-
   "The Reader object" when {
     "passed an api with no annotation" should {
       "product a Swagger instance without any paths" in {
         val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
         val reader = new Reader(swaggerConfig, readerConfig)
-        val swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiWithNoAnnotation])).asJava)
+        val swagger = reader.read(Set[Class[_]](classOf[TestApiWithNoAnnotation]).asJava)
         swagger.getPaths() should be(null)
       }
     }
@@ -60,7 +51,7 @@ class ApiReaderSpec
         .scheme(Scheme.HTTP)
         .basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[DictHttpService])).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[DictHttpService]).asJava)
 
       val info = com.github.swagger.akka.model.swagger2scala(swagger.getInfo())
 
@@ -188,7 +179,7 @@ class ApiReaderSpec
     "passed a service referencing a dataType" should {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiWithOnlyDataType])).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[TestApiWithOnlyDataType]).asJava)
       val defMap = swagger.getDefinitions()
       "contain the dataType in the definitions" in {
         defMap should not be (null)
@@ -213,7 +204,7 @@ class ApiReaderSpec
     "passed a service that does not extend an HttpService" should {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiDoesNotExtendHttpService])).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[TestApiDoesNotExtendHttpService]).asJava)
       "build the Swagger definition anyway" in {
         swagger.getPaths() should have size (1)
 
@@ -227,7 +218,7 @@ class ApiReaderSpec
     "passed a service that uses sub-paths" should {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiWithPathOperation])).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[TestApiWithPathOperation]).asJava)
 
       "define the sub-path operations" in {
         swagger.getPaths() should have size (2)
@@ -246,7 +237,7 @@ class ApiReaderSpec
     "passed a service with a parameter hierarchy" should {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiWithParamsHierarchy])).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[TestApiWithParamsHierarchy]).asJava)
 
       "define the path hierarchy" in {
         swagger.getPaths() should have size (1)
@@ -265,7 +256,7 @@ class ApiReaderSpec
     "passed a service with operations defined by position" ignore {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiWithOperationPositions])).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[TestApiWithOperationPositions]).asJava)
 
       "sequence the operations by position" in {
         swagger.getPaths() should have size (3)
@@ -293,7 +284,7 @@ class ApiReaderSpec
     "passed a service using a responseContainer" should {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiWithResponseContainer])).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[TestApiWithResponseContainer]).asJava)
 
       "define the operation" in {
         swagger.getPaths() should have size (1)
@@ -311,7 +302,7 @@ class ApiReaderSpec
     "passed a service with a dateTime parameter" should {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiWithDateTime])).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[TestApiWithDateTime]).asJava)
 
       "define the string data type with format date-time" in {
         swagger.getPaths() should have size (1)
@@ -338,7 +329,7 @@ class ApiReaderSpec
     "passed a service with an ApiResponse" should {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(typeOf[TestApiWithApiResponse])).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[TestApiWithApiResponse]).asJava)
 
       "define the operation" in {
         swagger.getPaths() should have size (1)
@@ -354,7 +345,7 @@ class ApiReaderSpec
       val reader = new Reader(swaggerConfig, readerConfig)
       "build the Swagger definition without errors" in {
         noException should be thrownBy {
-          reader.read(toJavaTypeSet(Seq(objectType(TestApiWithObject.getClass))).asJava)
+          reader.read(Set[Class[_]](TestApiWithObject.getClass).asJava)
         }
       }
     }
@@ -362,7 +353,7 @@ class ApiReaderSpec
     "passed an object that does not extend an HttpService" should {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
-      val swagger: Swagger = reader.read(toJavaTypeSet(Seq(objectType(TestApiWithObject.getClass))).asJava)
+      val swagger: Swagger = reader.read(Set[Class[_]](TestApiWithObject.getClass).asJava)
       "build the Swagger definition anyway" in {
         swagger.getPaths() should have size (1)
 

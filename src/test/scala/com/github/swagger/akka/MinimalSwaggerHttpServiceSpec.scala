@@ -1,7 +1,6 @@
 package com.github.swagger.akka
 
 import scala.collection.JavaConverters._
-import scala.reflect.runtime.universe.typeOf
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
@@ -20,7 +19,7 @@ class MinimalSwaggerHttpServiceSpec
   }
 
   val swaggerService = new SwaggerHttpService {
-    override val apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
+    override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
   }
 
   implicit val formats = org.json4s.DefaultFormats

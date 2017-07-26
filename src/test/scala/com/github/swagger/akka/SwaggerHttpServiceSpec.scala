@@ -2,7 +2,6 @@ package com.github.swagger.akka
 
 import java.util
 import scala.collection.JavaConverters._
-import scala.reflect.runtime.universe.typeOf
 import scala.collection.immutable.ListMap
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -26,7 +25,7 @@ class SwaggerHttpServiceSpec
   }
 
   val swaggerService = new SwaggerHttpService {
-    override val apiTypes = Seq(typeOf[PetHttpService], typeOf[UserHttpService])
+    override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
     override val basePath = "api"
     override val apiDocsPath = "api-doc"
     override val scheme = Scheme.HTTPS
@@ -132,10 +131,10 @@ class SwaggerHttpServiceSpec
         swaggerService.apiDocsPath should equal ("api-doc")
       }
       "prependSlashIfNecessary adds a slash" in {
-        swaggerService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
+        SwaggerHttpService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
       }
       "prependSlashIfNecessary does not need to add a slash" in {
-        swaggerService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
+        SwaggerHttpService.prependSlashIfNecessary("/api-doc") should equal ("/api-doc")
       }
       "removeInitialSlashIfNecessary removes a slash" in {
         SwaggerHttpService.removeInitialSlashIfNecessary("/api-doc") should equal ("api-doc")
@@ -147,7 +146,7 @@ class SwaggerHttpServiceSpec
 
     "defining an apiDocsPath" should {
       def swaggerService(testPath: String) = new SwaggerHttpService {
-        override val apiTypes = Seq(typeOf[UserHttpService])
+        override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
         override val apiDocsPath = testPath
       }
       def performGet(testPath: String) = {
@@ -172,7 +171,7 @@ class SwaggerHttpServiceSpec
 
     "not defining a host" should {
       val swaggerService = new SwaggerHttpService {
-        override val apiTypes = Seq(typeOf[UserHttpService])
+        override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
       }
       "have swagger config with null host" in {
         swaggerService.swaggerConfig.getHost shouldBe null
@@ -181,7 +180,7 @@ class SwaggerHttpServiceSpec
 
     "defining a host" should {
       def swaggerService(testHost: String) = new SwaggerHttpService {
-        override val apiTypes = Seq(typeOf[UserHttpService])
+        override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
         override val host = testHost
       }
       "support empty host resulting in swagger config with null host" in {
@@ -197,7 +196,7 @@ class SwaggerHttpServiceSpec
 
     "defining vendor extensions" should {
       val swaggerService = new SwaggerHttpService {
-        override val apiTypes = Seq(typeOf[UserHttpService])
+        override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
         override val apiDocsPath = "api-doc"
         override val vendorExtensions = ListMap("x-service-name" -> "ums",
                                                 "x-service-version" -> "v1",

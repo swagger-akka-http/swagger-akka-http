@@ -14,7 +14,6 @@
 package com.github.swagger.akka
 
 import scala.collection.JavaConverters._
-import scala.reflect.runtime.universe.Type
 import scala.util.control.NonFatal
 import com.github.swagger.akka.model.Info
 import com.github.swagger.akka.model.scala2swagger
@@ -30,36 +29,29 @@ import org.slf4j.LoggerFactory
 
 object SwaggerHttpService {
 
-  val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
   val readerConfig = new DefaultReaderConfig
-
-  def toJavaTypeSet(apiTypes: Seq[Type]): Set[Class[_]] = {
-    apiTypes.map(t => getClassForType(t)).toSet
-  }
-
-  private lazy val mirror = scala.reflect.runtime.universe.runtimeMirror(getClass.getClassLoader)
-
-  def getClassForType(t: Type): Class[_] = {
-    mirror.runtimeClass(t.typeSymbol.asClass)
-  }
 
   def removeInitialSlashIfNecessary(path: String): String =
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
+  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
+
+  private def apiDocsBase(path: String) = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(path))
+  private val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
 }
 
 trait SwaggerHttpService extends Directives {
 
   import SwaggerHttpService._
-  val apiTypes: Seq[Type]
-  val host: String = ""
-  val basePath: String = "/"
-  val apiDocsPath: String = "api-docs"
-  val info: Info = Info()
-  val scheme: Scheme = Scheme.HTTP
-  val securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map()
-  val externalDocs: Option[ExternalDocs] = None
-  val vendorExtensions: Map[String, Object] = Map.empty
-  val unwantedDefinitions: Seq[String] = Seq.empty
+  def apiClasses: Set[Class[_]]
+  def host: String = ""
+  def basePath: String = "/"
+  def apiDocsPath: String = "api-docs"
+  def info: Info = Info()
+  def scheme: Scheme = Scheme.HTTP
+  def securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map.empty
+  def externalDocs: Option[ExternalDocs] = None
+  def vendorExtensions: Map[String, Object] = Map.empty
+  def unwantedDefinitions: Seq[String] = Seq.empty
 
   def swaggerConfig: Swagger = {
     val modifiedPath = prependSlashIfNecessary(basePath)
@@ -74,7 +66,6 @@ trait SwaggerHttpService extends Directives {
   }
 
   def reader = new Reader(swaggerConfig, readerConfig)
-  def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
 
   def generateSwaggerJson: String = {
     try {
@@ -99,22 +90,22 @@ trait SwaggerHttpService extends Directives {
   }
 
   private def filteredSwagger: Swagger = {
-    val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
+    val swagger: Swagger = reader.read(apiClasses.asJava)
     swagger.setDefinitions(swagger.getDefinitions.asScala.filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
     swagger
   }
 
-  lazy val apiDocsBase = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(apiDocsPath))
-
-  lazy val routes: Route =
-    path(apiDocsBase / "swagger.json") {
+  def routes: Route = {
+    val base = apiDocsBase(apiDocsPath)
+    path(base / "swagger.json") {
       get {
         complete(HttpEntity(MediaTypes.`application/json`, generateSwaggerJson))
       }
     } ~
-    path(apiDocsBase / "swagger.yaml") {
-      get {
-        complete(HttpEntity(CustomMediaTypes.`text/vnd.yaml`, generateSwaggerYaml))
+      path(base / "swagger.yaml") {
+        get {
+          complete(HttpEntity(CustomMediaTypes.`text/vnd.yaml`, generateSwaggerYaml))
+        }
       }
-    }
+  }
 }

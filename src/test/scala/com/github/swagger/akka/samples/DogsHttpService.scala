@@ -17,8 +17,6 @@ package com.github.swagger.akka.samples
 
 import javax.ws.rs.Path
 
-import scala.reflect.runtime.universe._
-
 import com.github.swagger.akka._
 import com.github.swagger.akka.model.{Contact, Info, License}
 
@@ -34,7 +32,7 @@ case class Dog(breed: String)
 
 class NestedService(system: ActorSystem) {self =>
   val swaggerService = new SwaggerHttpService {
-    override val apiTypes = Seq(typeOf[Dogs.type])
+    override val apiClasses: Set[Class[_]] = Set(Dogs.getClass)
     override val host = "some.domain.com"
     override val basePath = "api-doc"
     override val unwantedDefinitions = Seq("Function1", "Function1RequestContextFutureRouteResult")
