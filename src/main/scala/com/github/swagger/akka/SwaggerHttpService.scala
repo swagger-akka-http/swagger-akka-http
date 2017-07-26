@@ -100,7 +100,7 @@ trait SwaggerHttpService extends Directives {
 
   private def filteredSwagger: Swagger = {
     val swagger: Swagger = reader.read(toJavaTypeSet(apiTypes).asJava)
-    swagger.setDefinitions(swagger.getDefinitions.asScala.filterNot { case (modelName, _) => unwantedDefinitions.contains(modelName) }.asJava)
+    swagger.setDefinitions(swagger.getDefinitions.asScala.filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
     swagger
   }
 

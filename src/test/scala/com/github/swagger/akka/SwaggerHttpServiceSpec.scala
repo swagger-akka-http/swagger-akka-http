@@ -1,11 +1,13 @@
 package com.github.swagger.akka
 
 import java.util
+import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe.typeOf
 import scala.collection.immutable.ListMap
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
+import org.yaml.snakeyaml.Yaml
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
 import akka.http.scaladsl.model._
@@ -14,8 +16,6 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import io.swagger.models.{ExternalDocs, Scheme}
 import io.swagger.models.auth.BasicAuthDefinition
-import org.yaml.snakeyaml.Yaml
-import collection.JavaConverters._
 
 class SwaggerHttpServiceSpec
     extends WordSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest {

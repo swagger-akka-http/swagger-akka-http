@@ -17,18 +17,18 @@ package com.github.swagger.akka.samples
 
 import javax.ws.rs.Path
 
-import akka.actor.{ActorRefFactory, ActorSystem}
-import akka.http.scaladsl.model.ContentTypes.`application/json`
-import akka.http.scaladsl.model.HttpMethods.OPTIONS
-import akka.http.scaladsl.model.StatusCodes.OK
-import akka.http.scaladsl.model.headers.`Access-Control-Allow-Methods`
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
-import akka.http.scaladsl.server.{Directives, Route}
+import scala.reflect.runtime.universe._
+
 import com.github.swagger.akka._
 import com.github.swagger.akka.model.{Contact, Info, License}
+
+import akka.actor.{ActorRefFactory, ActorSystem}
+import akka.http.scaladsl.model.ContentTypes.`application/json`
+import akka.http.scaladsl.model.StatusCodes.OK
+import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
+import akka.http.scaladsl.server.{Directives, Route}
 import io.swagger.annotations._
 
-import scala.reflect.runtime.universe._
 
 case class Dog(breed: String)
 
@@ -80,8 +80,7 @@ class NestedService(system: ActorSystem) {self =>
     )
     @ApiResponses(Array(new ApiResponse(code = 200, message = "OK")))
     def optionsRoute: Route = (path("dogs") & options) {
-      complete(HttpResponse(OK, entity = HttpEntity.empty(`application/json`),
-        headers = List(`Access-Control-Allow-Methods`(OPTIONS))))
+      complete(HttpResponse(OK, entity = HttpEntity.empty(`application/json`)))
     }
   }
 }
