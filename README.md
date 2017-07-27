@@ -23,9 +23,9 @@ The [swagger spec](http://swagger.io/specification/) is helpful for understandin
 The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.11. Snapshot releases are also hosted on sonatype. 
 
 ```sbt
-libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.2"
+libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.10.0"
 ```
-swagger-akka-http 0.9.2 is available in sonatype repository and it targets Akka Http 10.0.x. There are scala 2.11 and 2.12 compatible jars available.
+swagger-akka-http 0.10.0 is available in sonatype repository and it targets Akka Http 10.0.x. There are scala 2.11 and 2.12 compatible jars available. There are changes in the APIs, as against the 0.9.x releases, see below for details.
 
 Swagger libraries depend heavily on [Jackson](http://wiki.fasterxml.com/JacksonHome). If you need to older versions of Jackson, consider using swagger-akka-http 0.8.2. It depends on Jackson 2.4.
 
@@ -50,6 +50,20 @@ The service requires a set of `apiTypes` and `modelTypes` you want to expose via
 Here's an example `SwaggerHttpService` snippet which exposes [Swagger's PetStore](http://petstore.swagger.io/) resources, `Pet`, `User` and `Store`. The routes property can be concatenated to your other route definitions:
 
 ```scala
+class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService {
+  override val apiClasses: Set[Class[_]] = Set(classOf[PetService], classOf[UserService], classOf[StoreService])
+  override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
+  override val basePath = "/"    //the basePath for the API you are exposing
+  override val apiDocsPath = "api-docs" //where you want the swagger-json endpoint exposed
+  val info = Info() //provides license and other description details
+}.routes
+```
+
+## Breaking Changes in 0.10.0
+
+In versions prior to 0.10.0, you needed to use code like this:
+
+```scala
 class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService with HasActorSystem {
   override implicit val actorSystem: ActorSystem = system
   override implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -61,20 +75,8 @@ class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService with Has
 }.routes
 ```
 
-## Breaking Changes in 0.10.0-SNAPSHOT
-
-```scala
-class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService {
-  override val apiClasses: Set[Class[_]] = Set(classOf[PetService], classOf[UserService], classOf[StoreService])
-  override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
-  override val basePath = "/"    //the basePath for the API you are exposing
-  override val apiDocsPath = "api-docs" //where you want the swagger-json endpoint exposed
-  val info = Info() //provides license and other description details
-}.routes
-```
-
-* Drops HasActorSystem trait that was not required
-* apiClasses replaces apiTypes
+* 0.10.0 drops HasActorSystem trait that was not actually useful
+* apiClasses has replaced apiTypes
   * In Scala 2.11, you will need to explicitly use the `Set[Class[_]]` type, while Scala 2.12 seems to be able to infer it
 * `SwaggerHttpService` now uses `def`s instead of `val`s for more flexibility
 
