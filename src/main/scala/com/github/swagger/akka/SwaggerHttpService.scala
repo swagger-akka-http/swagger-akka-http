@@ -21,7 +21,7 @@ import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.DefaultReaderConfig
-import io.swagger.models.{ExternalDocs, Scheme, Swagger}
+import io.swagger.models.{ExternalDocs, Model, Scheme, Swagger}
 import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.util.{Json, Yaml}
 import org.apache.commons.lang3.StringUtils
@@ -91,7 +91,7 @@ trait SwaggerHttpService extends Directives {
 
   private def filteredSwagger: Swagger = {
     val swagger: Swagger = reader.read(apiClasses.asJava)
-    swagger.setDefinitions(swagger.getDefinitions.asScala.filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
+    swagger.setDefinitions(Option(swagger.getDefinitions).map(_.asScala).getOrElse(Map.empty[String, Model]).filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
     swagger
   }
 
