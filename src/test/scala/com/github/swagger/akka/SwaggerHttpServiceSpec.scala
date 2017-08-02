@@ -215,5 +215,21 @@ class SwaggerHttpServiceSpec
       }
     }
 
+    "not defining API classes" should {
+      "return an empty set of definitions" in {
+        val swaggerService = new SwaggerHttpService {
+          override val apiClasses = Set.empty[Class[_]]
+        }
+
+        Get(s"/${swaggerService.apiDocsPath}/swagger.json") ~> swaggerService.routes ~> check {
+          handled shouldBe true
+          contentType shouldBe ContentTypes.`application/json`
+          val str = responseAs[String]
+          val response = parse(str)
+
+          (response \ "definitions").values.asInstanceOf[Map[String, String]] shouldEqual(Map.empty)
+        }
+      }
+    }
   }
 }
