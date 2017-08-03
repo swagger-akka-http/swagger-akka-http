@@ -58,11 +58,11 @@ trait SwaggerHttpService extends Directives {
     val swagger = new Swagger().basePath(modifiedPath).info(info).scheme(scheme)
     if(StringUtils.isNotBlank(host)) swagger.host(host)
     swagger.setSecurityDefinitions(securitySchemeDefinitions.asJava)
+    swagger.vendorExtensions(vendorExtensions.asJava)
     externalDocs match {
       case Some(ed) => swagger.externalDocs(ed)
       case None => swagger
     }
-    swagger.vendorExtensions(vendorExtensions.asJava)
   }
 
   def reader = new Reader(swaggerConfig, readerConfig)
@@ -89,10 +89,17 @@ trait SwaggerHttpService extends Directives {
     }
   }
 
-  private def filteredSwagger: Swagger = {
+  private[akka] def filteredSwagger: Swagger = {
     val swagger: Swagger = reader.read(apiClasses.asJava)
-    swagger.setDefinitions(swagger.getDefinitions.asScala.filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
+    if (!unwantedDefinitions.isEmpty) {
+      swagger.setDefinitions(asScala(swagger.getDefinitions).filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
+    }
     swagger
+  }
+
+  private[akka] def asScala[K,V](jmap: java.util.Map[K,V]): Map[K,V] = Option(jmap) match {
+    case None => Map.empty[K,V]
+    case Some(jm) => jm.asScala.toMap
   }
 
   def routes: Route = {

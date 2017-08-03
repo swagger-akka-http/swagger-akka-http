@@ -1,20 +1,22 @@
 package com.github.swagger.akka
 
 import java.util
-import scala.collection.JavaConverters._
-import scala.collection.immutable.ListMap
-import org.json4s._
-import org.json4s.native.JsonMethods._
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
-import org.yaml.snakeyaml.Yaml
-import com.github.swagger.akka.model._
-import com.github.swagger.akka.samples._
+
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import io.swagger.models.{ExternalDocs, Scheme}
+import com.github.swagger.akka.model._
+import com.github.swagger.akka.samples._
 import io.swagger.models.auth.BasicAuthDefinition
+import io.swagger.models.{ExternalDocs, Model, Scheme}
+import org.json4s._
+import org.json4s.native.JsonMethods._
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
+import org.yaml.snakeyaml.Yaml
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable.ListMap
 
 class SwaggerHttpServiceSpec
     extends WordSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest {
@@ -215,5 +217,18 @@ class SwaggerHttpServiceSpec
       }
     }
 
+    "asScala" should {
+      "handle null" in {
+        swaggerService.asScala[String, Model](null) shouldEqual Map.empty[String, Model]
+        swaggerService.asScala[String, String](null) shouldEqual Map.empty[String, String]
+      }
+      "handle simple java map" in {
+        val definitions = swaggerService.filteredSwagger.getDefinitions
+        definitions should not be null
+        definitions should have size 4
+        val smap = swaggerService.asScala[String, Model](definitions)
+        smap should contain theSameElementsAs definitions.asScala
+      }
+    }
   }
 }
