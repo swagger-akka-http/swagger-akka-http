@@ -35,12 +35,11 @@ object SwaggerHttpService {
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
   def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
 
-  private def apiDocsBase(path: String) = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(path))
-  private val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
+  private[akka] def apiDocsBase(path: String) = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(path))
+  private[akka] val logger = LoggerFactory.getLogger(classOf[SwaggerHttpService])
 }
 
-trait SwaggerHttpService extends Directives {
-
+trait SwaggerGenerator {
   import SwaggerHttpService._
   def apiClasses: Set[Class[_]]
   def host: String = ""
@@ -101,7 +100,10 @@ trait SwaggerHttpService extends Directives {
     case None => Map.empty[K,V]
     case Some(jm) => jm.asScala.toMap
   }
+}
 
+trait SwaggerHttpService extends Directives with SwaggerGenerator {
+  import SwaggerHttpService._
   def routes: Route = {
     val base = apiDocsBase(apiDocsPath)
     path(base / "swagger.json") {
