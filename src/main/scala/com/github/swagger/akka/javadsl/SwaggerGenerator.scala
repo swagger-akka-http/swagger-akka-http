@@ -1,20 +1,23 @@
 package com.github.swagger.akka.javadsl
 
+import java.util
+
 import scala.collection.JavaConverters._
+import scala.compat.java8.OptionConverters._
 import io.swagger.models.{ExternalDocs, Info, Scheme}
 import io.swagger.models.auth.SecuritySchemeDefinition
 
 trait SwaggerGenerator {
-  def apiClasses: java.util.Set[Class[_]]
+  def apiClasses: util.Set[Class[_]]
   def host: String = ""
   def basePath: String = "/"
   def apiDocsPath: String = "api-docs"
   def info: Info = new Info()
   def scheme: Scheme = Scheme.HTTP
-  def securitySchemeDefinitions: java.util.Map[String, SecuritySchemeDefinition] = java.util.Collections.emptyMap()
-  def externalDocs: Option[ExternalDocs] = None
-  def vendorExtensions: java.util.Map[String, Object] = java.util.Collections.emptyMap()
-  def unwantedDefinitions: java.util.List[String] = java.util.Collections.emptyList()
+  def securitySchemeDefinitions: util.Map[String, SecuritySchemeDefinition] = util.Collections.emptyMap()
+  def externalDocs: util.Optional[ExternalDocs] = util.Optional.empty()
+  def vendorExtensions: util.Map[String, Object] = util.Collections.emptyMap()
+  def unwantedDefinitions: util.List[String] = util.Collections.emptyList()
 
   private lazy val converter = new Converter(this)
 
@@ -31,7 +34,7 @@ private class Converter(javaGenerator: SwaggerGenerator) extends com.github.swag
   override def info: com.github.swagger.akka.model.Info = javaGenerator.info
   override def scheme: Scheme = javaGenerator.scheme
   override def securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = javaGenerator.securitySchemeDefinitions.asScala.toMap
-  override def externalDocs: Option[ExternalDocs] = javaGenerator.externalDocs
+  override def externalDocs: Option[ExternalDocs] = javaGenerator.externalDocs.asScala
   override def vendorExtensions: Map[String, Object] = javaGenerator.vendorExtensions.asScala.toMap
   override def unwantedDefinitions: Seq[String] = javaGenerator.unwantedDefinitions.asScala
 }
