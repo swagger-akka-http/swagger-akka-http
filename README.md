@@ -43,7 +43,7 @@ The `/test` directory includes an `HttpSwaggerServiceSpec` which leverages `akka
 
 The `SwaggerHttpService` is a trait extending Akka-Http's `HttpService`. It will generate the appropriate Swagger json schema based on a set of inputs declaring your Api and the types you want to expose.
 
-The  `SwaggerHttpService` will contain a `routes` property you can concatenate along with your existing akka-http routes. This will expose an endpoint at `<baseUrl>/<specPath>/<resourcePath>` with the specified `apiVersion`, `swaggerVersion` and resource listing.
+The `SwaggerHttpService` contains a `routes` property you can concatenate along with your existing akka-http routes. This will expose an endpoint at `<baseUrl>/<specPath>/<resourcePath>` with the specified `apiVersion`, `swaggerVersion` and resource listing.
 
 The service requires a set of `apiTypes` and `modelTypes` you want to expose via Swagger. These types include the appropriate Swagger annotations for describing your api. The `SwaggerHttpService` will inspect these annotations and build the appropriate Swagger response.
 
