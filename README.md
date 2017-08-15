@@ -91,6 +91,7 @@ class MySwaggerGenerator extends SwaggerGenerator {
     return new io.swagger.models.Info();  //provides license and other description details
   }
 }
+```
 
 ## Breaking Changes in 0.10.0
 
