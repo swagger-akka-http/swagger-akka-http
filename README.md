@@ -35,9 +35,9 @@ Scala 2.10 support for akka-http 2.0.3 requires swagger-akka-http 0.6.2.
 
 [pjfanning/swagger-akka-http-sample](https://github.com/pjfanning/swagger-akka-http-sample) is a simple sample using this project.
 
-[mhamrah/spray-swagger-sample](https://github.com/mhamrah/spray-swagger-sample) is a spray api project with the original spray-swagger support and a Swagger UI.
+[pjfanning/swagger-akka-http-sample-java](https://github.com/pjfanning/swagger-akka-http-sample-java) demonstrates the experimental Java DSL support in swagger-akka-http 0.10.1.
 
-The `/test` directory includes an `HttpSwaggerServiceSpec` which leverages `akka-http.testkit` to test the API. It uses a `PetHttpService` and `UserHttpService` declared in the `/samples` folder. 
+The `/test` directory includes an `HttpSwaggerServiceSpec` which uses `akka-http-testkit` to test the API. It uses a `PetHttpService` and `UserHttpService` declared in the `/samples` folder. 
 
 ## SwaggerHttpService
 
@@ -50,14 +50,47 @@ The service requires a set of `apiTypes` and `modelTypes` you want to expose via
 Here's an example `SwaggerHttpService` snippet which exposes [Swagger's PetStore](http://petstore.swagger.io/) resources, `Pet`, `User` and `Store`. The routes property can be concatenated to your other route definitions:
 
 ```scala
-class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService {
+object SwaggerDocService extends SwaggerHttpService {
   override val apiClasses: Set[Class[_]] = Set(classOf[PetService], classOf[UserService], classOf[StoreService])
   override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
   override val basePath = "/"    //the basePath for the API you are exposing
   override val apiDocsPath = "api-docs" //where you want the swagger-json endpoint exposed
-  val info = Info() //provides license and other description details
+  override val info = Info() //provides license and other description details
 }.routes
 ```
+
+## Java DSL SwaggerGenerator
+
+This (experimental) support is added in swagger-akka-http 0.10.1. See [pjfanning/swagger-akka-http-sample-java](https://github.com/pjfanning/swagger-akka-http-sample-java) for a demo application.
+
+```java
+import com.github.swagger.akka.javadsl.SwaggerGenerator;
+class MySwaggerGenerator extends SwaggerGenerator {
+  @Override
+  public Set<Class<?>> apiClasses() {
+    return Collections.singleton(PetService.class);
+  }
+  
+  @Override
+  public String host() {
+    return "localhost:8080"; //the url of your api, not swagger's json endpoint
+  }
+  
+  @Override
+  public String basePath() {
+    return "/";  //the basePath for the API you are exposing
+  }
+
+  @Override
+  public String apiDocsPath() {
+    return "api-docs";  //where you want the swagger-json endpoint exposed
+  }
+
+  @Override
+  public Info info() {
+    return new io.swagger.models.Info();  //provides license and other description details
+  }
+}
 
 ## Breaking Changes in 0.10.0
 
@@ -71,7 +104,7 @@ class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService with Has
   override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
   override val basePath = "/"    //the basePath for the API you are exposing
   override val apiDocsPath = "api-docs" //where you want the swagger-json endpoint exposed
-  val info = Info() //provides license and other description details
+  override val info = Info() //provides license and other description details
 }.routes
 ```
 
