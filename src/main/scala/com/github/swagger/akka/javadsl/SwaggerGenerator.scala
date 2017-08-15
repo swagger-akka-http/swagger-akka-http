@@ -19,7 +19,7 @@ trait SwaggerGenerator {
   def vendorExtensions: util.Map[String, Object] = util.Collections.emptyMap()
   def unwantedDefinitions: util.List[String] = util.Collections.emptyList()
 
-  private lazy val converter = new Converter(this)
+  private[javadsl] lazy val converter = new Converter(this)
 
   def generateSwaggerJson: String = converter.generateSwaggerJson
   def generateSwaggerYaml: String = converter.generateSwaggerYaml
