@@ -46,7 +46,7 @@ trait SwaggerGenerator {
   def basePath: String = "/"
   def apiDocsPath: String = "api-docs"
   def info: Info = Info()
-  def scheme: Scheme = Scheme.HTTP
+  def schemes: List[Scheme] = List(Scheme.HTTP)
   def securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map.empty
   def externalDocs: Option[ExternalDocs] = None
   def vendorExtensions: Map[String, Object] = Map.empty
@@ -54,7 +54,7 @@ trait SwaggerGenerator {
 
   def swaggerConfig: Swagger = {
     val modifiedPath = prependSlashIfNecessary(basePath)
-    val swagger = new Swagger().basePath(modifiedPath).info(info).scheme(scheme)
+    val swagger = new Swagger().basePath(modifiedPath).info(info).schemes(schemes.asJava)
     if(StringUtils.isNotBlank(host)) swagger.host(host)
     swagger.setSecurityDefinitions(securitySchemeDefinitions.asJava)
     swagger.vendorExtensions(vendorExtensions.asJava)
