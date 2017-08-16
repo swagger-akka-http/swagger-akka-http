@@ -33,7 +33,7 @@ class SwaggerGeneratorSpec extends WordSpec with Matchers {
         override def basePath: String = "/base"
         override def apiDocsPath: String = "docs"
         override def info: Info = testInfo
-        override def schemes: List[Scheme] = List(Scheme.HTTPS)
+        override def schemes: util.List[Scheme] = List(Scheme.HTTPS).asJava
         override def securitySchemeDefinitions: util.Map[String, SecuritySchemeDefinition] = {
           val jmap = new util.HashMap[String, SecuritySchemeDefinition]()
           jmap.put("basic", securitySchemeDefinition)
@@ -53,7 +53,7 @@ class SwaggerGeneratorSpec extends WordSpec with Matchers {
       generator.converter.apiDocsPath shouldEqual generator.apiDocsPath
       import com.github.swagger.akka.model.scala2swagger
       scala2swagger(generator.converter.info) shouldEqual testInfo
-      generator.converter.schemes shouldEqual generator.schemes
+      generator.converter.schemes.asJava shouldEqual generator.schemes
       generator.converter.securitySchemeDefinitions.asJava shouldEqual generator.securitySchemeDefinitions
       generator.converter.externalDocs.get shouldEqual generator.externalDocs.get()
       generator.converter.vendorExtensions.asJava shouldEqual generator.vendorExtensions

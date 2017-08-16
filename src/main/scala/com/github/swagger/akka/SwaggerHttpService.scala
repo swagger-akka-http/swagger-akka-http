@@ -15,6 +15,7 @@ package com.github.swagger.akka
 
 import scala.collection.JavaConverters._
 import scala.util.control.NonFatal
+import com.github.swagger.akka.model.asScala
 import com.github.swagger.akka.model.Info
 import com.github.swagger.akka.model.scala2swagger
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
@@ -94,11 +95,6 @@ trait SwaggerGenerator {
       swagger.setDefinitions(asScala(swagger.getDefinitions).filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
     }
     swagger
-  }
-
-  private[akka] def asScala[K,V](jmap: java.util.Map[K,V]): Map[K,V] = Option(jmap) match {
-    case None => Map.empty[K,V]
-    case Some(jm) => jm.asScala.toMap
   }
 }
 

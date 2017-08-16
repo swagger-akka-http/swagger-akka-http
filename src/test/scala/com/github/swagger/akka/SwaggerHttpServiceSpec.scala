@@ -217,20 +217,6 @@ class SwaggerHttpServiceSpec
       }
     }
 
-    "asScala" should {
-      "handle null" in {
-        swaggerService.asScala[String, Model](null) shouldEqual Map.empty[String, Model]
-        swaggerService.asScala[String, String](null) shouldEqual Map.empty[String, String]
-      }
-      "handle simple java map" in {
-        val definitions = swaggerService.filteredSwagger.getDefinitions
-        definitions should not be null
-        definitions should have size 4
-        val smap = swaggerService.asScala[String, Model](definitions)
-        smap should contain theSameElementsAs definitions.asScala
-      }
-    }
-
     "defining multiple schemes" should {
       val swaggerService = new SwaggerHttpService {
         override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
