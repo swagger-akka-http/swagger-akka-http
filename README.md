@@ -114,6 +114,10 @@ class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService with Has
   * In Scala 2.11, you will need to explicitly use the `Set[Class[_]]` type, while Scala 2.12 seems to be able to infer it
 * `SwaggerHttpService` now uses `def`s instead of `val`s for more flexibility
 
+## Breaking Changes in 0.11.0
+
+The `val scheme = Scheme.HTTP` has been replaced with `val schemes = List(Scheme.HTTP)`
+
 ## Adding Swagger Annotations
 
 Akka-Http routing works by concatenating various routes, built up by directives, to produce an api. The [routing dsl](http://doc.akka.io/docs/akka-http/current/scala/http/introduction.html#routing-dsl-for-http-servers) is an elegant way to describe an api and differs from the more common class and method approach of other frameworks. But because Swagger's annotation library requires classes, methods and fields to describe an Api, one may find it difficult to annotate a akka-http routing application.
