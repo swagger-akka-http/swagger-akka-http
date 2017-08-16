@@ -176,6 +176,19 @@ class ApiReaderSpec
       }
     }
 
+    "passed a properly annotated HttpService with multiple schemes" should {
+      val swaggerConfig = new Swagger()
+        .host(HOST)
+        .schemes(List(Scheme.HTTP, Scheme.HTTPS).asJava)
+        .basePath(BASE_PATH).info(swaggerInfo)
+      val reader = new Reader(swaggerConfig, readerConfig)
+      val swagger: Swagger = reader.read(Set[Class[_]](classOf[DictHttpService]).asJava)
+
+      "set the schemes" in {
+        swagger.getSchemes() shouldBe List(Scheme.HTTP, Scheme.HTTPS).asJava
+      }
+    }
+
     "passed a service referencing a dataType" should {
       val swaggerConfig = new Swagger().basePath(BASE_PATH).info(swaggerInfo)
       val reader = new Reader(swaggerConfig, readerConfig)
