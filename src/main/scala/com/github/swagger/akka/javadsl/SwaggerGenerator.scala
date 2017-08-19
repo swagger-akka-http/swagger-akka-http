@@ -3,7 +3,6 @@ package com.github.swagger.akka.javadsl
 import java.util
 
 import scala.collection.JavaConverters._
-import scala.compat.java8.OptionConverters._
 import io.swagger.models.{ExternalDocs, Info, Scheme}
 import io.swagger.models.auth.SecuritySchemeDefinition
 import com.github.swagger.akka.model.asScala
@@ -35,7 +34,7 @@ private class Converter(javaGenerator: SwaggerGenerator) extends com.github.swag
   override def info: com.github.swagger.akka.model.Info = javaGenerator.info
   override def schemes: List[Scheme] = asScala(javaGenerator.schemes)
   override def securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = asScala(javaGenerator.securitySchemeDefinitions)
-  override def externalDocs: Option[ExternalDocs] = javaGenerator.externalDocs.asScala
+  override def externalDocs: Option[ExternalDocs] = asScala(javaGenerator.externalDocs)
   override def vendorExtensions: Map[String, Object] = asScala(javaGenerator.vendorExtensions)
   override def unwantedDefinitions: Seq[String] = asScala(javaGenerator.unwantedDefinitions)
 }
