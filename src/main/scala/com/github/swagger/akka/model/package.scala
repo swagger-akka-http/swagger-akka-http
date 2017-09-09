@@ -70,7 +70,7 @@ package object model {
       convertMe.getTermsOfService,
       convertMe.getContact,
       convertMe.getLicense,
-      convertMe.getVendorExtensions.asScala.toMap)
+      asScala(convertMe.getVendorExtensions))
   }
   implicit def scala2swagger(convertMe: Info): SwaggerInfo = {
     val ret = new SwaggerInfo()
