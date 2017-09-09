@@ -10,8 +10,6 @@ import io.swagger.converter._
 import io.swagger.oas.models.media.{Schema, StringSchema}
 import io.swagger.util.{Json, PrimitiveType}
 
-import scala.collection.JavaConverters._
-
 object SwaggerScalaModelConverter {
   Json.mapper().registerModule(new DefaultScalaModule())
 }
@@ -32,17 +30,17 @@ class SwaggerScalaModelConverter extends ModelConverter {
             val sp = new StringSchema()
             for (v <- enumInstance.values)
               sp.addEnumItem(v.toString)
-            sp.addRequiredItem(`type`.getTypeName)
+            //sp.setRequired(true)
             return sp
           }
         case None =>
           if (cls.isAssignableFrom(classOf[BigDecimal])) {
             val dp = PrimitiveType.DECIMAL.createProperty()
-            dp.addRequiredItem(`type`.getTypeName)
+            //dp.setRequired(true)
             return dp
           } else if (cls.isAssignableFrom(classOf[BigInt])) {
             val ip = PrimitiveType.INT.createProperty()
-            ip.addRequiredItem(`type`.getTypeName)
+            //ip.setRequired(true)
             return ip
           }
       }
@@ -62,7 +60,7 @@ class SwaggerScalaModelConverter extends ModelConverter {
         }
         nextResolved match {
           case Some(property) =>
-            property.setRequired(List.empty[String].asJava)
+            //property.setRequired(false)
             property
           case None => null
         }
@@ -70,7 +68,7 @@ class SwaggerScalaModelConverter extends ModelConverter {
         val nextResolved = Option(chain.next().resolve(t, context, annotations, chain))
         nextResolved match {
           case Some(property) =>
-            property.addRequiredItem(t.getTypeName)
+            //property.setRequired(true)
             property
           case None => null
         }
