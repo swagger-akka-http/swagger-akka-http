@@ -16,7 +16,7 @@ package com.github.swagger.akka
 import scala.collection.JavaConverters._
 import scala.compat.java8.OptionConverters._
 import scala.language.implicitConversions
-import io.swagger.models.{
+import io.swagger.oas.models.info.{
   Info ⇒ SwaggerInfo,
   Contact ⇒ SwaggerContact,
   License ⇒ SwaggerLicense
@@ -70,7 +70,7 @@ package object model {
       convertMe.getTermsOfService,
       convertMe.getContact,
       convertMe.getLicense,
-      convertMe.getVendorExtensions.asScala.toMap)
+      asScala(convertMe.getExtensions))
   }
   implicit def scala2swagger(convertMe: Info): SwaggerInfo = {
     val ret = new SwaggerInfo()
@@ -81,7 +81,9 @@ package object model {
       .contact(convertMe.contact.getOrElse(null))
       .license(convertMe.license.getOrElse(null))
 
-    ret.getVendorExtensions.putAll(convertMe.vendorExtensions.asJava)
+    convertMe.vendorExtensions.foreach { case (k, v) =>
+      ret.addExtension(k, v)
+    }
     ret
   }
   def asScala[K,V](jmap: java.util.Map[K,V]): Map[K,V] = Option(jmap) match {

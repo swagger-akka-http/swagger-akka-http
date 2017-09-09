@@ -4,12 +4,12 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.12.2"
 
-crossScalaVersions := Seq("2.11.11", "2.12.2")
+crossScalaVersions := Seq("2.11.11", "2.12.3")
 
-val swaggerVersion = "1.5.16"
-val akkaHttpVersion = "10.0.9"
+val swaggerVersion = "2.0.0-rc1"
+val akkaHttpVersion = "10.0.10"
 val jacksonVersion = "2.8.9"
-val slf4jVersion = "1.7.22"
+val slf4jVersion = "1.7.25"
 
 checksums in update := Nil
 
@@ -23,8 +23,7 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-core" % swaggerVersion,
   "io.swagger" % "swagger-annotations" % swaggerVersion,
   "io.swagger" % "swagger-models" % swaggerVersion,
-  "io.swagger" % "swagger-jaxrs" % swaggerVersion,
-  "io.swagger" %% "swagger-scala-module" % "1.0.4",
+  "io.swagger" % "swagger-jaxrs2" % swaggerVersion,
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
@@ -53,8 +52,6 @@ publishTo := {
 publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
-
-parallelExecution in Test := false
 
 homepage := Some(url("https://github.com/swagger-akka-http/swagger-akka-http"))
 
