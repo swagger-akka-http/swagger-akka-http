@@ -47,7 +47,7 @@ trait SwaggerGenerator {
   def basePath: String = "/"
   def apiDocsPath: String = "api-docs"
   def info: Info = Info()
-  def schemes: List[Scheme] = List(Scheme.HTTP)
+  def schemes: List[Scheme] = List(Scheme.HTTP, Scheme.HTTPS)
   def securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map.empty
   def externalDocs: Option[ExternalDocs] = None
   def vendorExtensions: Map[String, Object] = Map.empty
