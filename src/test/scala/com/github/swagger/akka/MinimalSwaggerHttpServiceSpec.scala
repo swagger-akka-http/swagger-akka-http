@@ -34,7 +34,7 @@ class MinimalSwaggerHttpServiceSpec
           val response = parse(str)
           (response \ "swagger").extract[String] shouldEqual "2.0"
           (response \ "host") shouldBe JNothing
-          (response \ "schemes").extract[List[String]] shouldEqual List("http")
+          (response \ "schemes").extract[List[String]] shouldEqual List("http", "https")
           (response \ "basePath").extract[String] shouldEqual s"${swaggerService.basePath}"
           (response \ "externalDocs").extract[Option[Map[String, String]]] shouldEqual None
           (response \ "securityDefinitions").extract[Map[String, String]] shouldEqual Map()
