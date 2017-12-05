@@ -1,23 +1,21 @@
 package com.github.swagger.akka.samples
 
-import io.swagger.annotations._
 import javax.ws.rs.Path
-import spray.json._
+
 import akka.http.scaladsl.server.Directives
-import akka.http.scaladsl.unmarshalling._
 import akka.stream.ActorMaterializer
 import akka.actor.ActorSystem
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.marshalling.ToResponseMarshallable.apply
 import akka.http.scaladsl.server.Directive.addByNameNullaryApply
 import akka.http.scaladsl.server.Directive.addDirectiveApply
+import io.swagger.annotations._
+import io.swagger.annotations.SwaggerDefinition.Scheme
 
 @Api(value = "/dict", description = "This is a dictionary api.")
 @Path("/dict")
 trait DictHttpService
     extends Directives
     with ModelFormats {
-  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   implicit val actorSystem = ActorSystem("mysystem")
   implicit val materializer = ActorMaterializer()
 
