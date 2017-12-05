@@ -13,20 +13,20 @@
  */
 package com.github.swagger.akka
 
-import scala.collection.JavaConverters._
-import scala.util.control.NonFatal
-import com.github.swagger.akka.model.asScala
-import com.github.swagger.akka.model.Info
-import com.github.swagger.akka.model.scala2swagger
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
+import com.github.swagger.akka.model.{Info, asScala, scala2swagger}
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.DefaultReaderConfig
-import io.swagger.models.{ExternalDocs, Scheme, Swagger}
 import io.swagger.models.auth.SecuritySchemeDefinition
+import io.swagger.models.{ExternalDocs, Scheme, Swagger}
 import io.swagger.util.{Json, Yaml}
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
+
+import scala.collection.JavaConverters._
+import scala.collection.mutable.{ListBuffer, Map => MutableMap}
+import scala.util.control.NonFatal
 
 object SwaggerHttpService {
 
@@ -55,10 +55,10 @@ trait SwaggerGenerator {
 
   def swaggerConfig: Swagger = {
     val modifiedPath = prependSlashIfNecessary(basePath)
-    val swagger = new Swagger().basePath(modifiedPath).info(info).schemes(schemes.asJava)
+    val swagger = new Swagger().basePath(modifiedPath).info(info).schemes(asJavaMutableList(schemes))
     if(StringUtils.isNotBlank(host)) swagger.host(host)
-    swagger.setSecurityDefinitions(securitySchemeDefinitions.asJava)
-    swagger.vendorExtensions(vendorExtensions.asJava)
+    swagger.setSecurityDefinitions(asJavaMutableMap(securitySchemeDefinitions))
+    swagger.vendorExtensions(asJavaMutableMap(vendorExtensions))
     externalDocs match {
       case Some(ed) => swagger.externalDocs(ed)
       case None => swagger
@@ -87,6 +87,14 @@ trait SwaggerGenerator {
         throw t
       }
     }
+  }
+
+  private[akka] def asJavaMutableList[T](list: List[T]) = {
+    (new ListBuffer[T] ++ list).asJava
+  }
+
+  private[akka] def asJavaMutableMap[K, V](map: Map[K, V]) = {
+    (MutableMap.empty[K, V] ++ map).asJava
   }
 
   private[akka] def filteredSwagger: Swagger = {

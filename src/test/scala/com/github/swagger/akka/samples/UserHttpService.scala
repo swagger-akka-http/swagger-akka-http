@@ -15,22 +15,22 @@
  */
 package com.github.swagger.akka.samples
 
-import io.swagger.annotations._
 import javax.ws.rs.Path
-import akka.http.scaladsl.server.Directives
-import akka.http.scaladsl.server.Directives._
-import spray.json.DefaultJsonProtocol
-import akka.stream.ActorMaterializer
+
 import akka.actor.ActorSystem
+import akka.http.scaladsl.server.Directives
+import akka.stream.ActorMaterializer
+import io.swagger.annotations.SwaggerDefinition.Scheme
+import io.swagger.annotations._
 
 @Api(value = "/user", description = "Operations about users.", produces = "application/json")
 @Path("/user")
+@SwaggerDefinition(schemes = Array(Scheme.HTTP))
 trait UserHttpService
     extends Directives
     with ModelFormats {
   implicit val actorSystem = ActorSystem("mysystem")
   implicit val materializer = ActorMaterializer()
-  import actorSystem.dispatcher
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.", nickname = "updateUser", httpMethod = "PUT")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "username", value = "ID of user that needs to be updated", required = true, dataType = "string", paramType = "path"),
