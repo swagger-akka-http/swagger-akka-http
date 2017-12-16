@@ -2,10 +2,9 @@ package com.github.swagger.akka.javadsl
 
 import java.util
 
-import scala.collection.JavaConverters._
-import io.swagger.oas.models.ExternalDocumentation
+import io.swagger.v3.oas.models.ExternalDocumentation
 import com.github.swagger.akka.model.asScala
-import io.swagger.oas.models.info.Info
+import io.swagger.v3.oas.models.info.Info
 
 trait SwaggerGenerator {
   def apiClasses: util.Set[Class[_]]

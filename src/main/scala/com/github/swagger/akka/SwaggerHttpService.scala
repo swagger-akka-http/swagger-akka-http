@@ -13,18 +13,20 @@
  */
 package com.github.swagger.akka
 
-import scala.collection.JavaConverters._
-import scala.util.control.NonFatal
-import com.github.swagger.akka.model.asScala
-import com.github.swagger.akka.model.Info
-import com.github.swagger.akka.model.scala2swagger
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
-import io.swagger.jaxrs2.Reader
-import io.swagger.oas.integration.SwaggerConfiguration
-import io.swagger.oas.models.{ExternalDocumentation, OpenAPI}
-import io.swagger.util.{Json, Yaml}
+import com.github.swagger.akka.model.{Info, swagger2scala}
+import io.swagger.v3.core.util.{Json, Yaml}
+import io.swagger.v3.jaxrs2.Reader
+import io.swagger.v3.oas.integration.SwaggerConfiguration
+import io.swagger.v3.oas.models.servers.Server
+import io.swagger.v3.oas.models.{ExternalDocumentation, OpenAPI}
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
+
+import scala.collection.JavaConverters._
+import scala.collection.mutable.{ListBuffer, Map => MutableMap}
+import scala.util.control.NonFatal
 
 object SwaggerHttpService {
 
@@ -45,7 +47,7 @@ trait SwaggerGenerator {
   def basePath: String = "/"
   def apiDocsPath: String = "api-docs"
   def info: Info = Info()
-  //def schemes: List[Scheme] = List(Scheme.HTTP)
+  def schemes: List[String] = List("http")
   //def securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map.empty
   def externalDocs: Option[ExternalDocumentation] = None
   def vendorExtensions: Map[String, Object] = Map.empty
@@ -55,11 +57,14 @@ trait SwaggerGenerator {
     val modifiedPath = prependSlashIfNecessary(basePath)
     val swagger = new OpenAPI()
     swagger.setInfo(info)
-    //swagger.schemes(schemes.asJava)
     //.basePath(modifiedPath)
-    //if(StringUtils.isNotBlank(host)) swagger.host(host)
-    //swagger.setSecurityDefinitions(securitySchemeDefinitions.asJava)
-    swagger.setExtensions(vendorExtensions.asJava)
+    if(StringUtils.isNotBlank(host)) {
+      schemes.foreach { scheme =>
+        swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://${host}"))
+      }
+    }
+    //swagger.setSecurityDefinitions(asJavaMutableMap(securitySchemeDefinitions))
+    swagger.extensions(asJavaMutableMap(vendorExtensions))
     externalDocs match {
       case Some(ed) => swagger.setExternalDocs(ed)
       case None => swagger
@@ -89,6 +94,14 @@ trait SwaggerGenerator {
         throw t
       }
     }
+  }
+
+  private[akka] def asJavaMutableList[T](list: List[T]) = {
+    (new ListBuffer[T] ++ list).asJava
+  }
+
+  private[akka] def asJavaMutableMap[K, V](map: Map[K, V]) = {
+    (MutableMap.empty[K, V] ++ map).asJava
   }
 
   private[akka] def filteredSwagger: OpenAPI = {

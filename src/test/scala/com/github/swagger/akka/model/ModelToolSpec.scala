@@ -3,7 +3,7 @@ package com.github.swagger.akka.model
 import scala.collection.JavaConverters._
 import com.github.swagger.akka.SwaggerHttpService
 //import com.github.swagger.akka.samples.{PetHttpService, UserHttpService}
-import io.swagger.oas.models.info.{Contact => SwaggerContact, Info => SwaggerInfo, License => SwaggerLicense}
+import io.swagger.v3.oas.models.info.{Contact => SwaggerContact, Info => SwaggerInfo, License => SwaggerLicense}
 import org.scalatest.{Matchers, WordSpec}
 
 class ModelToolSpec extends WordSpec with Matchers {

@@ -16,7 +16,7 @@ package com.github.swagger.akka
 import scala.collection.JavaConverters._
 import scala.compat.java8.OptionConverters._
 import scala.language.implicitConversions
-import io.swagger.oas.models.info.{
+import io.swagger.v3.oas.models.info.{
   Info ⇒ SwaggerInfo,
   Contact ⇒ SwaggerContact,
   License ⇒ SwaggerLicense

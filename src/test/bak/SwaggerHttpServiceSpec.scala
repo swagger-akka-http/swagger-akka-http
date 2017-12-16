@@ -54,7 +54,7 @@ class SwaggerHttpServiceSpec
           val response = parse(str)
           (response \ "swagger").extract[String] shouldEqual "2.0"
           (response \ "host").extract[String] shouldEqual swaggerService.host
-          (response \ "schemes").extract[List[String]] shouldEqual List("https")
+          (response \ "schemes").extract[Set[String]] shouldEqual Set("http", "https")
           (response \ "basePath").extract[String] shouldEqual s"/${swaggerService.basePath}"
           val ed = swaggerService.externalDocs.getOrElse(throw new IllegalArgumentException("missing external docs"))
           (response \ "externalDocs").extract[Map[String, String]] shouldEqual Map(
@@ -228,8 +228,21 @@ class SwaggerHttpServiceSpec
           contentType shouldBe ContentTypes.`application/json`
           val str = responseAs[String]
           val response = parse(str)
-          (response \ "schemes").extract[List[String]] shouldEqual List("https", "http")
+          (response \ "schemes").extract[Set[String]] shouldEqual Set("https", "http")
         }
+      }
+    }
+
+    "conversion of scala collections to java" should {
+      "return mutable list" in {
+        val jlist = swaggerService.asJavaMutableList(List("http"))
+        jlist.add("extra")
+        jlist.asScala.toSet shouldEqual Set("http", "extra")
+      }
+      "return mutable map" in {
+        val jmap= swaggerService.asJavaMutableMap(Map("scheme" -> "http"))
+        jmap.put("extraKey", "extraValue")
+        jmap.asScala.toMap shouldEqual Map(("scheme" -> "http"), ("extraKey" -> "extraValue"))
       }
     }
   }
