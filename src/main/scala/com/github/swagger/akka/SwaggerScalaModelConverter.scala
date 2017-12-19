@@ -4,10 +4,10 @@ import java.lang.annotation.Annotation
 import java.lang.reflect.Type
 import java.util.Iterator
 
-import com.fasterxml.jackson.databind.introspect.Annotated
 import com.fasterxml.jackson.databind.`type`.ReferenceType
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import io.swagger.v3.core.converter._
+import io.swagger.v3.core.converter.{ModelConverter, ModelConverterContext}
+import io.swagger.v3.core.jackson.AbstractModelConverter
 import io.swagger.v3.oas.models.media.{Schema, StringSchema}
 import io.swagger.v3.core.util.{Json, PrimitiveType}
 
@@ -15,7 +15,7 @@ object SwaggerScalaModelConverter {
   Json.mapper().registerModule(new DefaultScalaModule())
 }
 
-class SwaggerScalaModelConverter extends ModelConverter {
+class SwaggerScalaModelConverter extends AbstractModelConverter(Json.mapper()) {
   SwaggerScalaModelConverter
 
   override def resolve(`type`: Type, context: ModelConverterContext,
@@ -90,11 +90,6 @@ class SwaggerScalaModelConverter extends ModelConverter {
         else
           null
     }
-  }
-
-  override def resolveAnnotatedType(`type`: Type, member: Annotated, elementName: String,
-                                    context: ModelConverterContext, chain: Iterator[ModelConverter]): Schema[_] = {
-    resolve(`type`, context, chain)
   }
 
   private def getEnumerationInstance(cls: Class[_]): Option[Enumeration] =
