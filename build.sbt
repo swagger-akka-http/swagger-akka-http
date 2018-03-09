@@ -7,7 +7,8 @@ scalaVersion := "2.12.4"
 crossScalaVersions := Seq("2.11.12", "2.12.4")
 
 val swaggerVersion = "1.5.18"
-val akkaHttpVersion = "10.0.11"
+val akkaVersion = "2.5.11"
+val akkaHttpVersion = "10.1.0"
 val jacksonVersion = "2.9.4"
 val slf4jVersion = "1.7.25"
 
@@ -17,6 +18,7 @@ resolvers += Resolver.sonatypeRepo("releases")
 
 libraryDependencies ++= Seq(
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0",
+  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % "test",
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
