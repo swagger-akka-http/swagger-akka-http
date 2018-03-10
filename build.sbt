@@ -4,7 +4,7 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.12.4"
 
-crossScalaVersions := Seq("2.11.12", "2.12.4")
+crossScalaVersions := Seq("2.11.12", "2.12.4", "2.13.0-M3")
 
 val swaggerVersion = "1.5.18"
 val akkaVersion = "2.5.11"
@@ -29,8 +29,8 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
-  "org.scalatest" %% "scalatest" % "3.0.3" % "test",
-  "org.json4s" %% "json4s-native" % "3.5.0" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.5-M1" % "test",
+  "org.json4s" %% "json4s-native" % "3.5.3" % "test",
   "joda-time" % "joda-time" % "2.8" % "test",
   "org.joda" % "joda-convert" % "1.7" % "test",
   "org.slf4j" % "slf4j-simple" % slf4jVersion % "test"
