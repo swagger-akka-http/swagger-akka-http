@@ -1,26 +1,22 @@
 package com.github.swagger.akka
 
-import java.lang.annotation.Annotation
-import java.lang.reflect.Type
 import java.util.Iterator
 
 import com.fasterxml.jackson.databind.`type`.ReferenceType
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import io.swagger.v3.core.converter.{ModelConverter, ModelConverterContext}
-import io.swagger.v3.core.jackson.AbstractModelConverter
-import io.swagger.v3.oas.models.media.{Schema, StringSchema}
+import io.swagger.v3.core.converter._
 import io.swagger.v3.core.util.{Json, PrimitiveType}
+import io.swagger.v3.oas.models.media.{Schema, StringSchema}
 
 object SwaggerScalaModelConverter {
   Json.mapper().registerModule(new DefaultScalaModule())
 }
 
-class SwaggerScalaModelConverter extends AbstractModelConverter(Json.mapper()) {
+class SwaggerScalaModelConverter extends ModelConverter {
   SwaggerScalaModelConverter
 
-  override def resolve(`type`: Type, context: ModelConverterContext,
-                       annotations: Array[Annotation], chain: Iterator[ModelConverter]): Schema[_] = {
-    val javaType = Json.mapper().constructType(`type`)
+  override def resolve(`type`: AnnotatedType, context: ModelConverterContext, chain: Iterator[ModelConverter]): Schema[_] = {
+    val javaType = Json.mapper().constructType(`type`.getType)
     val cls = javaType.getRawClass
 
     if(cls != null) {
@@ -48,14 +44,14 @@ class SwaggerScalaModelConverter extends AbstractModelConverter(Json.mapper()) {
     }
 
     // Unbox scala options
-    `type` match {
+    `type`.getType match {
       case rt: ReferenceType if isOption(cls) =>
         val nextType = rt.getContentType
         val nextResolved = {
-          Option(resolve(nextType, context, annotations, chain)) match {
+          Option(resolve(new AnnotatedType(nextType), context, chain)) match {
             case Some(p) => Some(p)
             case None if chain.hasNext =>
-              Option(chain.next().resolve(nextType, context, annotations, chain))
+              Option(chain.next().resolve(new AnnotatedType(nextType), context, chain))
             case _ => None
           }
         }
@@ -65,8 +61,8 @@ class SwaggerScalaModelConverter extends AbstractModelConverter(Json.mapper()) {
             property
           case None => null
         }
-      case t if chain.hasNext =>
-        val nextResolved = Option(chain.next().resolve(t, context, annotations, chain))
+      case _ if chain.hasNext =>
+        val nextResolved = Option(chain.next().resolve(`type`, context, chain))
         nextResolved match {
           case Some(property) =>
             //property.setRequired(true)
@@ -75,20 +71,6 @@ class SwaggerScalaModelConverter extends AbstractModelConverter(Json.mapper()) {
         }
       case _ =>
         null
-    }
-  }
-
-  override def resolve(`type`: Type, context: ModelConverterContext, chain: Iterator[ModelConverter]): Schema[_] = {
-    val javaType = Json.mapper().constructType(`type`)
-    getEnumerationInstance(javaType.getRawClass) match {
-      case Some(enumInstance) => null // ignore scala enums
-      case None =>
-        if (chain.hasNext()) {
-          val next = chain.next()
-          next.resolve(`type`, context, chain)
-        }
-        else
-          null
     }
   }
 
