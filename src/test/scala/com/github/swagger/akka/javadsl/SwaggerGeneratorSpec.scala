@@ -2,6 +2,8 @@ package com.github.swagger.akka.javadsl
 
 import java.util
 
+import com.github.swagger.akka.samples.DictHttpService
+
 import scala.collection.JavaConverters._
 import io.swagger.v3.oas.models.ExternalDocumentation
 import io.swagger.v3.oas.models.info.{Contact, Info, License}
@@ -11,11 +13,11 @@ class SwaggerGeneratorSpec extends WordSpec with Matchers {
 
   "Java DSL SwaggerGenerator" should {
     "not fail when generating swagger doc" in {
-//      val generator = new SwaggerGenerator {
-//        override def apiClasses: util.Set[Class[_]] = util.Collections.singleton(classOf[DictHttpService])
-//      }
-//      generator.generateSwaggerJson should not be empty
-//      generator.generateSwaggerYaml should not be empty
+      val generator = new SwaggerGenerator {
+        override def apiClasses: util.Set[Class[_]] = util.Collections.singleton(classOf[DictHttpService])
+      }
+      generator.generateSwaggerJson should not be empty
+      generator.generateSwaggerYaml should not be empty
     }
 
     "properly convert the javadsl settings" in {
@@ -26,8 +28,7 @@ class SwaggerGeneratorSpec extends WordSpec with Matchers {
       //val securitySchemeDefinition = new BasicAuthDefinition()
       val edocs = new ExternalDocumentation().description("edesc").url("http://b.com/docs")
       val generator = new SwaggerGenerator {
-        override def apiClasses: util.Set[Class[_]] = util.Collections.emptySet()
-        // util.Collections.singleton(classOf[DictHttpService])
+        override def apiClasses: util.Set[Class[_]] = util.Collections.singleton(classOf[DictHttpService])
         override def host: String = "host:12345"
         override def basePath: String = "/base"
         override def apiDocsPath: String = "docs"
@@ -46,7 +47,7 @@ class SwaggerGeneratorSpec extends WordSpec with Matchers {
         }
         override def unwantedDefinitions: util.List[String] = util.Collections.singletonList("unwanted")
       }
-      //generator.converter.apiClasses shouldEqual Set(classOf[DictHttpService])
+      generator.converter.apiClasses shouldEqual Set(classOf[DictHttpService])
       generator.converter.host shouldEqual generator.host
       generator.converter.basePath shouldEqual generator.basePath
       generator.converter.apiDocsPath shouldEqual generator.apiDocsPath

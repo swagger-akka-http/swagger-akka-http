@@ -15,7 +15,7 @@ package com.github.swagger.akka
 
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
-import com.github.swagger.akka.model.{Info, swagger2scala}
+import com.github.swagger.akka.model.{Info, asScala}
 import io.swagger.v3.core.util.{Json, Yaml}
 import io.swagger.v3.jaxrs2.Reader
 import io.swagger.v3.oas.integration.SwaggerConfiguration
@@ -107,7 +107,9 @@ trait SwaggerGenerator {
   private[akka] def filteredSwagger: OpenAPI = {
     val swagger: OpenAPI = reader.read(apiClasses.asJava)
     if (!unwantedDefinitions.isEmpty) {
-      //swagger.setDefinitions(asScala(swagger.getDefinitions).filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
+      val filteredSchemas = asScala(swagger.getComponents.getSchemas).filterKeys(
+        definitionName => !unwantedDefinitions.contains(definitionName)).asJava
+      swagger.getComponents.setSchemas(filteredSchemas)
     }
     swagger
   }
