@@ -18,8 +18,6 @@ package com.github.swagger.akka.samples
 import io.swagger.annotations._
 import javax.ws.rs.Path
 import akka.http.scaladsl.server.Directives
-import akka.http.scaladsl.server.Directives._
-import spray.json.DefaultJsonProtocol
 import akka.stream.ActorMaterializer
 import akka.actor.ActorSystem
 
@@ -31,7 +29,6 @@ trait PetHttpService
 
   implicit val actorSystem = ActorSystem("mysystem")
   implicit val materializer = ActorMaterializer()
-  import actorSystem.dispatcher
 
   @ApiOperation(value = "Find a pet by ID", notes = "Returns a pet based on ID", httpMethod = "GET", response = classOf[Pet])
   @ApiImplicitParams(Array(
@@ -51,7 +48,7 @@ trait PetHttpService
     new ApiImplicitParam(name = "name", value = "Updated name of the pet.", required = false, dataType = "string", paramType = "form"),
     new ApiImplicitParam(name = "status", value = "Updated status of the pet.", required = false, dataType = "string", paramType = "form")))
   @ApiResponses(Array(
-    new ApiResponse(code = 404, message = "Dictionary does not exist.")))
+    new ApiResponse(code = 404, message = "Pet does not exist.")))
   def updateRoute = post {
     path("/pet" / Segment) { id ⇒
       {
