@@ -53,9 +53,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
   }
 }
 
-case class ModelWithVector (
-                             name: String,
-                             friends: Vector[String])
+case class ModelWithVector (name: String, friends: Vector[String])
 
 case class ModelWithIntVector (ints: Vector[Int])
 
