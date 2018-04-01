@@ -1,9 +1,11 @@
 package com.github.swagger.akka.model
 
 import scala.collection.JavaConverters._
+
 import com.github.swagger.akka.SwaggerHttpService
-//import com.github.swagger.akka.samples.{PetHttpService, UserHttpService}
+import com.github.swagger.akka.samples.{PetHttpService, UserHttpService}
 import io.swagger.v3.oas.models.info.{Contact => SwaggerContact, Info => SwaggerInfo, License => SwaggerLicense}
+import io.swagger.v3.oas.models.media.Schema
 import org.scalatest.{Matchers, WordSpec}
 
 class ModelToolSpec extends WordSpec with Matchers {
@@ -20,19 +22,21 @@ class ModelToolSpec extends WordSpec with Matchers {
 
   "asScala" should {
     "handle null" in {
-//      asScala(null.asInstanceOf[java.util.Map[String, Model]]) shouldEqual Map.empty[String, Model]
-//      asScala(null.asInstanceOf[java.util.Map[String, String]]) shouldEqual Map.empty[String, String]
-//      asScala(null.asInstanceOf[java.util.Set[String]]) shouldEqual Set.empty[String]
-//      asScala(null.asInstanceOf[java.util.Set[Model]]) shouldEqual Set.empty[Model]
-//      asScala(null.asInstanceOf[java.util.List[String]]) shouldEqual List.empty[String]
-//      asScala(null.asInstanceOf[java.util.List[Model]]) shouldEqual List.empty[Model]
-//      asScala(null.asInstanceOf[java.util.Optional[String]]) shouldEqual None
-//      asScala(null.asInstanceOf[java.util.Optional[Model]]) shouldEqual None
+      asScala(null.asInstanceOf[java.util.Map[String, Schema[_]]]) shouldEqual Map.empty[String, Schema[_]]
+      asScala(null.asInstanceOf[java.util.Map[String, String]]) shouldEqual Map.empty[String, String]
+      asScala(null.asInstanceOf[java.util.Set[String]]) shouldEqual Set.empty[String]
+      asScala(null.asInstanceOf[java.util.Set[Schema[_]]]) shouldEqual Set.empty[Schema[_]]
+      asScala(null.asInstanceOf[java.util.List[String]]) shouldEqual List.empty[String]
+      asScala(null.asInstanceOf[java.util.List[Schema[_]]]) shouldEqual List.empty[Schema[_]]
+      asScala(null.asInstanceOf[java.util.Optional[String]]) shouldEqual None
+      asScala(null.asInstanceOf[java.util.Optional[Schema[_]]]) shouldEqual None
     }
     "handle simple java map" in {
-//      val swaggerService = new SwaggerHttpService {
-//        override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
-//      }
+      val swaggerService = new SwaggerHttpService {
+        override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
+      }
+      swaggerService.filteredSwagger should not be (null)
+//      swaggerService.filteredSwagger.getComponents should not be (null)
 //      val definitions = swaggerService.filteredSwagger.getComponents.getSchemas
 //      definitions should not be null
 //      definitions should have size 4
