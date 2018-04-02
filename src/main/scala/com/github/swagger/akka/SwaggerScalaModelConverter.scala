@@ -27,17 +27,17 @@ class SwaggerScalaModelConverter extends ModelConverter {
             val sp = new StringSchema()
             for (v <- enumInstance.values)
               sp.addEnumItem(v.toString)
-            //sp.setRequired(true)
+            setRequired(`type`)
             return sp
           }
         case None =>
           if (cls.isAssignableFrom(classOf[BigDecimal])) {
             val dp = PrimitiveType.DECIMAL.createProperty()
-            //dp.setRequired(true)
+            setRequired(`type`)
             return dp
           } else if (cls.isAssignableFrom(classOf[BigInt])) {
             val ip = PrimitiveType.INT.createProperty()
-            //ip.setRequired(true)
+            setRequired(`type`)
             return ip
           }
       }
@@ -46,27 +46,23 @@ class SwaggerScalaModelConverter extends ModelConverter {
     // Unbox scala options
     `type`.getType match {
       case rt: ReferenceType if isOption(cls) =>
-        val nextType = rt.getContentType
-        val nextResolved = {
-          Option(resolve(new AnnotatedType(nextType), context, chain)) match {
-            case Some(p) => Some(p)
-            case None if chain.hasNext =>
-              Option(chain.next().resolve(new AnnotatedType(nextType), context, chain))
-            case _ => None
-          }
-        }
-        nextResolved match {
-          case Some(property) =>
-            //property.setRequired(false)
-            property
-          case None => null
-        }
+        val nextType = new AnnotatedType()
+          .`type`(rt.getContentType)
+          .ctxAnnotations(`type`.getCtxAnnotations)
+          .parent(`type`.getParent)
+          .schemaProperty(`type`.isSchemaProperty)
+          .name(`type`.getName)
+          .resolveAsRef(`type`.isResolveAsRef)
+          .jsonViewAnnotation(`type`.getJsonViewAnnotation)
+          .skipOverride(true)
+        context.resolve(nextType)
       case _ if chain.hasNext =>
         val nextResolved = Option(chain.next().resolve(`type`, context, chain))
         nextResolved match {
-          case Some(property) =>
-            //property.setRequired(true)
+          case Some(property) => {
+            setRequired(`type`)
             property
+          }
           case None => null
         }
       case _ =>
@@ -74,8 +70,14 @@ class SwaggerScalaModelConverter extends ModelConverter {
     }
   }
 
-  private def getEnumerationInstance(cls: Class[_]): Option[Enumeration] =
-  {
+  private def setRequired(`type`: AnnotatedType): Unit = {
+    (Option(`type`.getParent), Option(`type`.getName)) match {
+      case (Some(parent), Some(name)) => parent.addRequiredItem(name)
+      case _ =>
+    }
+  }
+
+  private def getEnumerationInstance(cls: Class[_]): Option[Enumeration] = {
     if (cls.getFields.map(_.getName).contains("MODULE$")) {
       val javaUniverse = scala.reflect.runtime.universe
       val m = javaUniverse.runtimeMirror(Thread.currentThread().getContextClassLoader)
