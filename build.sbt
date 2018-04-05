@@ -24,7 +24,6 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-annotations" % swaggerVersion,
   "io.swagger" % "swagger-models" % swaggerVersion,
   "io.swagger" % "swagger-jaxrs" % swaggerVersion,
-  "io.swagger" %% "swagger-scala-module" % "1.0.4",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
