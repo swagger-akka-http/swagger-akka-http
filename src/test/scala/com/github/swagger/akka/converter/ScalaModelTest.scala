@@ -40,6 +40,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     val model = schemas("ModelWithVector")
     val friends = model.getProperties().get("friends")
     friends.isInstanceOf[ArrayProperty] should be (true)
+    friends.asInstanceOf[ArrayProperty].getItems.getType should be ("string")
   }
 
   it should "read a model with vector of ints" in {

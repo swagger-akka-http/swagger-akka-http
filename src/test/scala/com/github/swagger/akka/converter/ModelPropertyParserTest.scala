@@ -6,8 +6,8 @@ import java.util
 
 import com.github.swagger.akka.SwaggerScalaModelConverter
 import io.swagger.converter._
-import io.swagger.models.properties._
 import io.swagger.models.{Model, properties}
+import io.swagger.models.properties._
 import models._
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -93,6 +93,17 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     optBigDecimal should not be (null)
     optBigDecimal shouldBe a [properties.BaseIntegerProperty]
     optBigDecimal.getRequired should be (false)
+  }
+
+  it should "process Model with Scala Option Int" in {
+    val converter = ModelConverters.getInstance()
+    val schemas = converter.readAll(classOf[ModelWOptionInt]).asScala.toMap
+    val model = schemas.get("ModelWOptionInt")
+    model should be ('defined)
+    val optBoolean = model.get.getProperties().get("optInt")
+    optBoolean should not be (null)
+    optBoolean shouldBe a [properties.ObjectProperty]
+    optBoolean.getRequired should be (false)
   }
 
   it should "process Model with Scala Option Boolean" in {
