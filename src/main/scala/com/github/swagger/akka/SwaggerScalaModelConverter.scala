@@ -20,7 +20,6 @@ class SwaggerScalaModelConverter extends ModelConverter {
 
   private val BigDecimalClass = classOf[BigDecimal]
   private val BigIntClass = classOf[BigInt]
-  private val ObjectClass = classOf[Object]
 
   override
   def resolveProperty(`type`: Type, context: ModelConverterContext,
@@ -40,15 +39,11 @@ class SwaggerScalaModelConverter extends ModelConverter {
             return sp
           }
         case None =>
-          if (cls == ObjectClass) {
-            val p = PrimitiveType.OBJECT.createProperty()
-            p.setRequired(true)
-            return p
-          } else if (cls.isAssignableFrom(BigDecimalClass)) {
+          if (cls == BigDecimalClass) {
             val dp = PrimitiveType.DECIMAL.createProperty()
             dp.setRequired(true)
             return dp
-          } else if (cls.isAssignableFrom(BigIntClass)) {
+          } else if (cls == BigIntClass) {
             val dp = PrimitiveType.INT.createProperty()
             dp.setRequired(true)
             return dp
