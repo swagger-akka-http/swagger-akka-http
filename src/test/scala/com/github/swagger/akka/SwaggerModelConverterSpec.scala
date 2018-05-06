@@ -34,7 +34,7 @@ class SwaggerModelConverterSpec
         val userSchema = schemas.get ("ModelBase")
         userSchema.getDescription() should equal (ModelBaseDescription)
         val name = userSchema.getProperties().get("name")
-        name.isInstanceOf[StringProperty] should be (true)
+        name shouldBe a [StringProperty]
         name.getDescription() should equal ("name123")
       }
       "include the base class details in the Swagger Model" in {
@@ -80,7 +80,7 @@ class SwaggerModelConverterSpec
         offset.getItems().getType() should equal ("integer")
         offset.getItems().getFormat() should equal ("int32")
         val date = userSchema.getProperties().get("endDate").asInstanceOf[DateProperty]
-        date.getRequired() should be (false)
+        date.getRequired() shouldBe false
         date.getType() should be ("string")
         date.getFormat() should be ("date")
         val amount = userSchema.getProperties().get("amount")

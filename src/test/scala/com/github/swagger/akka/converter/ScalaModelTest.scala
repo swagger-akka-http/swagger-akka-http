@@ -15,7 +15,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     val userSchema = schemas("SModelWithEnum")
 
     val orderSize = userSchema.getProperties().get("orderSize")
-    orderSize.isInstanceOf[StringProperty] should be (true)
+    orderSize shouldBe a [StringProperty]
 
     val sp = orderSize.asInstanceOf[StringProperty]
     (sp.getEnum().asScala.toSet & Set("TALL", "GRANDE", "VENTI")).size should be (3)
@@ -25,13 +25,13 @@ class ScalaModelTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().readAll(classOf[SimpleUser]).asScala
     val userSchema = schemas("SimpleUser")
     val id = userSchema.getProperties().get("id")
-    id.isInstanceOf[LongProperty] should be (true)
+    id shouldBe a [LongProperty]
 
     val name = userSchema.getProperties().get("name")
-    name.isInstanceOf[StringProperty] should be (true)
+    name shouldBe a [StringProperty]
 
     val date = userSchema.getProperties().get("date")
-    date.isInstanceOf[DateTimeProperty] should be (true)
+    date shouldBe a [DateTimeProperty]
     date.getDescription should be ("the birthdate")
   }
 
@@ -39,7 +39,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithVector]).asScala
     val model = schemas("ModelWithVector")
     val friends = model.getProperties().get("friends")
-    friends.isInstanceOf[ArrayProperty] should be (true)
+    friends shouldBe an [ArrayProperty]
     friends.asInstanceOf[ArrayProperty].getItems.getType should be ("string")
   }
 
@@ -47,7 +47,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithIntVector]).asScala
     val model = schemas("ModelWithIntVector")
     val prop = model.getProperties().get("ints")
-    prop.isInstanceOf[ArrayProperty] should be (true)
+    prop shouldBe an [ArrayProperty]
     prop.asInstanceOf[ArrayProperty].getItems.getType should be ("object")
   }
 
@@ -55,7 +55,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithBooleanVector]).asScala
     val model = schemas("ModelWithBooleanVector")
     val prop = model.getProperties().get("bools")
-    prop.isInstanceOf[ArrayProperty] should be (true)
+    prop shouldBe an [ArrayProperty]
     prop.asInstanceOf[ArrayProperty].getItems.getType should be ("object")
   }
 }

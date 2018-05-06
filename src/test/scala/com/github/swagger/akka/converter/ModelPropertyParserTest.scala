@@ -21,7 +21,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     model should not be (null)
     val isFoo = model.getProperties().get("isFoo")
     isFoo should not be (null)
-    isFoo.isInstanceOf[BooleanProperty] should be (true)
+    isFoo shouldBe a [BooleanProperty]
   }
 
   it should "process Option[String] as string" in {
@@ -31,12 +31,12 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     model should be ('defined)
     val stringOpt = model.get.getProperties().get("stringOpt")
     stringOpt should not be (null)
-    stringOpt.isInstanceOf[StringProperty] should be (true)
-    stringOpt.getRequired should be (false)
+    stringOpt shouldBe a [StringProperty]
+    stringOpt.getRequired shouldBe false
     val stringWithDataType = model.get.getProperties().get("stringWithDataTypeOpt")
     stringWithDataType should not be (null)
-    stringWithDataType.isInstanceOf[StringProperty] should be (true)
-    stringWithDataType.getRequired should be (false)
+    stringWithDataType shouldBe a [StringProperty]
+    stringWithDataType.getRequired shouldBe false
   }
 
   it should "process Option[Model] as Model" in {
@@ -46,7 +46,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     model should be ('defined)
     val modelOpt = model.get.getProperties().get("modelOpt")
     modelOpt should not be (null)
-    modelOpt.isInstanceOf[RefProperty] should be (true)
+    modelOpt shouldBe a [RefProperty]
   }
 
   it should "process Model with Scala BigDecimal as Number" in {
@@ -58,7 +58,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     model should be ('defined)
     val modelOpt = model.get.getProperties().get("field")
     modelOpt shouldBe a [properties.DecimalProperty]
-    modelOpt.getRequired should be (true)
+    modelOpt.getRequired shouldBe true
   }
 
   it should "process Model with Scala BigInt as Number" in {
@@ -70,7 +70,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     model should be ('defined)
     val modelOpt = model.get.getProperties().get("field")
     modelOpt shouldBe a [properties.BaseIntegerProperty]
-    modelOpt.getRequired should be (true)
+    modelOpt.getRequired shouldBe true
   }
 
   it should "process Model with Scala Option BigDecimal" in {
@@ -81,7 +81,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val optBigDecimal = model.get.getProperties().get("optBigDecimal")
     optBigDecimal should not be (null)
     optBigDecimal shouldBe a [properties.DecimalProperty]
-    optBigDecimal.getRequired should be (false)
+    optBigDecimal.getRequired shouldBe false
   }
 
   it should "process Model with Scala Option BigInt" in {
@@ -92,18 +92,18 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val optBigDecimal = model.get.getProperties().get("optBigInt")
     optBigDecimal should not be (null)
     optBigDecimal shouldBe a [properties.BaseIntegerProperty]
-    optBigDecimal.getRequired should be (false)
+    optBigDecimal.getRequired shouldBe false
   }
 
   it should "process Model with Scala Option Int" in {
     val converter = ModelConverters.getInstance()
     val schemas = converter.readAll(classOf[ModelWOptionInt]).asScala.toMap
     val model = schemas.get("ModelWOptionInt")
-    model should be ('defined)
-    val optBoolean = model.get.getProperties().get("optInt")
-    optBoolean should not be (null)
-    optBoolean shouldBe a [properties.ObjectProperty]
-    optBoolean.getRequired should be (false)
+    model should be('defined)
+    val optInt = model.get.getProperties().get("optInt")
+    optInt should not be (null)
+    optInt shouldBe a[properties.ObjectProperty]
+    optInt.getRequired shouldBe false
   }
 
   it should "process Model with Scala Option Boolean" in {
@@ -114,7 +114,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val optBoolean = model.get.getProperties().get("optBoolean")
     optBoolean should not be (null)
     optBoolean shouldBe a [properties.ObjectProperty]
-    optBoolean.getRequired should be (false)
+    optBoolean.getRequired shouldBe false
   }
 
   it should "process all properties as required barring Option[_] or if overridden in annotation" in {
@@ -127,16 +127,16 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     model should not be (null)
 
     val optional = model.getProperties().get("optional")
-    optional.getRequired should be (false)
+    optional.getRequired shouldBe false
 
     val required = model.getProperties().get("required")
-    required.getRequired should be (true)
+    required.getRequired shouldBe true
 
     val forcedRequired = model.getProperties().get("forcedRequired")
-    forcedRequired.getRequired should be (true)
+    forcedRequired.getRequired shouldBe true
 
     val forcedOptional = model.getProperties().get("forcedOptional")
-    forcedOptional.getRequired should be (false)
+    forcedOptional.getRequired shouldBe false
   }
 
   it should "handle null properties from converters later in the chain" in {

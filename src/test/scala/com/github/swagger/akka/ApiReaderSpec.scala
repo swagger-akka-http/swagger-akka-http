@@ -15,13 +15,14 @@
  */
 package com.github.swagger.akka
 
+import com.github.swagger.akka.samples._
 import io.swagger.jaxrs.Reader
+import io.swagger.models._
 import io.swagger.models.parameters.BodyParameter
 import io.swagger.models.properties.{RefProperty, StringProperty}
-import io.swagger.models._
 import org.scalatest.{Matchers, WordSpec}
+
 import scala.collection.JavaConverters._
-import com.github.swagger.akka.samples._
 
 class ApiReaderSpec
     extends WordSpec
@@ -305,7 +306,7 @@ class ApiReaderSpec
         ops should have size (1)
         val resp200 = ops.head.getResponses().get("200")
         resp200 should not be (null)
-        resp200.getSchema().isInstanceOf[RefProperty] should be (true)
+        resp200.getSchema() shouldBe a [RefProperty]
         val refProp = resp200.getSchema().asInstanceOf[RefProperty]
         refProp.getSimpleRef() should equal ("ListReply")
         // TODO - Needs to encode the ListReply[T] T-Val
