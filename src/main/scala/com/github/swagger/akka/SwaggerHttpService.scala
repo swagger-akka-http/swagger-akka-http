@@ -19,8 +19,9 @@ import com.github.swagger.akka.model.{Info, asScala}
 import io.swagger.v3.core.util.{Json, Yaml}
 import io.swagger.v3.jaxrs2.Reader
 import io.swagger.v3.oas.integration.SwaggerConfiguration
+import io.swagger.v3.oas.models.security.{SecurityRequirement, SecurityScheme}
 import io.swagger.v3.oas.models.servers.Server
-import io.swagger.v3.oas.models.{ExternalDocumentation, OpenAPI}
+import io.swagger.v3.oas.models.{Components, ExternalDocumentation, OpenAPI}
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 
@@ -47,8 +48,10 @@ trait SwaggerGenerator {
   def basePath: String = "/"
   def apiDocsPath: String = "api-docs"
   def info: Info = Info()
+  def components: Option[Components] = None
   def schemes: List[String] = List("http")
-  //def securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map.empty
+  def security: List[SecurityRequirement] = List()
+  def securitySchemes: Map[String, SecurityScheme] = Map.empty
   def externalDocs: Option[ExternalDocumentation] = None
   def vendorExtensions: Map[String, Object] = Map.empty
   def unwantedDefinitions: Seq[String] = Seq.empty
@@ -57,14 +60,18 @@ trait SwaggerGenerator {
     val modifiedPath = prependSlashIfNecessary(basePath)
     val swagger = new OpenAPI()
     swagger.setInfo(info)
+    components.foreach { c => swagger.setComponents(c) }
+
     //.basePath(modifiedPath)
     if(StringUtils.isNotBlank(host)) {
       schemes.foreach { scheme =>
         swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://${host}"))
       }
     }
-    //swagger.setSecurityDefinitions(asJavaMutableMap(securitySchemeDefinitions))
+    securitySchemes.foreach { case (k: String, v: SecurityScheme) => swagger.schemaRequirement(k, v) }
+    swagger.setSecurity(asJavaMutableList(security))
     swagger.extensions(asJavaMutableMap(vendorExtensions))
+
     externalDocs match {
       case Some(ed) => swagger.setExternalDocs(ed)
       case None => swagger

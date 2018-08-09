@@ -10,6 +10,9 @@ import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
 import io.swagger.models.auth.BasicAuthDefinition
 import io.swagger.models.{ExternalDocs, Model, Scheme}
+import io.swagger.v3.oas.models.Components
+import io.swagger.v3.oas.models.parameters.Parameter
+import io.swagger.v3.oas.models.security.SecurityScheme.In
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
@@ -26,12 +29,20 @@ class SwaggerHttpServiceSpec
     system.terminate()
   }
 
+  val someGlobalHeaderParam: Parameter = new Parameter()
+    .name("X-Customer-Header")
+    .description("A customer header defined in the global OpenAPI scope")
+    .required(true)
+    .in(In.HEADER.toString)
+    .schema(new Schema().`type`("string"))
+
   val swaggerService = new SwaggerHttpService {
     override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
     override val basePath = "api"
     override val apiDocsPath = "api-doc"
     override val schemes = List(Scheme.HTTPS)
     override val host = "some.domain.com:12345"
+    override val components = new Components().parameters(Map("globalHeaderParam" -> someGlobalHeaderParam).asJava)
     override val info = Info(description = "desc1",
                    version = "v1.0",
                    title = "title1",
@@ -70,6 +81,7 @@ class SwaggerHttpServiceSpec
           (response \ "info" \ "version").extract[String] shouldEqual swaggerService.info.version
           (response \ "info" \ "contact").extract[Option[Contact]] shouldEqual swaggerService.info.contact
           (response \ "info" \ "license").extract[Option[License]] shouldEqual swaggerService.info.license
+          (response \ "component" \ "parameter" \ "customHeader2" \ "name").extract[String] shouldEqual "X-Customer-Header"
         }
       }
     }
