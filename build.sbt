@@ -6,7 +6,7 @@ scalaVersion := "2.12.6"
 
 crossScalaVersions := Seq("2.11.12", scalaVersion.value)
 
-val swaggerVersion = "1.5.20"
+val swaggerVersion = "2.0.3"
 val akkaVersion = "2.5.14"
 val akkaHttpVersion = "10.1.3"
 val jacksonVersion = "2.9.6"
@@ -15,6 +15,7 @@ val slf4jVersion = "1.7.25"
 checksums in update := Nil
 
 resolvers += Resolver.sonatypeRepo("releases")
+resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0",
@@ -22,15 +23,16 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % "test",
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
-  "io.swagger" % "swagger-core" % swaggerVersion,
-  "io.swagger" % "swagger-annotations" % swaggerVersion,
-  "io.swagger" % "swagger-models" % swaggerVersion,
-  "io.swagger" % "swagger-jaxrs" % swaggerVersion,
+  "io.swagger.core.v3" % "swagger-core" % swaggerVersion,
+  "io.swagger.core.v3" % "swagger-annotations" % swaggerVersion,
+  "io.swagger.core.v3" % "swagger-models" % swaggerVersion,
+  "io.swagger.core.v3" % "swagger-jaxrs2" % swaggerVersion,
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
   "org.scalatest" %% "scalatest" % "3.0.5-M1" % "test",
   "org.json4s" %% "json4s-native" % "3.5.3" % "test",
+  "javax.ws.rs" % "javax.ws.rs-api" % "2.0.1" % "test",
   "joda-time" % "joda-time" % "2.8" % "test",
   "org.joda" % "joda-convert" % "1.7" % "test",
   "org.slf4j" % "slf4j-simple" % slf4jVersion % "test"
@@ -54,8 +56,6 @@ publishTo := {
 publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
-
-parallelExecution in Test := false
 
 homepage := Some(url("https://github.com/swagger-akka-http/swagger-akka-http"))
 

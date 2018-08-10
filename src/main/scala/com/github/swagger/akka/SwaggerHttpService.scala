@@ -15,12 +15,13 @@ package com.github.swagger.akka
 
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
-import com.github.swagger.akka.model.{Info, asScala, scala2swagger}
-import io.swagger.jaxrs.Reader
-import io.swagger.jaxrs.config.DefaultReaderConfig
-import io.swagger.models.auth.SecuritySchemeDefinition
-import io.swagger.models.{ExternalDocs, Scheme, Swagger}
-import io.swagger.util.{Json, Yaml}
+import com.github.swagger.akka.model.{Info, asScala}
+import io.swagger.v3.core.util.{Json, Yaml}
+import io.swagger.v3.jaxrs2.Reader
+import io.swagger.v3.oas.integration.SwaggerConfiguration
+import io.swagger.v3.oas.models.security.{SecurityRequirement, SecurityScheme}
+import io.swagger.v3.oas.models.servers.Server
+import io.swagger.v3.oas.models.{Components, ExternalDocumentation, OpenAPI}
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 
@@ -30,7 +31,7 @@ import scala.util.control.NonFatal
 
 object SwaggerHttpService {
 
-  val readerConfig = new DefaultReaderConfig
+  val readerConfig = new SwaggerConfiguration
 
   def removeInitialSlashIfNecessary(path: String): String =
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
@@ -47,25 +48,38 @@ trait SwaggerGenerator {
   def basePath: String = "/"
   def apiDocsPath: String = "api-docs"
   def info: Info = Info()
-  def schemes: List[Scheme] = List(Scheme.HTTP)
-  def securitySchemeDefinitions: Map[String, SecuritySchemeDefinition] = Map.empty
-  def externalDocs: Option[ExternalDocs] = None
+  def components: Option[Components] = None
+  def schemes: List[String] = List("http")
+  def security: List[SecurityRequirement] = List()
+  def securitySchemes: Map[String, SecurityScheme] = Map.empty
+  def externalDocs: Option[ExternalDocumentation] = None
   def vendorExtensions: Map[String, Object] = Map.empty
   def unwantedDefinitions: Seq[String] = Seq.empty
 
-  def swaggerConfig: Swagger = {
+  def swaggerConfig: OpenAPI = {
     val modifiedPath = prependSlashIfNecessary(basePath)
-    val swagger = new Swagger().basePath(modifiedPath).info(info).schemes(asJavaMutableList(schemes))
-    if(StringUtils.isNotBlank(host)) swagger.host(host)
-    swagger.setSecurityDefinitions(asJavaMutableMap(securitySchemeDefinitions))
-    swagger.vendorExtensions(asJavaMutableMap(vendorExtensions))
+    val swagger = new OpenAPI()
+    swagger.setInfo(info)
+    components.foreach { c => swagger.setComponents(c) }
+
+    //.basePath(modifiedPath)
+    if(StringUtils.isNotBlank(host)) {
+      schemes.foreach { scheme =>
+        swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://${host}"))
+      }
+    }
+    securitySchemes.foreach { case (k: String, v: SecurityScheme) => swagger.schemaRequirement(k, v) }
+    swagger.setSecurity(asJavaMutableList(security))
+    swagger.extensions(asJavaMutableMap(vendorExtensions))
+
     externalDocs match {
-      case Some(ed) => swagger.externalDocs(ed)
+      case Some(ed) => swagger.setExternalDocs(ed)
       case None => swagger
     }
+    swagger
   }
 
-  def reader = new Reader(swaggerConfig, readerConfig)
+  def reader = new Reader(readerConfig.openAPI(swaggerConfig))
 
   def generateSwaggerJson: String = {
     try {
@@ -97,10 +111,12 @@ trait SwaggerGenerator {
     (MutableMap.empty[K, V] ++ map).asJava
   }
 
-  private[akka] def filteredSwagger: Swagger = {
-    val swagger: Swagger = reader.read(apiClasses.asJava)
+  private[akka] def filteredSwagger: OpenAPI = {
+    val swagger: OpenAPI = reader.read(apiClasses.asJava)
     if (!unwantedDefinitions.isEmpty) {
-      swagger.setDefinitions(asScala(swagger.getDefinitions).filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
+      val filteredSchemas = asScala(swagger.getComponents.getSchemas).filterKeys(
+        definitionName => !unwantedDefinitions.contains(definitionName)).asJava
+      swagger.getComponents.setSchemas(filteredSchemas)
     }
     swagger
   }

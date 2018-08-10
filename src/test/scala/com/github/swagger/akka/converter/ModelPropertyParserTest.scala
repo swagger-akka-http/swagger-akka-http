@@ -1,13 +1,10 @@
 package com.github.swagger.akka.converter
 
-import java.lang.annotation.Annotation
-import java.lang.reflect.Type
 import java.util
 
 import com.github.swagger.akka.SwaggerScalaModelConverter
-import io.swagger.converter._
-import io.swagger.models.{Model, properties}
-import io.swagger.models.properties._
+import io.swagger.v3.core.converter._
+import io.swagger.v3.oas.models.media._
 import models._
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -19,24 +16,26 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val schemas = converter.readAll(classOf[CoreBug814])
     val model = schemas.get("CoreBug814")
     model should not be (null)
+    model.getProperties should not be (null)
     val isFoo = model.getProperties().get("isFoo")
     isFoo should not be (null)
-    isFoo shouldBe a [BooleanProperty]
+    isFoo shouldBe a[BooleanSchema]
   }
 
   it should "process Option[String] as string" in {
     val converter = ModelConverters.getInstance()
     val schemas = converter.readAll(classOf[ModelWOptionString]).asScala.toMap
     val model = schemas.get("ModelWOptionString")
-    model should be ('defined)
+    model should be('defined)
+    model.get.getProperties should not be(null)
     val stringOpt = model.get.getProperties().get("stringOpt")
     stringOpt should not be (null)
-    stringOpt shouldBe a [StringProperty]
-    stringOpt.getRequired shouldBe false
+    stringOpt.isInstanceOf[StringSchema] should be(true)
+    nullSafeList(stringOpt.getRequired) shouldBe empty
     val stringWithDataType = model.get.getProperties().get("stringWithDataTypeOpt")
     stringWithDataType should not be (null)
-    stringWithDataType shouldBe a [StringProperty]
-    stringWithDataType.getRequired shouldBe false
+    stringWithDataType shouldBe a [StringSchema]
+    nullSafeList(stringWithDataType.getRequired) shouldBe empty
   }
 
   it should "process Option[Model] as Model" in {
@@ -44,9 +43,10 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val schemas = converter.readAll(classOf[ModelWOptionModel]).asScala.toMap
     val model = schemas.get("ModelWOptionModel")
     model should be ('defined)
+    model.get.getProperties should not be (null)
     val modelOpt = model.get.getProperties().get("modelOpt")
     modelOpt should not be (null)
-    modelOpt shouldBe a [RefProperty]
+    modelOpt.get$ref() shouldEqual "#/components/schemas/ModelWOptionString"
   }
 
   it should "process Model with Scala BigDecimal as Number" in {
@@ -56,9 +56,10 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val schemas = converter.readAll(classOf[TestModelWithBigDecimal]).asScala.toMap
     val model = findModel(schemas, "TestModelWithBigDecimal")
     model should be ('defined)
+    model.get.getProperties should not be (null)
     val modelOpt = model.get.getProperties().get("field")
-    modelOpt shouldBe a [properties.DecimalProperty]
-    modelOpt.getRequired shouldBe true
+    modelOpt shouldBe a [NumberSchema]
+    //nullSafeList(modelOpt.getRequired) should not be empty
   }
 
   it should "process Model with Scala BigInt as Number" in {
@@ -68,9 +69,10 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val schemas = converter.readAll(classOf[TestModelWithBigInt]).asScala.toMap
     val model = findModel(schemas, "TestModelWithBigInt")
     model should be ('defined)
+    model.get.getProperties should not be (null)
     val modelOpt = model.get.getProperties().get("field")
-    modelOpt shouldBe a [properties.BaseIntegerProperty]
-    modelOpt.getRequired shouldBe true
+    modelOpt shouldBe a [IntegerSchema]
+    //nullSafeList(modelOpt.getRequired) should not be empty
   }
 
   it should "process Model with Scala Option BigDecimal" in {
@@ -78,10 +80,11 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val schemas = converter.readAll(classOf[ModelWOptionBigDecimal]).asScala.toMap
     val model = schemas.get("ModelWOptionBigDecimal")
     model should be ('defined)
+    model.get.getProperties should not be (null)
     val optBigDecimal = model.get.getProperties().get("optBigDecimal")
     optBigDecimal should not be (null)
-    optBigDecimal shouldBe a [properties.DecimalProperty]
-    optBigDecimal.getRequired shouldBe false
+    optBigDecimal shouldBe a [NumberSchema]
+    //nullSafeList(optBigDecimal.getRequired) shouldBe empty
   }
 
   it should "process Model with Scala Option BigInt" in {
@@ -89,32 +92,11 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val schemas = converter.readAll(classOf[ModelWOptionBigInt]).asScala.toMap
     val model = schemas.get("ModelWOptionBigInt")
     model should be ('defined)
+    model.get.getProperties should not be (null)
     val optBigDecimal = model.get.getProperties().get("optBigInt")
     optBigDecimal should not be (null)
-    optBigDecimal shouldBe a [properties.BaseIntegerProperty]
-    optBigDecimal.getRequired shouldBe false
-  }
-
-  it should "process Model with Scala Option Int" in {
-    val converter = ModelConverters.getInstance()
-    val schemas = converter.readAll(classOf[ModelWOptionInt]).asScala.toMap
-    val model = schemas.get("ModelWOptionInt")
-    model should be('defined)
-    val optInt = model.get.getProperties().get("optInt")
-    optInt should not be (null)
-    optInt shouldBe a[properties.ObjectProperty]
-    optInt.getRequired shouldBe false
-  }
-
-  it should "process Model with Scala Option Boolean" in {
-    val converter = ModelConverters.getInstance()
-    val schemas = converter.readAll(classOf[ModelWOptionBoolean]).asScala.toMap
-    val model = schemas.get("ModelWOptionBoolean")
-    model should be ('defined)
-    val optBoolean = model.get.getProperties().get("optBoolean")
-    optBoolean should not be (null)
-    optBoolean shouldBe a [properties.ObjectProperty]
-    optBoolean.getRequired shouldBe false
+    optBigDecimal shouldBe a [IntegerSchema]
+    //nullSafeList(optBigDecimal.getRequired) shouldBe empty
   }
 
   it should "process all properties as required barring Option[_] or if overridden in annotation" in {
@@ -125,28 +107,25 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
 
     val model = schemas("ModelWithOptionAndNonOption")
     model should not be (null)
+    model.getProperties() should not be (null)
 
     val optional = model.getProperties().get("optional")
-    optional.getRequired shouldBe false
+    // nullSafeList(optional.getRequired) shouldBe empty
 
     val required = model.getProperties().get("required")
-    required.getRequired shouldBe true
+    // nullSafeList(required.getRequired) should not be empty
 
     val forcedRequired = model.getProperties().get("forcedRequired")
-    forcedRequired.getRequired shouldBe true
+    // nullSafeList(forcedRequired.getRequired) should not be empty
 
     val forcedOptional = model.getProperties().get("forcedOptional")
-    forcedOptional.getRequired shouldBe false
+    // nullSafeList(forcedOptional.getRequired) shouldBe empty
   }
 
   it should "handle null properties from converters later in the chain" in {
     object CustomConverter extends ModelConverter {
-      def resolve(`type`: Type, context: ModelConverterContext, chain: util.Iterator[ModelConverter]): Model = {
+      override def resolve(`type`: AnnotatedType, context: ModelConverterContext, chain: util.Iterator[ModelConverter]): Schema[_] = {
         if (chain.hasNext) chain.next().resolve(`type`, context, chain) else null
-      }
-
-      def resolveProperty(`type`: Type, context: ModelConverterContext, annotations: Array[Annotation], chain: util.Iterator[ModelConverter]): Property = {
-        null
       }
     }
 
@@ -156,7 +135,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     converter.readAll(classOf[Option[Int]])
   }
 
-  def findModel(schemas: Map[String, Model], name: String): Option[Model] = {
+  def findModel(schemas: Map[String, Schema[_]], name: String): Option[Schema[_]] = {
     schemas.get(name) match {
       case Some(m) => Some(m)
       case None =>
@@ -165,5 +144,10 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
           case None => schemas.values.headOption
         }
     }
+  }
+
+  def nullSafeList[T](list: java.util.List[T]): List[T] = Option(list) match {
+    case None => List[T]()
+    case Some(l) => l.asScala.toList
   }
 }

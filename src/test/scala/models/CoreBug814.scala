@@ -1,8 +1,9 @@
 package models
 
-import io.swagger.annotations.{ ApiModel, ApiModelProperty }
+import io.swagger.v3.oas.annotations.Operation
+
 import scala.annotation.meta.field
 
 case class CoreBug814 (
-  @(ApiModelProperty @field)(required = true, value="true if open to the public") isFoo: Boolean
+  @(Operation @field)(description="true if open to the public") isFoo: Boolean
 )
