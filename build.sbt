@@ -4,10 +4,10 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.12.6"
 
-crossScalaVersions := Seq("2.11.12", scalaVersion.value, "2.13.0-M3")
+crossScalaVersions := Seq("2.11.12", scalaVersion.value)
 
 val swaggerVersion = "1.5.20"
-val akkaVersion = "2.5.13"
+val akkaVersion = "2.5.14"
 val akkaHttpVersion = "10.1.3"
 val jacksonVersion = "2.9.6"
 val slf4jVersion = "1.7.25"
