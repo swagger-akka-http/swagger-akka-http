@@ -21,8 +21,8 @@ libraryDependencies ++= Seq(
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0",
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-  "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % "test",
-  "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
+  "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % Test,
+  "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
   "io.swagger.core.v3" % "swagger-core" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-annotations" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-models" % swaggerVersion,
@@ -30,12 +30,12 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
-  "org.scalatest" %% "scalatest" % "3.0.5-M1" % "test",
-  "org.json4s" %% "json4s-native" % "3.5.3" % "test",
-  "javax.ws.rs" % "javax.ws.rs-api" % "2.0.1" % "test",
-  "joda-time" % "joda-time" % "2.8" % "test",
-  "org.joda" % "joda-convert" % "1.7" % "test",
-  "org.slf4j" % "slf4j-simple" % slf4jVersion % "test"
+  "org.scalatest" %% "scalatest" % "3.0.5-M1" % Test,
+  "org.json4s" %% "json4s-native" % "3.5.3" % Test,
+  "javax.ws.rs" % "javax.ws.rs-api" % "2.0.1" % Test,
+  "joda-time" % "joda-time" % "2.8" % Test,
+  "org.joda" % "joda-convert" % "1.7" % Test,
+  "org.slf4j" % "slf4j-simple" % slf4jVersion % Test
 )
 
 testOptions in Test += Tests.Argument("-oD")

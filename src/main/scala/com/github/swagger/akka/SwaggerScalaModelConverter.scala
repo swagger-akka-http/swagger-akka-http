@@ -11,8 +11,6 @@ import io.swagger.v3.core.util.{Json, PrimitiveType}
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.models.media.{Schema, StringSchema}
 
-import scala.collection.JavaConverters._
-
 class AnnotatedTypeForOption extends AnnotatedType
 
 object SwaggerScalaModelConverter {
@@ -130,9 +128,7 @@ class SwaggerScalaModelConverter extends ModelResolver(Json.mapper()) {
     case _ => {
       Option(annotatedType.getParent).foreach { parent =>
         Option(annotatedType.getPropertyName).foreach { n =>
-          if (!nullSafeList(parent.getRequired).contains(n)) {
-            parent.addRequiredItem(n)
-          }
+          addRequiredItem(parent, n)
         }
       }
     }
@@ -143,8 +139,7 @@ class SwaggerScalaModelConverter extends ModelResolver(Json.mapper()) {
       val javaUniverse = scala.reflect.runtime.universe
       val m = javaUniverse.runtimeMirror(Thread.currentThread().getContextClassLoader)
       val moduleMirror = m.reflectModule(m.staticModule(cls.getName))
-      moduleMirror.instance match
-      {
+      moduleMirror.instance match {
         case enumInstance: Enumeration => Some(enumInstance)
         case _ => None
       }
@@ -158,10 +153,4 @@ class SwaggerScalaModelConverter extends ModelResolver(Json.mapper()) {
     case None => List.empty[T]
     case Some(arr) => arr.toList
   }
-
-  private def nullSafeList[T](javaList: java.util.List[T]): List[T] = Option(javaList) match {
-    case None => List.empty[T]
-    case Some(jl) => jl.asScala.toList
-  }
-
 }
