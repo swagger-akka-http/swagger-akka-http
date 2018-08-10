@@ -140,13 +140,13 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     required should not be (null)
 
     val forcedRequired = model.getProperties().get("forcedRequired")
-    //forcedRequired should not be (null)
+    forcedRequired should not be (null)
 
     val forcedOptional = model.getProperties().get("forcedOptional")
     forcedOptional should not be (null)
 
     val requiredItems = nullSafeList(model.getRequired)
-    //requiredItems shouldBe List("forcedRequired", "required")
+    requiredItems shouldBe List("forcedRequired", "required")
   }
 
   it should "handle null properties from converters later in the chain" in {

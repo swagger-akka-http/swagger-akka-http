@@ -49,21 +49,19 @@ class SwaggerScalaModelConverter extends ModelResolver(Json.mapper()) {
     }
 
     // Unbox scala options
-    val annotatedOverrides = nullSafeList(`type`.getCtxAnnotations).collect {
-      case p: Parameter => p.required()
-    }
-    if (annotatedOverrides.headOption.getOrElse(false) || _isOptional(`type`, cls)) {
-      val nextType = new AnnotatedTypeForOption()
-        .`type`(underlyingJavaType(`type`, cls, javaType))
-        .ctxAnnotations(`type`.getCtxAnnotations)
-        .parent(`type`.getParent)
-        .schemaProperty(`type`.isSchemaProperty)
-        .name(`type`.getName)
-        .propertyName(`type`.getPropertyName)
-        .resolveAsRef(`type`.isResolveAsRef)
-        .jsonViewAnnotation(`type`.getJsonViewAnnotation)
-        .skipOverride(true)
-      context.resolve(nextType)
+    val annotatedOverrides = `type` match {
+      case _: AnnotatedTypeForOption => Seq.empty
+      case _ => {
+        nullSafeList(`type`.getCtxAnnotations).collect {
+          case p: Parameter => p.required()
+        }
+      }
+    } 
+    if (_isOptional(`type`, cls)) {
+      val baseType = if (annotatedOverrides.headOption.getOrElse(false)) new AnnotatedType() else new AnnotatedTypeForOption()
+      resolve(nextType(baseType, `type`, cls, javaType), context, chain)
+    } else if (!annotatedOverrides.headOption.getOrElse(true)) {
+      resolve(nextType(new AnnotatedTypeForOption(), `type`, cls, javaType), context, chain)
     } else if (chain.hasNext) {
       val nextResolved = Option(chain.next().resolve(`type`, context, chain))
       nextResolved match {
@@ -85,11 +83,23 @@ class SwaggerScalaModelConverter extends ModelResolver(Json.mapper()) {
     }
   }
 
-  def underlyingJavaType(annotatedType: AnnotatedType, cls: Class[_], baseType: JavaType): JavaType = {
+  private def underlyingJavaType(annotatedType: AnnotatedType, cls: Class[_], javaType: JavaType): JavaType = {
     annotatedType.getType match {
       case rt: ReferenceType => rt.getContentType
-      case _ => baseType
+      case _ => javaType
     }
+  }
+
+  private def nextType(baseType: AnnotatedType, `type`: AnnotatedType, cls: Class[_], javaType: JavaType): AnnotatedType = {
+    baseType.`type`(underlyingJavaType(`type`, cls, javaType))
+      .ctxAnnotations(`type`.getCtxAnnotations)
+      .parent(`type`.getParent)
+      .schemaProperty(`type`.isSchemaProperty)
+      .name(`type`.getName)
+      .propertyName(`type`.getPropertyName)
+      .resolveAsRef(`type`.isResolveAsRef)
+      .jsonViewAnnotation(`type`.getJsonViewAnnotation)
+      .skipOverride(true)
   }
 
   override def _isOptionalType(propType: JavaType): Boolean = {
