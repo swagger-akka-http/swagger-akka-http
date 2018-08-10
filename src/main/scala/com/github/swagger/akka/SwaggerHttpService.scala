@@ -45,7 +45,6 @@ trait SwaggerGenerator {
   import SwaggerHttpService._
   def apiClasses: Set[Class[_]]
   def host: String = ""
-  def basePath: String = "/"
   def apiDocsPath: String = "api-docs"
   def info: Info = Info()
   def components: Option[Components] = None
@@ -57,12 +56,10 @@ trait SwaggerGenerator {
   def unwantedDefinitions: Seq[String] = Seq.empty
 
   def swaggerConfig: OpenAPI = {
-    val modifiedPath = prependSlashIfNecessary(basePath)
     val swagger = new OpenAPI()
     swagger.setInfo(info)
     components.foreach { c => swagger.setComponents(c) }
 
-    //.basePath(modifiedPath)
     if(StringUtils.isNotBlank(host)) {
       schemes.foreach { scheme =>
         swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://${host}"))
@@ -72,10 +69,7 @@ trait SwaggerGenerator {
     swagger.setSecurity(asJavaMutableList(security))
     swagger.extensions(asJavaMutableMap(vendorExtensions))
 
-    externalDocs match {
-      case Some(ed) => swagger.setExternalDocs(ed)
-      case None => swagger
-    }
+    externalDocs.foreach { ed => swagger.setExternalDocs(ed) }
     swagger
   }
 

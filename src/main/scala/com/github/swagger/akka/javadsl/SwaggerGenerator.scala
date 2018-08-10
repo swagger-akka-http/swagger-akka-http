@@ -2,7 +2,7 @@ package com.github.swagger.akka.javadsl
 
 import java.util
 
-import io.swagger.v3.oas.models.{Components, ExternalDocumentation}
+import io.swagger.v3.oas.models.ExternalDocumentation
 import com.github.swagger.akka.model.asScala
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityScheme
@@ -29,7 +29,6 @@ private class Converter(javaGenerator: SwaggerGenerator) extends com.github.swag
   import com.github.swagger.akka.model.swagger2scala
   override def apiClasses: Set[Class[_]] = asScala(javaGenerator.apiClasses)
   override def host: String = javaGenerator.host
-  override def basePath: String = javaGenerator.basePath
   override def apiDocsPath: String = javaGenerator.apiDocsPath
   override def info: com.github.swagger.akka.model.Info = javaGenerator.info
   //override def schemes: List[Scheme] = asScala(javaGenerator.schemes)
