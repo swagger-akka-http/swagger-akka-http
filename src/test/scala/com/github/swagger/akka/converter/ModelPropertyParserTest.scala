@@ -107,7 +107,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     model.get.getProperties should not be (null)
     val optInt = model.get.getProperties().get("optInt")
     optInt should not be (null)
-    optInt shouldBe a [NumberSchema]
+    optInt shouldBe a [Schema[_]]
     nullSafeList(model.get.getRequired) shouldBe empty
   }
 
@@ -119,7 +119,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     model.get.getProperties should not be (null)
     val optBoolean = model.get.getProperties().get("optBoolean")
     optBoolean should not be (null)
-    optBoolean shouldBe a [NumberSchema]
+    optBoolean shouldBe a [Schema[_]]
     nullSafeList(model.get.getRequired) shouldBe empty
   }
 

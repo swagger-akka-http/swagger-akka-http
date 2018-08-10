@@ -26,55 +26,65 @@ class SwaggerScalaModelConverter extends ModelResolver(Json.mapper()) {
     val javaType = _mapper.constructType(`type`.getType)
     val cls = javaType.getRawClass
 
-    if(cls != null) {
+    matchScalaPrimitives(`type`, cls).getOrElse {
+      // Unbox scala options
+      val annotatedOverrides = `type` match {
+        case _: AnnotatedTypeForOption => Seq.empty
+        case _ => {
+          nullSafeList(`type`.getCtxAnnotations).collect {
+            case p: Parameter => p.required()
+          }
+        }
+      }
+      if (_isOptional(`type`, cls)) {
+        val baseType = if (annotatedOverrides.headOption.getOrElse(false)) new AnnotatedType() else new AnnotatedTypeForOption()
+        resolve(nextType(baseType, `type`, cls, javaType), context, chain)
+      } else if (!annotatedOverrides.headOption.getOrElse(true)) {
+        resolve(nextType(new AnnotatedTypeForOption(), `type`, cls, javaType), context, chain)
+      } else if (chain.hasNext) {
+        val nextResolved = Option(chain.next().resolve(`type`, context, chain))
+        nextResolved match {
+          case Some(property) => {
+            setRequired(`type`)
+            property
+          }
+          case None => null
+        }
+      } else {
+        null
+      }
+    }
+  }
+
+  private def matchScalaPrimitives(`type`: AnnotatedType, nullableClass: Class[_]): Option[Schema[_]] = {
+    Option(nullableClass).flatMap { cls =>
       // handle scala enums
       getEnumerationInstance(cls) match {
-        case Some(enumInstance) =>
+        case Some(enumInstance) => {
           if (enumInstance.values != null) {
             val sp = new StringSchema()
             for (v <- enumInstance.values)
               sp.addEnumItem(v.toString)
             setRequired(`type`)
-            return sp
+            Some(sp)
+          } else {
+            None
           }
-        case None =>
-          if (cls.isAssignableFrom(classOf[BigDecimal])) {
+        }
+        case _ => {
+          if (cls == classOf[BigDecimal]) {
             val dp = PrimitiveType.DECIMAL.createProperty()
             setRequired(`type`)
-            return dp
-          } else if (cls.isAssignableFrom(classOf[BigInt])) {
+            Some(dp)
+          } else if (cls == classOf[BigInt]) {
             val ip = PrimitiveType.INT.createProperty()
             setRequired(`type`)
-            return ip
+            Some(ip)
+          } else {
+            None
           }
-      }
-    }
-
-    // Unbox scala options
-    val annotatedOverrides = `type` match {
-      case _: AnnotatedTypeForOption => Seq.empty
-      case _ => {
-        nullSafeList(`type`.getCtxAnnotations).collect {
-          case p: Parameter => p.required()
         }
       }
-    } 
-    if (_isOptional(`type`, cls)) {
-      val baseType = if (annotatedOverrides.headOption.getOrElse(false)) new AnnotatedType() else new AnnotatedTypeForOption()
-      resolve(nextType(baseType, `type`, cls, javaType), context, chain)
-    } else if (!annotatedOverrides.headOption.getOrElse(true)) {
-      resolve(nextType(new AnnotatedTypeForOption(), `type`, cls, javaType), context, chain)
-    } else if (chain.hasNext) {
-      val nextResolved = Option(chain.next().resolve(`type`, context, chain))
-      nextResolved match {
-        case Some(property) => {
-          setRequired(`type`)
-          property
-        }
-        case None => null
-      }
-    } else {
-      null
     }
   }
 

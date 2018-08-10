@@ -49,7 +49,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     val model = schemas("ModelWithIntVector")
     val prop = model.getProperties().get("ints")
     prop shouldBe a [ArraySchema]
-    prop.asInstanceOf[ArraySchema].getItems.getType should be ("number")
+    prop.asInstanceOf[ArraySchema].getItems.getType should be ("object")
   }
 }
 
