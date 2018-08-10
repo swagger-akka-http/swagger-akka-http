@@ -57,9 +57,9 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val model = findModel(schemas, "TestModelWithBigDecimal")
     model should be ('defined)
     model.get.getProperties should not be (null)
-    val modelOpt = model.get.getProperties().get("field")
-    modelOpt shouldBe a [NumberSchema]
-    //nullSafeList(modelOpt.getRequired) should not be empty
+    val field = model.get.getProperties().get("field")
+    field shouldBe a [NumberSchema]
+    nullSafeList(model.get.getRequired) should not be empty
   }
 
   it should "process Model with Scala BigInt as Number" in {
@@ -70,9 +70,9 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val model = findModel(schemas, "TestModelWithBigInt")
     model should be ('defined)
     model.get.getProperties should not be (null)
-    val modelOpt = model.get.getProperties().get("field")
-    modelOpt shouldBe a [IntegerSchema]
-    //nullSafeList(modelOpt.getRequired) should not be empty
+    val field = model.get.getProperties().get("field")
+    field shouldBe a [IntegerSchema]
+    nullSafeList(model.get.getRequired) should not be empty
   }
 
   it should "process Model with Scala Option BigDecimal" in {
@@ -84,7 +84,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val optBigDecimal = model.get.getProperties().get("optBigDecimal")
     optBigDecimal should not be (null)
     optBigDecimal shouldBe a [NumberSchema]
-    //nullSafeList(optBigDecimal.getRequired) shouldBe empty
+    nullSafeList(model.get.getRequired) shouldBe empty
   }
 
   it should "process Model with Scala Option BigInt" in {
@@ -96,7 +96,7 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     val optBigDecimal = model.get.getProperties().get("optBigInt")
     optBigDecimal should not be (null)
     optBigDecimal shouldBe a [IntegerSchema]
-    //nullSafeList(optBigDecimal.getRequired) shouldBe empty
+    nullSafeList(model.get.getRequired) shouldBe empty
   }
 
   it should "process all properties as required barring Option[_] or if overridden in annotation" in {
@@ -110,16 +110,19 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     model.getProperties() should not be (null)
 
     val optional = model.getProperties().get("optional")
-    // nullSafeList(optional.getRequired) shouldBe empty
+    optional should not be (null)
 
     val required = model.getProperties().get("required")
-    // nullSafeList(required.getRequired) should not be empty
+    required should not be (null)
 
     val forcedRequired = model.getProperties().get("forcedRequired")
-    // nullSafeList(forcedRequired.getRequired) should not be empty
+    //forcedRequired should not be (null)
 
     val forcedOptional = model.getProperties().get("forcedOptional")
-    // nullSafeList(forcedOptional.getRequired) shouldBe empty
+    forcedOptional should not be (null)
+
+    val requiredItems = nullSafeList(model.getRequired)
+    //requiredItems shouldBe List("forcedRequired", "required")
   }
 
   it should "handle null properties from converters later in the chain" in {
