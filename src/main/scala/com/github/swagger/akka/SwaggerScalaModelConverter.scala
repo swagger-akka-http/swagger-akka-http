@@ -11,6 +11,8 @@ import io.swagger.v3.core.util.{Json, PrimitiveType}
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.models.media.{Schema, StringSchema}
 
+import scala.collection.JavaConverters._
+
 class AnnotatedTypeForOption extends AnnotatedType
 
 object SwaggerScalaModelConverter {
@@ -117,7 +119,11 @@ class SwaggerScalaModelConverter extends ModelResolver(Json.mapper()) {
     case _: AnnotatedTypeForOption => // not required
     case _ => {
       Option(annotatedType.getParent).foreach { parent =>
-        Option(annotatedType.getPropertyName).foreach { n => parent.addRequiredItem(n) }
+        Option(annotatedType.getPropertyName).foreach { n =>
+          if (!nullSafeList(parent.getRequired).contains(n)) {
+            parent.addRequiredItem(n)
+          }
+        }
       }
     }
   }
@@ -138,8 +144,14 @@ class SwaggerScalaModelConverter extends ModelResolver(Json.mapper()) {
 
   private def isOption(cls: Class[_]): Boolean = cls == classOf[scala.Option[_]]
 
-  def nullSafeList[T](array: Array[T]): List[T] = Option(array) match {
-    case None => List[T]()
+  private def nullSafeList[T](array: Array[T]): List[T] = Option(array) match {
+    case None => List.empty[T]
     case Some(arr) => arr.toList
   }
+
+  private def nullSafeList[T](javaList: java.util.List[T]): List[T] = Option(javaList) match {
+    case None => List.empty[T]
+    case Some(jl) => jl.asScala.toList
+  }
+
 }
