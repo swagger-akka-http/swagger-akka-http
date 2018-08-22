@@ -49,6 +49,12 @@ case class TestModelWithWrongAnnotation()
 case class TestModelEmptyAnnotation()
 
 @Schema
-sealed trait TestModelParent {
+sealed trait TestModelParent
 
-}
+case class A() extends Letter
+case class B() extends Letter
+
+@Schema(
+  subTypes = Array(classOf[String], classOf[B])
+)
+abstract class Letter
