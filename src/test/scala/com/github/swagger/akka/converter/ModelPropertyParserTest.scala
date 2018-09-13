@@ -2,7 +2,7 @@ package com.github.swagger.akka.converter
 
 import java.util
 
-import io.swagger.scala.converter.SwaggerScalaModelConverter
+import com.github.swagger.scala.converter.SwaggerScalaModelConverter
 import io.swagger.v3.core.converter._
 import io.swagger.v3.oas.models.media._
 import models._
