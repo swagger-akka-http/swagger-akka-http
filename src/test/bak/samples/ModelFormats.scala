@@ -16,7 +16,10 @@
 package com.github.swagger.akka.samples
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.marshalling._
+import akka.http.scaladsl.unmarshalling._
 import spray.json.DefaultJsonProtocol
+import io.swagger.annotations.ApiModel
 
 /**
   * @author rleibman
@@ -24,5 +27,7 @@ import spray.json.DefaultJsonProtocol
 trait ModelFormats
   extends DefaultJsonProtocol
     with SprayJsonSupport {
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+
   implicit val dictEntryformats = jsonFormat3(DictEntry)
 }
