@@ -6,10 +6,10 @@ scalaVersion := "2.12.6"
 
 crossScalaVersions := Seq("2.11.12", scalaVersion.value)
 
-val swaggerVersion = "2.0.4"
+val swaggerVersion = "2.0.5"
 val akkaVersion = "2.5.16"
 val akkaHttpVersion = "10.1.5"
-val jacksonVersion = "2.9.6"
+val jacksonVersion = "2.9.7"
 val slf4jVersion = "1.7.25"
 
 checksums in update := Nil
@@ -18,7 +18,7 @@ resolvers += Resolver.sonatypeRepo("releases")
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
-  "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0",
+  "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.0",
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % Test,
@@ -27,7 +27,7 @@ libraryDependencies ++= Seq(
   "io.swagger.core.v3" % "swagger-annotations" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-models" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-jaxrs2" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.0.0",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.0.1",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
