@@ -2,7 +2,7 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.7"
 
 crossScalaVersions := Seq("2.11.12", scalaVersion.value)
 
