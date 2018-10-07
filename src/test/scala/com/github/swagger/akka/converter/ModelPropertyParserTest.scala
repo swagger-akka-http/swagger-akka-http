@@ -150,6 +150,28 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     forcedOptional.getRequired shouldBe false
   }
 
+  it should "process all properties as required barring Option[_] or if overridden in annotation (dataType)" in {
+    val schemas = ModelConverters
+      .getInstance()
+      .readAll(classOf[ModelWithOptionAndNonOption2])
+      .asScala
+
+    val model = schemas("ModelWithOptionAndNonOption2")
+    model should not be (null)
+
+    val optional = model.getProperties().get("optional")
+    optional.getRequired shouldBe false
+
+    val required = model.getProperties().get("required")
+    required.getRequired shouldBe true
+
+    val forcedRequired = model.getProperties().get("forcedRequired")
+    forcedRequired.getRequired shouldBe true
+
+    val forcedOptional = model.getProperties().get("forcedOptional")
+    forcedOptional.getRequired shouldBe false
+  }
+
   it should "handle null properties from converters later in the chain" in {
     object CustomConverter extends ModelConverter {
       def resolve(`type`: Type, context: ModelConverterContext, chain: util.Iterator[ModelConverter]): Model = {

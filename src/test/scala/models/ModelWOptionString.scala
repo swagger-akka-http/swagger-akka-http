@@ -22,3 +22,10 @@ case class ModelWithOptionAndNonOption(
                                         @ApiModelProperty(required = false) forcedOptional: String,
                                         @ApiModelProperty(required = true) forcedRequired: Option[String]
                                       )
+
+case class ModelWithOptionAndNonOption2(
+                                        required: String,
+                                        optional: Option[String],
+                                        @ApiModelProperty(required = false, dataType = "string") forcedOptional: String,
+                                        @ApiModelProperty(required = true, dataType = "string") forcedRequired: Option[String]
+                                       )
