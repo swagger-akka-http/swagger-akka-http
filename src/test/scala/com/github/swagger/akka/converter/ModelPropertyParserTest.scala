@@ -106,6 +106,17 @@ class ModelPropertyParserTest extends FlatSpec with Matchers {
     optInt.getRequired shouldBe false
   }
 
+  it should "process Model with Scala Option Int (Schema Override)" in {
+    val converter = ModelConverters.getInstance()
+    val schemas = converter.readAll(classOf[ModelWOptionIntSchemaOverride]).asScala.toMap
+    val model = schemas.get("ModelWOptionIntSchemaOverride")
+    model should be('defined)
+    val optInt = model.get.getProperties().get("optInt")
+    optInt should not be (null)
+    optInt shouldBe a[properties.IntegerProperty]
+    optInt.getRequired shouldBe false
+  }
+
   it should "process Model with Scala Option Boolean" in {
     val converter = ModelConverters.getInstance()
     val schemas = converter.readAll(classOf[ModelWOptionBoolean]).asScala.toMap

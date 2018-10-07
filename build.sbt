@@ -2,14 +2,14 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.7"
 
 crossScalaVersions := Seq("2.11.12", scalaVersion.value)
 
 val swaggerVersion = "1.5.21"
-val akkaVersion = "2.5.16"
-val akkaHttpVersion = "10.1.4"
-val jacksonVersion = "2.9.6"
+val akkaVersion = "2.5.17"
+val akkaHttpVersion = "10.1.5"
+val jacksonVersion = "2.9.7"
 val slf4jVersion = "1.7.25"
 
 checksums in update := Nil
@@ -17,7 +17,8 @@ checksums in update := Nil
 resolvers += Resolver.sonatypeRepo("releases")
 
 libraryDependencies ++= Seq(
-  "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0",
+  "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+  "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.0",
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % "test",
