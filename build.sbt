@@ -8,7 +8,7 @@ crossScalaVersions := Seq("2.11.12", scalaVersion.value)
 
 val swaggerVersion = "2.0.6"
 val akkaVersion = "2.5.19"
-val akkaHttpVersion = "10.1.5"
+val akkaHttpVersion = "10.1.6"
 val jacksonVersion = "2.9.7"
 val slf4jVersion = "1.7.25"
 
@@ -31,7 +31,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
-  "org.scalatest" %% "scalatest" % "3.0.5-M1" % Test,
+  "org.scalatest" %% "scalatest" % "3.0.6-SNAP5" % Test,
   "org.json4s" %% "json4s-native" % "3.5.3" % Test,
   "javax.ws.rs" % "javax.ws.rs-api" % "2.0.1" % Test,
   "joda-time" % "joda-time" % "2.8" % Test,
