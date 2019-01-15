@@ -109,7 +109,7 @@ trait SwaggerGenerator {
     val swagger: OpenAPI = reader.read(apiClasses.asJava)
     if (!unwantedDefinitions.isEmpty) {
       val filteredSchemas = asScala(swagger.getComponents.getSchemas).filterKeys(
-        definitionName => !unwantedDefinitions.contains(definitionName)).asJava
+        definitionName => !unwantedDefinitions.contains(definitionName)).toMap.asJava
       swagger.getComponents.setSchemas(filteredSchemas)
     }
     swagger
