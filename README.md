@@ -80,11 +80,6 @@ class MySwaggerGenerator extends SwaggerGenerator {
   public String host() {
     return "localhost:8080"; //the url of your api, not swagger's json endpoint
   }
-  
-  @Override
-  public String basePath() {
-    return "/";  //the basePath for the API you are exposing
-  }
 
   @Override
   public String apiDocsPath() {
