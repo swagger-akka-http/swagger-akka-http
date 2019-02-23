@@ -58,7 +58,6 @@ Here's an example `SwaggerHttpService` snippet which exposes [Swagger's PetStore
 object SwaggerDocService extends SwaggerHttpService {
   override val apiClasses: Set[Class[_]] = Set(classOf[PetService], classOf[UserService], classOf[StoreService])
   override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
-  override val basePath = "/"    //the basePath for the API you are exposing
   override val apiDocsPath = "api-docs" //where you want the swagger-json endpoint exposed
   override val info = Info() //provides license and other description details
 }.routes
