@@ -102,7 +102,6 @@ class SwaggerDocService(system: ActorSystem) extends SwaggerHttpService with Has
   override implicit val materializer: ActorMaterializer = ActorMaterializer()
   override val apiTypes = Seq(typeOf[PetService], typeOf[UserService], typeOf[StoreService])
   override val host = "localhost:8080" //the url of your api, not swagger's json endpoint
-  override val basePath = "/"    //the basePath for the API you are exposing
   override val apiDocsPath = "api-docs" //where you want the swagger-json endpoint exposed
   override val info = Info() //provides license and other description details
 }.routes
