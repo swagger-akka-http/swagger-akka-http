@@ -45,6 +45,7 @@ trait SwaggerGenerator {
   import SwaggerHttpService._
   def apiClasses: Set[Class[_]]
   def host: String = ""
+  def basePath: String = ""
   def apiDocsPath: String = "api-docs"
   def info: Info = Info()
   def components: Option[Components] = None
@@ -61,8 +62,14 @@ trait SwaggerGenerator {
     components.foreach { c => swagger.setComponents(c) }
 
     if(StringUtils.isNotBlank(host)) {
+      val path = removeInitialSlashIfNecessary(basePath)
+      val hostPath = if (StringUtils.isNotBlank(path)) {
+        s"${host}/${path}"
+      } else {
+        host
+      }
       schemes.foreach { scheme =>
-        swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://${host}"))
+        swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://$hostPath"))
       }
     }
     securitySchemes.foreach { case (k: String, v: SecurityScheme) => swagger.schemaRequirement(k, v) }
@@ -125,10 +132,10 @@ trait SwaggerHttpService extends Directives with SwaggerGenerator {
         complete(HttpEntity(MediaTypes.`application/json`, generateSwaggerJson))
       }
     } ~
-      path(base / "swagger.yaml") {
-        get {
-          complete(HttpEntity(CustomMediaTypes.`text/vnd.yaml`, generateSwaggerYaml))
-        }
+    path(base / "swagger.yaml") {
+      get {
+        complete(HttpEntity(CustomMediaTypes.`text/vnd.yaml`, generateSwaggerYaml))
       }
+    }
   }
 }
