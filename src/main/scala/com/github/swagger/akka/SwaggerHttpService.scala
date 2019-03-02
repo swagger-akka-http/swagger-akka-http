@@ -64,7 +64,7 @@ trait SwaggerGenerator {
     if(StringUtils.isNotBlank(host)) {
       val path = removeInitialSlashIfNecessary(basePath)
       val hostPath = if (StringUtils.isNotBlank(path)) {
-        s"${host}/${path}"
+        s"${host}/${path}/"
       } else {
         host
       }
