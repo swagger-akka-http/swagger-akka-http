@@ -10,7 +10,7 @@ val swaggerVersion = "2.0.7"
 val akkaVersion = "2.5.21"
 val akkaHttpVersion = "10.1.7"
 val jacksonVersion = "2.9.8"
-val slf4jVersion = "1.7.25"
+val slf4jVersion = "1.7.26"
 
 checksums in update := Nil
 
@@ -33,10 +33,10 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
   "org.scalatest" %% "scalatest" % "3.0.6" % Test,
-  "org.json4s" %% "json4s-native" % "3.6.3" % Test,
+  "org.json4s" %% "json4s-native" % "3.6.5" % Test,
   "javax.ws.rs" % "javax.ws.rs-api" % "2.1.1" % Test,
-  "joda-time" % "joda-time" % "2.8" % Test,
-  "org.joda" % "joda-convert" % "1.7" % Test,
+  "joda-time" % "joda-time" % "2.8.2" % Test,
+  "org.joda" % "joda-convert" % "1.9.2" % Test,
   "org.slf4j" % "slf4j-simple" % slf4jVersion % Test
 )
 
