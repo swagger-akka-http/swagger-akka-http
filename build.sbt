@@ -35,7 +35,7 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.6" % Test,
   "org.json4s" %% "json4s-native" % "3.6.3" % Test,
   "javax.ws.rs" % "javax.ws.rs-api" % "2.0.1" % Test,
-  "joda-time" % "joda-time" % "2.8" % Test,
+  "joda-time" % "joda-time" % "2.8.2" % Test,
   "org.joda" % "joda-convert" % "1.7" % Test,
   "org.slf4j" % "slf4j-simple" % slf4jVersion % Test
 )
