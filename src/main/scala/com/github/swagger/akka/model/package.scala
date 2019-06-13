@@ -70,7 +70,7 @@ package object model {
       convertMe.getTermsOfService,
       convertMe.getContact,
       convertMe.getLicense,
-      asScala(convertMe.getVendorExtensions))
+      mapAsScala(convertMe.getVendorExtensions))
   }
   implicit def scala2swagger(convertMe: Info): SwaggerInfo = {
     val ret = new SwaggerInfo()
@@ -84,17 +84,17 @@ package object model {
     ret.getVendorExtensions.putAll(convertMe.vendorExtensions.asJava)
     ret
   }
-  def asScala[K,V](jmap: java.util.Map[K,V]): Map[K,V] = Option(jmap) match {
+  def mapAsScala[K,V](jmap: java.util.Map[K,V]): Map[K,V] = Option(jmap) match {
     case None => Map.empty[K,V]
     case Some(jm) => jm.asScala.toMap
   }
-  def asScala[T](jlist: java.util.List[T]): List[T] = Option(jlist) match {
+  def listAsScala[T](jlist: java.util.List[T]): List[T] = Option(jlist) match {
     case None => List.empty[T]
     case Some(jl) => jl.asScala.toList
   }
-  def asScala[T](jset: java.util.Set[T]): Set[T] = Option(jset) match {
+  def setAsScala[T](jset: java.util.Set[T]): Set[T] = Option(jset) match {
     case None => Set.empty[T]
     case Some(js) => js.asScala.toSet
   }
-  def asScala[T](jopt: java.util.Optional[T]): Option[T] = Option(jopt) flatMap { opt => opt.asScala }
+  def optionalAsScala[T](jopt: java.util.Optional[T]): Option[T] = Option(jopt) flatMap { opt => opt.asScala }
 }

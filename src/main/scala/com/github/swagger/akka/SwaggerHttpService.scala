@@ -15,7 +15,7 @@ package com.github.swagger.akka
 
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
-import com.github.swagger.akka.model.{Info, asScala, scala2swagger}
+import com.github.swagger.akka.model.{Info, mapAsScala, scala2swagger}
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.DefaultReaderConfig
 import io.swagger.models.auth.SecuritySchemeDefinition
@@ -93,14 +93,15 @@ trait SwaggerGenerator {
     (new ListBuffer[T] ++ list).asJava
   }
 
-  private[akka] def asJavaMutableMap[K, V](map: Map[K, V]) = {
+  private[akka] def asJavaMutableMap[K, V](map: Iterable[(K, V)]) = {
     (MutableMap.empty[K, V] ++ map).asJava
   }
 
   private[akka] def filteredSwagger: Swagger = {
     val swagger: Swagger = reader.read(apiClasses.asJava)
     if (!unwantedDefinitions.isEmpty) {
-      swagger.setDefinitions(asScala(swagger.getDefinitions).filterKeys(definitionName => !unwantedDefinitions.contains(definitionName)).asJava)
+      swagger.setDefinitions(asJavaMutableMap(
+        mapAsScala(swagger.getDefinitions).filterKeys(definitionName => !unwantedDefinitions.contains(definitionName))))
     }
     swagger
   }

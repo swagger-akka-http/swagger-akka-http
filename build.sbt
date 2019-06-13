@@ -2,15 +2,15 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.12.7"
+scalaVersion := "2.12.8"
 
-crossScalaVersions := Seq("2.11.12", scalaVersion.value)
+crossScalaVersions := Seq("2.11.12", scalaVersion.value, "2.13.0")
 
-val swaggerVersion = "1.5.21"
-val akkaVersion = "2.5.17"
-val akkaHttpVersion = "10.1.5"
-val jacksonVersion = "2.9.7"
-val slf4jVersion = "1.7.25"
+val swaggerVersion = "1.5.22"
+val akkaVersion = "2.5.23"
+val akkaHttpVersion = "10.1.8"
+val jacksonVersion = "2.9.9"
+val slf4jVersion = "1.7.26"
 
 checksums in update := Nil
 
@@ -20,6 +20,7 @@ libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.0",
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion % "test",
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test",
@@ -30,10 +31,10 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
-  "org.scalatest" %% "scalatest" % "3.0.5-M1" % "test",
-  "org.json4s" %% "json4s-native" % "3.5.3" % "test",
-  "joda-time" % "joda-time" % "2.8" % "test",
-  "org.joda" % "joda-convert" % "1.7" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.8" % "test",
+  "org.json4s" %% "json4s-native" % "3.6.6" % "test",
+  "joda-time" % "joda-time" % "2.10.2" % "test",
+  "org.joda" % "joda-convert" % "2.2.1" % "test",
   "org.slf4j" % "slf4j-simple" % slf4jVersion % "test"
 )
 

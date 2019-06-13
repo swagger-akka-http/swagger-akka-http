@@ -20,14 +20,14 @@ class ModelToolSpec extends WordSpec with Matchers {
 
   "asScala" should {
     "handle null" in {
-      asScala(null.asInstanceOf[java.util.Map[String, Model]]) shouldEqual Map.empty[String, Model]
-      asScala(null.asInstanceOf[java.util.Map[String, String]]) shouldEqual Map.empty[String, String]
-      asScala(null.asInstanceOf[java.util.Set[String]]) shouldEqual Set.empty[String]
-      asScala(null.asInstanceOf[java.util.Set[Model]]) shouldEqual Set.empty[Model]
-      asScala(null.asInstanceOf[java.util.List[String]]) shouldEqual List.empty[String]
-      asScala(null.asInstanceOf[java.util.List[Model]]) shouldEqual List.empty[Model]
-      asScala(null.asInstanceOf[java.util.Optional[String]]) shouldEqual None
-      asScala(null.asInstanceOf[java.util.Optional[Model]]) shouldEqual None
+      mapAsScala(null.asInstanceOf[java.util.Map[String, Model]]) shouldEqual Map.empty[String, Model]
+      mapAsScala(null.asInstanceOf[java.util.Map[String, String]]) shouldEqual Map.empty[String, String]
+      setAsScala(null.asInstanceOf[java.util.Set[String]]) shouldEqual Set.empty[String]
+      setAsScala(null.asInstanceOf[java.util.Set[Model]]) shouldEqual Set.empty[Model]
+      listAsScala(null.asInstanceOf[java.util.List[String]]) shouldEqual List.empty[String]
+      listAsScala(null.asInstanceOf[java.util.List[Model]]) shouldEqual List.empty[Model]
+      optionalAsScala(null.asInstanceOf[java.util.Optional[String]]) shouldEqual None
+      optionalAsScala(null.asInstanceOf[java.util.Optional[Model]]) shouldEqual None
     }
     "handle simple java map" in {
       val swaggerService = new SwaggerHttpService {
@@ -36,7 +36,7 @@ class ModelToolSpec extends WordSpec with Matchers {
       val definitions = swaggerService.filteredSwagger.getDefinitions
       definitions should not be null
       definitions should have size 4
-      val smap = asScala(definitions)
+      val smap = mapAsScala(definitions)
       smap should contain theSameElementsAs definitions.asScala
     }
   }
