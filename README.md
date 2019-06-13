@@ -24,7 +24,7 @@ The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Mave
 
 Version | Stability | Branch | Description
 --------|-----------|--------|------------
-2.0.2 | beta | master | Supports Swagger 2.0.X and OpenAPI 3.0 Specification. Still regarded as experimental.
+2.0.3 | beta | master | Supports Swagger 2.0.X and OpenAPI 3.0 Specification. Still regarded as experimental.
 1.0.0 | stable | swagger-1.5| Supports Swagger 1.5.X and Swagger 2.0 Specification.
 
 ```sbt
