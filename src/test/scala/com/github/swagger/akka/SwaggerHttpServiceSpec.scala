@@ -11,7 +11,6 @@ import io.swagger.v3.oas.models.parameters.Parameter
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme.In
 import io.swagger.v3.oas.models.servers.Server
-import io.swagger.v3.oas.models.tags.Tag
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
@@ -171,12 +170,6 @@ class SwaggerHttpServiceSpec
       }
       "mean that getServers returns a mutable list" in {
         swaggerService.swaggerConfig.getServers.add(new Server)
-      }
-      "mean that getTags returns a mutable list" in {
-        swaggerService.swaggerConfig.getTags.add(new Tag)
-      }
-      "mean that getSchemas returns a mutable list" in {
-        swaggerService.swaggerConfig.getComponents.getSchemas.put("fakeSchema", new Schema[String])
       }
     }
   }
