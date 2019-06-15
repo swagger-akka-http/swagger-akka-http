@@ -1,7 +1,6 @@
 package com.github.swagger.akka.model
 
 import com.github.swagger.akka.SwaggerHttpService
-import com.github.swagger.akka.model.asScala
 import com.github.swagger.akka.samples.{PetHttpService, UserHttpService}
 import io.swagger.v3.oas.models.info.{Contact => SwaggerContact, Info => SwaggerInfo, License => SwaggerLicense}
 import io.swagger.v3.oas.models.media.Schema

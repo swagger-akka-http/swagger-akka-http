@@ -1,21 +1,20 @@
 package com.github.swagger.akka
 
-import java.util
-
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
-import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.parameters.Parameter
+import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme.In
+import io.swagger.v3.oas.models.servers.Server
+import io.swagger.v3.oas.models.tags.Tag
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
-import org.yaml.snakeyaml.Yaml
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.ListMap
@@ -35,7 +34,7 @@ class SwaggerHttpServiceSpec
     .in(In.HEADER.toString)
     .schema(new Schema().`type`("string"))
 
-  val swaggerService = new SwaggerHttpService {
+  def swaggerService = new SwaggerHttpService {
     override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
     override val basePath = "api"
     override val apiDocsPath = "api-doc"
@@ -160,9 +159,24 @@ class SwaggerHttpServiceSpec
         jlist.asScala.toSet shouldEqual Set("http", "extra")
       }
       "return mutable map" in {
-        val jmap= swaggerService.asJavaMutableMap(Map("scheme" -> "http"))
+        val jmap = swaggerService.asJavaMutableMap(Map("scheme" -> "http"))
         jmap.put("extraKey", "extraValue")
         jmap.asScala.toMap shouldEqual Map(("scheme" -> "http"), ("extraKey" -> "extraValue"))
+      }
+      "mean that getSecurity returns a mutable list" in {
+        swaggerService.swaggerConfig.getSecurity.add(new SecurityRequirement)
+      }
+      "mean that getExtensions returns a mutable map" in {
+        swaggerService.swaggerConfig.getExtensions.put("fakeExtension", new Object)
+      }
+      "mean that getServers returns a mutable list" in {
+        swaggerService.swaggerConfig.getServers.add(new Server)
+      }
+      "mean that getTags returns a mutable list" in {
+        swaggerService.swaggerConfig.getTags.add(new Tag)
+      }
+      "mean that getSchemas returns a mutable list" in {
+        swaggerService.swaggerConfig.getComponents.getSchemas.put("fakeSchema", new Schema[String])
       }
     }
   }

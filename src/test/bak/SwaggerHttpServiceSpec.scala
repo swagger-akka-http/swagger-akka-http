@@ -12,6 +12,7 @@ import io.swagger.models.auth.BasicAuthDefinition
 import io.swagger.models.{ExternalDocs, Model, Scheme}
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.parameters.Parameter
+import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme.In
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -242,19 +243,6 @@ class SwaggerHttpServiceSpec
           val response = parse(str)
           (response \ "schemes").extract[Set[String]] shouldEqual Set("https", "http")
         }
-      }
-    }
-
-    "conversion of scala collections to java" should {
-      "return mutable list" in {
-        val jlist = swaggerService.asJavaMutableList(List("http"))
-        jlist.add("extra")
-        jlist.asScala.toSet shouldEqual Set("http", "extra")
-      }
-      "return mutable map" in {
-        val jmap= swaggerService.asJavaMutableMap(Map("scheme" -> "http"))
-        jmap.put("extraKey", "extraValue")
-        jmap.asScala.toMap shouldEqual Map(("scheme" -> "http"), ("extraKey" -> "extraValue"))
       }
     }
   }

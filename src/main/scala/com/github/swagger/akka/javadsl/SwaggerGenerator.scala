@@ -2,8 +2,8 @@ package com.github.swagger.akka.javadsl
 
 import java.util
 
-import io.swagger.v3.oas.models.ExternalDocumentation
 import com.github.swagger.akka.model.asScala
+import io.swagger.v3.oas.models.ExternalDocumentation
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityScheme
 
