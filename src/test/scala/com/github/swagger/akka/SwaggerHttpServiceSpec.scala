@@ -9,7 +9,7 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
 import io.swagger.models.auth.BasicAuthDefinition
-import io.swagger.models.{ExternalDocs, Model, Scheme}
+import io.swagger.models.{ExternalDocs, Scheme}
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
@@ -26,7 +26,7 @@ class SwaggerHttpServiceSpec
     system.terminate()
   }
 
-  val swaggerService = new SwaggerHttpService {
+  def swaggerService = new SwaggerHttpService {
     override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
     override val basePath = "api"
     override val apiDocsPath = "api-doc"
@@ -240,9 +240,12 @@ class SwaggerHttpServiceSpec
         jlist.asScala.toSet shouldEqual Set("http", "extra")
       }
       "return mutable map" in {
-        val jmap= swaggerService.asJavaMutableMap(Map("scheme" -> "http"))
+        val jmap = swaggerService.asJavaMutableMap(Map("scheme" -> "http"))
         jmap.put("extraKey", "extraValue")
         jmap.asScala.toMap shouldEqual Map(("scheme" -> "http"), ("extraKey" -> "extraValue"))
+      }
+      "mean that getSecurity returns a mutable map" in {
+        swaggerService.swaggerConfig.getSecurityDefinitions.put("fakeSecurity", new BasicAuthDefinition)
       }
     }
   }
