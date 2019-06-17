@@ -66,6 +66,7 @@ class SwaggerGeneratorSpec extends WordSpec with Matchers {
       generator.converter.securitySchemes.asJava shouldEqual generator.securitySchemes
       generator.converter.externalDocs.get shouldEqual generator.externalDocs.get()
       generator.converter.vendorExtensions.asJava shouldEqual generator.vendorExtensions
+      generator.converter.unwantedDefinitions.asJava shouldEqual generator.unwantedDefinitions
     }
   }
 }

@@ -116,17 +116,27 @@ class SwaggerHttpServiceSpec
           contentType shouldBe ContentTypes.`application/json`
         }
       }
+      def performYamlGet(testPath: String) = {
+        Get(s"/${SwaggerHttpService.removeInitialSlashIfNecessary(testPath)}/swagger.yaml") ~> swaggerService(testPath).routes ~> check {
+          handled shouldBe true
+          contentType.toString() shouldBe CustomMediaTypes.`text/vnd.yaml`.toString()
+        }
+      }
       "support root slash" in {
         performGet("/arbitrary")
+        performYamlGet("/arbitrary")
       }
       "support root slash and path elements" in {
         performGet("/arbitrary/path/to/docs")
+        performYamlGet("/arbitrary/path/to/docs")
       }
       "support no root slash" in {
         performGet("arbitrary")
+        performYamlGet("arbitrary")
       }
       "support no root slash and path elements" in {
         performGet("arbitrary/path/to/docs")
+        performYamlGet("arbitrary/path/to/docs")
       }
     }
 
