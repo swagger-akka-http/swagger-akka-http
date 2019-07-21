@@ -20,7 +20,7 @@ The [swagger spec](http://swagger.io/specification/) is helpful for understandin
 
 ### Release Version
 
-The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.11 and 2.12. Snapshot releases are also hosted on sonatype. 
+The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.11, 2.12, and 2.13. Snapshot releases are also hosted on sonatype. 
 
 Version | Stability | Branch | Description
 --------|-----------|--------|------------
