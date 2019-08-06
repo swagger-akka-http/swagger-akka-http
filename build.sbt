@@ -10,7 +10,7 @@ val swaggerVersion = "2.0.8"
 val akkaVersion = "2.5.23"
 val akkaHttpVersion = "10.1.9"
 val jacksonVersion = "2.9.9"
-val slf4jVersion = "1.7.26"
+val slf4jVersion = "1.7.27"
 
 checksums in update := Nil
 
