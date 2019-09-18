@@ -128,48 +128,46 @@ You can also use jax-rs `@Path` annotations alongside `@ApiOperation`s if you ne
 
 ### Resource Definitions
 
+The swagger 2.0 annotations are very different from those used in swagger 1.5.
+
 The general pattern for resource definitions and akka-http routes:
 
 * Place an individual resource in its own trait
-* Annotate the trait with `@Api` to describe the resource
 * Define specific api operations with `def` methods which produce a route
-* Annotate these methods with `@ApiOperation`, `@ApiImplictParams` and `@ApiResponse` accordingly
+* Annotate these methods with `@Operation`, `@Parameter` and `@ApiResponse` accordingly
 * Concatenate operations together into a single routes property, wrapped with a path directive for that resource
 * Concatenate all resource traits together on their routes property to produce the final route structure for your application.
 
 Here's what Swagger's *pet* resource would look like:
 
 ```scala
-@Api(value = "/pet", description = "Operations about pets")
 trait PetHttpService extends HttpService {
 
-  @ApiOperation(httpMethod = "GET", response = classOf[Pet], value = "Returns a pet based on ID")
-  @ApiImplicitParams(Array(
-      new ApiImplicitParam(name = "petId", required = false, dataType = "integer", paramType = "path", value = "ID of pet that needs to be fetched")
-        ))
-  @ApiResponses(Array(
-    new ApiResponse(code = 400, message = "Invalid ID Supplied"),
-    new ApiResponse(code = 404, message = "Pet not found")))
+  @Operation(summary = "Find a pet by ID",
+    description = "Returns a pet based on ID",
+    method = "GET",
+    parameters = Array(
+      new Parameter(name = "petId", in = ParameterIn.PATH, required = true, description = "ID of pet that needs to be fetched",
+        content = Array(new Content(schema = new Schema(implementation = classOf[Int], allowableValues = Array("[1,100000]")))))
+    ),
+    responses = Array(
+      new ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
+      new ApiResponse(responseCode = "404", description = "Pet not found")
+    )
+  )
   def petGetRoute = get { path("pet" / IntNumber) { petId =>
     complete(s"Hello, I'm pet ${petId}!")
-    } }
+    }
+  }
 }
 ```
 
-Notice the use of `ApiImplicitParams`. This is the best way to apply parameter information. The `paramType` can be used to specify `path`, `body`, `header`, `query` or `form`. If the dataType value is not of the basic types, `swagger-akka-http` will try and find the type in the `modelTypes` sequence. Refer to *swagger-core* for other attribute information.
+### Schema Definitions
 
-### Model Definitions
-
-Model definitions are fairly self-explanatory. Attributes are applied to case class entities and their respective properties. A simplified Pet model:
+Schema definitions are fairly self-explanatory. You can use swagger annotations to try to adjust the model generated for a class. Due to type erasure, the `Option[Boolean]` will normally treated as `Option[Any]` but the schema annotation corrects this. This type erasure affects primitives like Int, Long, Boolean, etc.
 
 ```scala
-@ApiModel(description = "A pet object")
-case class Pet(
-  @(ApiModelProperty @field)(value = "unique identifier for the pet")
-  val id: Int,
-
-  @(ApiModelProperty @field)(value = "The name of the pet")
-  val name: String)
+case class ModelWOptionBooleanSchemaOverride(@Schema(implementation = classOf[Boolean]) optBoolean: Option[Boolean])
 ```
 
 ## Swagger UI
@@ -190,4 +188,5 @@ You can then mix this trait with a new or existing Akka-Http class with an `acto
 
 ## How Annotations are Mapped to Swagger
 
-[Swagger Annotations Guide](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X)
+[Swagger 2 Annotations Guide](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations)
+[Swagger 1.5 Annotations Guide](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X)
