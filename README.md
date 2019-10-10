@@ -188,5 +188,5 @@ You can then mix this trait with a new or existing Akka-Http class with an `acto
 
 ## How Annotations are Mapped to Swagger
 
-[Swagger 2 Annotations Guide](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations)
-[Swagger 1.5 Annotations Guide](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X)
+* [Swagger 2 Annotations Guide](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations)
+* [Swagger 1.5 Annotations Guide](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X)
