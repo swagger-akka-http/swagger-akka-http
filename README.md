@@ -28,7 +28,7 @@ Version | Stability | Branch | Description
 1.1.0 | stable | swagger-1.5| Supports Swagger 1.5.X and Swagger 2.0 Specification.
 
 ```sbt
-libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "1.1.0"
+libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "2.0.4"
 ```
 swagger-akka-http 0.10.x and 0.11.x both have had some changes in APIs, for those who are upgrading. See below for details.
 
