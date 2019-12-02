@@ -13,13 +13,15 @@ import io.swagger.v3.oas.models.security.SecurityScheme.In
 import io.swagger.v3.oas.models.servers.Server
 import org.json4s._
 import org.json4s.native.JsonMethods._
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
+import org.scalatest.BeforeAndAfterAll
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.ListMap
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 class SwaggerHttpServiceSpec
-    extends WordSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest {
+    extends AnyWordSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest {
 
   override def afterAll: Unit = {
     super.afterAll()

@@ -4,12 +4,13 @@ import io.swagger.v3.core.converter._
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.models.media.{ArraySchema, DateTimeSchema, IntegerSchema, StringSchema}
 import models._
-import org.scalatest.{FlatSpec, Matchers}
 
 import scala.annotation.meta.field
 import scala.collection.JavaConverters._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ScalaModelTest extends FlatSpec with Matchers {
+class ScalaModelTest extends AnyFlatSpec with Matchers {
   it should "extract a scala enum" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[SModelWithEnum]).asScala
     val userSchema = schemas("SModelWithEnum")

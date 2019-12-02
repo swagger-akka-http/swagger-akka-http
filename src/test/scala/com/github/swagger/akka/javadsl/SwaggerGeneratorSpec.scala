@@ -8,9 +8,10 @@ import scala.collection.JavaConverters._
 import io.swagger.v3.oas.models.ExternalDocumentation
 import io.swagger.v3.oas.models.info.{Contact, Info, License}
 import io.swagger.v3.oas.models.security.SecurityScheme
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class SwaggerGeneratorSpec extends WordSpec with Matchers {
+class SwaggerGeneratorSpec extends AnyWordSpec with Matchers {
 
   "Java DSL SwaggerGenerator" should {
     "not fail when generating swagger doc" in {

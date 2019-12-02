@@ -19,12 +19,13 @@ import com.github.swagger.akka.samples._
 import io.swagger.v3.jaxrs2.Reader
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
-import org.scalatest.{Matchers, WordSpec}
 
 import scala.collection.JavaConverters._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 class ApiReaderSpec
-    extends WordSpec
+    extends AnyWordSpec
     with Matchers {
   val OPENAPI_VERSION = "3.0.1"
   val API_VERSION = "1.0"
