@@ -4,9 +4,10 @@ import com.github.swagger.akka.SwaggerHttpService
 import com.github.swagger.akka.samples.{PetHttpService, UserHttpService}
 import io.swagger.v3.oas.models.info.{Contact => SwaggerContact, Info => SwaggerInfo, License => SwaggerLicense}
 import io.swagger.v3.oas.models.media.Schema
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class ModelToolSpec extends WordSpec with Matchers {
+class ModelToolSpec extends AnyWordSpec with Matchers {
 
   "swaggerToScala" should {
     "support roundtrip" in {
