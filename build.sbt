@@ -2,9 +2,9 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.12.10"
 
-crossScalaVersions := Seq("2.11.12", scalaVersion.value, "2.13.0")
+crossScalaVersions := Seq("2.11.12", scalaVersion.value, "2.13.1")
 
 val swaggerVersion = "1.6.0"
 val akkaVersion = "2.5.26"
@@ -28,6 +28,7 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-annotations" % swaggerVersion,
   "io.swagger" % "swagger-models" % swaggerVersion,
   "io.swagger" % "swagger-jaxrs" % swaggerVersion,
+  "io.swagger" %% "swagger-scala-module" % "1.0.6",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
