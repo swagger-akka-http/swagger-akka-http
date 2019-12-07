@@ -4,10 +4,10 @@ import java.lang.annotation.Annotation
 import java.lang.reflect.Type
 import java.util
 
-import com.github.swagger.akka.SwaggerScalaModelConverter
 import io.swagger.converter._
 import io.swagger.models.{Model, properties}
 import io.swagger.models.properties._
+import io.swagger.scala.converter.SwaggerScalaModelConverter
 import models._
 import org.scalatest.{FlatSpec, Matchers}
 
