@@ -9,7 +9,7 @@ crossScalaVersions := Seq("2.11.12", "2.12.10", scalaVersion.value)
 val swaggerVersion = "2.1.1"
 val akkaVersion = "2.5.30"
 val akkaHttpVersion = "10.1.11"
-val jacksonVersion = "2.10.2"
+val jacksonVersion = "2.10.3"
 val slf4jVersion = "1.7.30"
 
 checksums in update := Nil
@@ -19,7 +19,7 @@ resolvers += Resolver.sonatypeRepo("snapshots")
 Global / useGpg := false
 
 libraryDependencies ++= Seq(
-  "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.0",
+  "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1",
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
-  "org.scalatest" %% "scalatest" % "3.1.0" % Test,
+  "org.scalatest" %% "scalatest" % "3.1.1" % Test,
   "org.json4s" %% "json4s-native" % "3.6.7" % Test,
   "javax.ws.rs" % "javax.ws.rs-api" % "2.0.1" % Test,
   "joda-time" % "joda-time" % "2.10.5" % Test,
