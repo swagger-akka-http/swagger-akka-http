@@ -2,15 +2,15 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.12.11"
 
-crossScalaVersions := Seq("2.11.12", scalaVersion.value, "2.13.1")
+crossScalaVersions := Seq("2.11.12", scalaVersion.value, "2.13.2")
 
 val swaggerVersion = "1.6.0"
 val akkaVersion = "2.5.26"
 val akkaHttpVersion = "10.1.10"
 val jacksonVersion = "2.10.1"
-val slf4jVersion = "1.7.29"
+val slf4jVersion = "1.7.30"
 
 checksums in update := Nil
 
