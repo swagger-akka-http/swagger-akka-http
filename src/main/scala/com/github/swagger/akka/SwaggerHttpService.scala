@@ -61,16 +61,17 @@ trait SwaggerGenerator {
     swagger.setInfo(info)
     components.foreach { c => swagger.setComponents(c) }
 
-    if(StringUtils.isNotBlank(host)) {
-      val path = removeInitialSlashIfNecessary(basePath)
-      val hostPath = if (StringUtils.isNotBlank(path)) {
-        s"${host}/${path}/"
-      } else {
-        host
-      }
-      schemes.foreach { scheme =>
-        swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://$hostPath"))
-      }
+    val path = removeInitialSlashIfNecessary(basePath)
+    val hostPath = if (StringUtils.isNotBlank(path)) {
+      s"${host}/${path}/"
+    } else {
+      host
+    }
+    schemes.foreach { scheme =>
+      swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://$hostPath"))
+    }
+    if (schemes.isEmpty && StringUtils.isNotBlank(hostPath)) {
+      swagger.addServersItem(new Server().url(hostPath))
     }
     securitySchemes.foreach { case (k: String, v: SecurityScheme) => swagger.schemaRequirement(k, v) }
     swagger.setSecurity(asJavaMutableList(security))

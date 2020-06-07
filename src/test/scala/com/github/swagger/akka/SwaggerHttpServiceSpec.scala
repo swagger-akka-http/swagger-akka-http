@@ -163,6 +163,25 @@ class SwaggerHttpServiceSpec
       }
     }
 
+    "defining relative paths" should {
+      val swaggerService = new SwaggerHttpService {
+        override val apiClasses: Set[Class[_]] = Set(classOf[UserHttpService])
+        override val apiDocsPath = "api-doc"
+        override val host = ""
+        override val basePath = "test/path"
+        override val schemes = List.empty[String]
+      }
+      "handle path properly" in {
+        Get(s"/${swaggerService.apiDocsPath}/swagger.json") ~> swaggerService.routes ~> check {
+          handled shouldBe true
+          contentType shouldBe ContentTypes.`application/json`
+          val str = responseAs[String]
+          val response = parse(str)
+          ((response \ "servers")(0) \ "url").extract[String] shouldEqual "/test/path/"
+        }
+      }
+    }
+
     "conversion of scala collections to java" should {
       "return mutable list" in {
         val jlist = swaggerService.asJavaMutableList(List("http"))
