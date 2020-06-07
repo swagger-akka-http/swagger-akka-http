@@ -24,11 +24,11 @@ The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Mave
 
 Version | Stability | Branch | Description
 --------|-----------|--------|------------
-2.0.5 | stable | master | Supports Swagger 2.0.X and OpenAPI 3.0 Specification.
+2.1.0 | stable | master | Supports Swagger 2.0.X and OpenAPI 3.0 Specification.
 1.1.1 | stable | swagger-1.5| Supports Swagger 1.5.X/1.6.X and Swagger 2.0 Specification.
 
 ```sbt
-libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "2.0.4"
+libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "2.1.0"
 ```
 swagger-akka-http 0.10.x and 0.11.x both have had some changes in APIs, for those who are upgrading. See below for details.
 
