@@ -18,7 +18,7 @@ trait DictHttpService
   implicit val actorSystem = ActorSystem("mysystem")
   implicit val materializer = ActorMaterializer()
 
-  var dict: Map[String, String] = Map[String, String]()
+  var dict = Map[String, DictEntry]()
 
   @ApiOperation(value = "Add dictionary entry.", notes = "Will add new entry to the dictionary, indexed by key, with an optional expiration value.", httpMethod = "POST")
   @ApiImplicitParams(Array(
@@ -28,7 +28,7 @@ trait DictHttpService
   def createRoute = post {
     path("/dict") {
       entity(as[DictEntry]) { e ⇒
-        dict += e.key -> e.value
+        dict += e.key -> e
         complete("ok")
       }
     }
