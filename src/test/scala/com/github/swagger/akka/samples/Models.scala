@@ -38,11 +38,7 @@ object SwaggerModelBuilderSpecValues {
 }
 
 @ApiModel(description = "an entry in the dictionary")
-case class DictEntry(
-  val key: String,
-  val value: String,
-  val expire: Option[Long]
-  )
+case class DictEntry(key: String, value: String, expire: Option[Long])
 
 
 import SwaggerModelBuilderSpecValues._

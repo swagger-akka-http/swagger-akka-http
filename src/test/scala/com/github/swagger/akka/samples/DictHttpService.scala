@@ -21,8 +21,6 @@ trait DictHttpService
 
   val me = DictEntry("", "", None)
 
-  val yoyo = as[DictEntry]
-
   var dict: Map[String, String] = Map[String, String]()
 
   @ApiOperation(value = "Add dictionary entry.", notes = "Will add new entry to the dictionary, indexed by key, with an optional expiration value.", httpMethod = "POST")
