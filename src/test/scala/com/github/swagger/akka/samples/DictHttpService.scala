@@ -9,7 +9,6 @@ import akka.http.scaladsl.marshalling.ToResponseMarshallable.apply
 import akka.http.scaladsl.server.Directive.addByNameNullaryApply
 import akka.http.scaladsl.server.Directive.addDirectiveApply
 import io.swagger.annotations._
-import io.swagger.annotations.SwaggerDefinition.Scheme
 
 @Api(value = "/dict", description = "This is a dictionary api.")
 @Path("/dict")
@@ -18,8 +17,6 @@ trait DictHttpService
     with ModelFormats {
   implicit val actorSystem = ActorSystem("mysystem")
   implicit val materializer = ActorMaterializer()
-
-  val me = DictEntry("", "", None)
 
   var dict: Map[String, String] = Map[String, String]()
 
