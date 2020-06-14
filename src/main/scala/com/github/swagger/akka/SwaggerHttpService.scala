@@ -20,7 +20,6 @@ import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.DefaultReaderConfig
 import io.swagger.models.auth.SecuritySchemeDefinition
 import io.swagger.models.{ExternalDocs, Scheme, Swagger}
-import io.swagger.util.{Json, Yaml}
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 
@@ -69,7 +68,7 @@ trait SwaggerGenerator {
 
   def generateSwaggerJson: String = {
     try {
-      Json.pretty().writeValueAsString(filteredSwagger)
+      SwaggerObjectMapperFactory.jsonPretty.writeValueAsString(filteredSwagger)
     } catch {
       case NonFatal(t) => {
         logger.error("Issue with creating swagger.json", t)
@@ -80,7 +79,7 @@ trait SwaggerGenerator {
 
   def generateSwaggerYaml: String = {
     try {
-      Yaml.pretty().writeValueAsString(filteredSwagger)
+      SwaggerObjectMapperFactory.yamlPretty.writeValueAsString(filteredSwagger)
     } catch {
       case NonFatal(t) => {
         logger.error("Issue with creating swagger.yaml", t)
