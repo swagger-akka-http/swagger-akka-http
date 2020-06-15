@@ -14,7 +14,9 @@ val slf4jVersion = "1.7.30"
 
 checksums in update := Nil
 
-resolvers += Resolver.sonatypeRepo("releases")
+//resolvers += Resolver.sonatypeRepo("snapshots")
+
+Global / useGpg := false
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
