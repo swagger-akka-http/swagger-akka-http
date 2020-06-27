@@ -6,7 +6,7 @@ scalaVersion := "2.13.3"
 
 crossScalaVersions := Seq("2.11.12", "2.12.11", scalaVersion.value)
 
-val swaggerVersion = "2.1.2"
+val swaggerVersion = "2.1.3"
 val akkaVersion = "2.5.31"
 val akkaHttpVersion = "10.1.12"
 val jacksonVersion = "2.11.1"
@@ -29,7 +29,7 @@ libraryDependencies ++= Seq(
   "io.swagger.core.v3" % "swagger-annotations" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-models" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-jaxrs2" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.1.2",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.1.3",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
