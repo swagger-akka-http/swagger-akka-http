@@ -23,7 +23,7 @@ import org.scalatest.wordspec.AnyWordSpec
 class SwaggerHttpServiceSpec
     extends AnyWordSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest {
 
-  override def afterAll: Unit = {
+  override def afterAll(): Unit = {
     super.afterAll()
     system.terminate()
   }
