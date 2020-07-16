@@ -4,7 +4,7 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.13.3"
 
-crossScalaVersions := Seq("2.11.12", "2.12.11", scalaVersion.value)
+crossScalaVersions := Seq("2.11.12", "2.12.12", scalaVersion.value)
 
 val swaggerVersion = "2.1.3"
 val akkaVersion = "2.5.31"
