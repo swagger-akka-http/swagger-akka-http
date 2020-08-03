@@ -2,7 +2,7 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.12.11"
+scalaVersion := "2.12.12"
 
 crossScalaVersions := Seq("2.11.12", scalaVersion.value, "2.13.3")
 
@@ -30,7 +30,7 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-annotations" % swaggerVersion,
   "io.swagger" % "swagger-models" % swaggerVersion,
   "io.swagger" % "swagger-jaxrs" % swaggerVersion,
-  "io.swagger" %% "swagger-scala-module" % "1.0.6",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "1.1.0",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
