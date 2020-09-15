@@ -20,12 +20,12 @@ The [swagger spec](http://swagger.io/specification/) is helpful for understandin
 
 ### Release Version
 
-The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.11, 2.12, and 2.13. Snapshot releases are also hosted on sonatype. 
+The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.12, and 2.13. Snapshot releases are also hosted on sonatype. 
 
 Version | Stability | Branch | Description
 --------|-----------|--------|------------
 2.1.1 | stable | master | Supports Swagger 2.0.X and OpenAPI 3.0 Specification.
-1.1.2 | stable | swagger-1.5| Supports Swagger 1.5.X/1.6.X and Swagger 2.0 Specification.
+1.2.0 | stable | swagger-1.5| Supports Swagger 1.5.X/1.6.X and Swagger 2.0 Specification.
 
 ```sbt
 libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "2.1.1"
@@ -33,6 +33,8 @@ libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "
 swagger-akka-http 0.10.x and 0.11.x both have had some changes in APIs, for those who are upgrading. See below for details.
 
 Swagger libraries depend heavily on [Jackson](http://wiki.fasterxml.com/JacksonHome). If you need to older versions of Jackson, consider using swagger-akka-http 0.8.2. It depends on Jackson 2.4.
+
+Scala 2.11 support for akka-http 10.1.x requires swagger-akka-http 2.1.1 or 1.1.2.
 
 Scala 2.10 support for akka-http 2.0.3 requires swagger-akka-http 0.6.2.
 
