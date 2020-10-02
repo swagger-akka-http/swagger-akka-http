@@ -9,7 +9,7 @@ crossScalaVersions := Seq("2.12.12", scalaVersion.value)
 val swaggerVersion = "2.1.5"
 val akkaVersion = "2.5.31"
 val akkaHttpVersion = "10.2.0"
-val jacksonVersion = "2.11.2"
+val jacksonVersion = "2.11.3"
 val slf4jVersion = "1.7.30"
 
 checksums in update := Nil
