@@ -4,12 +4,12 @@ name := "swagger-akka-http"
 
 scalaVersion := "2.12.12"
 
-crossScalaVersions := Seq(scalaVersion.value, "2.13.3")
+crossScalaVersions := Seq(scalaVersion.value, "2.13.4")
 
 val swaggerVersion = "1.6.2"
-val akkaVersion = "2.5.31"
-val akkaHttpVersion = "10.2.0"
-val jacksonVersion = "2.11.2"
+val akkaVersion = "2.5.32"
+val akkaHttpVersion = "10.2.1"
+val jacksonVersion = "2.12.0"
 val slf4jVersion = "1.7.30"
 
 checksums in update := Nil
@@ -30,12 +30,12 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-annotations" % swaggerVersion,
   "io.swagger" % "swagger-models" % swaggerVersion,
   "io.swagger" % "swagger-jaxrs" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "1.1.0",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "1.2.0",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
   "org.scalatest" %% "scalatest" % "3.0.8" % "test",
-  "org.json4s" %% "json4s-native" % "3.6.9" % "test",
+  "org.json4s" %% "json4s-native" % "3.6.10" % "test",
   "joda-time" % "joda-time" % "2.10.2" % "test",
   "org.joda" % "joda-convert" % "2.2.1" % "test",
   "org.slf4j" % "slf4j-simple" % slf4jVersion % "test"
