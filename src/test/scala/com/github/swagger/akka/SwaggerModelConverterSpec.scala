@@ -96,8 +96,11 @@ class SwaggerModelConverterSpec
         items.get$ref() should equal ("#/definitions/TestModelNode")
         items.getSimpleRef() should equal ("TestModelNode")
         val testModelNode = schemas.get("TestModelNode")
-        val value = testModelNode.getProperties().get("value")
-        value.getType() should equal ("string")
+        val enum = userSchema.getProperties().get("testEnum")
+        enum.getType() should equal ("string")
+        val sp = enum.asInstanceOf[StringProperty]
+        Option(sp.getEnum) shouldBe defined
+        sp.getEnum().asScala.toSet shouldEqual Set("a", "b")
       }
     }
   }
