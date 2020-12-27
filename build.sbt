@@ -2,24 +2,23 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.12.12"
+scalaVersion := "2.13.4"
 
-crossScalaVersions := Seq(scalaVersion.value, "2.13.4")
+crossScalaVersions := Seq("2.12.12", scalaVersion.value)
 
 val swaggerVersion = "1.6.2"
 val akkaVersion = "2.5.32"
-val akkaHttpVersion = "10.2.1"
+val akkaHttpVersion = "10.2.2"
 val jacksonVersion = "2.12.0"
 val slf4jVersion = "1.7.30"
 
 checksums in update := Nil
 
-//resolvers += Resolver.sonatypeRepo("snapshots")
+resolvers += Resolver.sonatypeRepo("snapshots")
 
 Global / useGpg := false
 
 libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1",
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
@@ -30,7 +29,7 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-annotations" % swaggerVersion,
   "io.swagger" % "swagger-models" % swaggerVersion,
   "io.swagger" % "swagger-jaxrs" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "1.2.0",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "1.3.0-SNAPSHOT" changing(),
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
