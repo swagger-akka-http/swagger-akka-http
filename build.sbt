@@ -12,11 +12,9 @@ val akkaHttpVersion = "10.2.2"
 val jacksonVersion = "2.12.3"
 val slf4jVersion = "1.7.30"
 
-checksums in update := Nil
+update / checksums := Nil
 
 //resolvers += Resolver.sonatypeRepo("snapshots")
-
-Global / useGpg := false
 
 libraryDependencies ++= Seq(
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1",
@@ -41,10 +39,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % slf4jVersion % Test
 )
 
-testOptions in Test += Tests.Argument("-oD")
-
-parallelExecution in Test := false
-logBuffered := false
+Test / testOptions += Tests.Argument("-oD")
 
 publishMavenStyle := true
 
@@ -56,7 +51,7 @@ publishTo := {
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
-publishArtifact in Test := false
+Test / publishArtifact := false
 
 pomIncludeRepository := { _ => false }
 
