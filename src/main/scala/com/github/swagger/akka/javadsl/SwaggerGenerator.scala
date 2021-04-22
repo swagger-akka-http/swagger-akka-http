@@ -12,6 +12,7 @@ trait SwaggerGenerator {
   def apiDocsPath: String = "api-docs"
   def basePath: String = ""
   def info: Info = new Info()
+  def schemes: util.List[String] = util.Collections.singletonList("http")
   def securitySchemes: util.Map[String, SecurityScheme] = util.Collections.emptyMap()
   def externalDocs: util.Optional[ExternalDocumentation] = util.Optional.empty()
   def vendorExtensions: util.Map[String, Object] = util.Collections.emptyMap()
@@ -29,6 +30,7 @@ private class Converter(javaGenerator: SwaggerGenerator) extends com.github.swag
   override def basePath: String = javaGenerator.basePath
   override def apiDocsPath: String = javaGenerator.apiDocsPath
   override def info: com.github.swagger.akka.model.Info = javaGenerator.info
+  override def schemes: List[String] = asScala(javaGenerator.schemes)
   override def securitySchemes: Map[String, SecurityScheme] = asScala(javaGenerator.securitySchemes)
   override def externalDocs: Option[ExternalDocumentation] = asScala(javaGenerator.externalDocs)
   override def vendorExtensions: Map[String, Object] = asScala(javaGenerator.vendorExtensions)

@@ -40,6 +40,7 @@ class SwaggerGeneratorSpec extends AnyWordSpec with Matchers {
         override def apiDocsPath: String = "docs"
         override def basePath: String = "basePath"
         override def info: Info = testInfo
+        override def schemes: util.List[String] = util.Collections.singletonList("https")
         override def securitySchemes: util.Map[String, SecurityScheme] = {
           val jmap = new util.HashMap[String, SecurityScheme]()
           jmap.put("bearerAuth", bearerTokenScheme)
@@ -54,14 +55,14 @@ class SwaggerGeneratorSpec extends AnyWordSpec with Matchers {
         override def unwantedDefinitions: util.List[String] = util.Collections.singletonList("unwanted")
       }
 
-      generator.securitySchemes should not be empty
+      generator.schemes should have size 1
       generator.securitySchemes should have size 1
       generator.vendorExtensions should not be empty
-
 
       generator.converter.apiClasses shouldEqual Set(classOf[DictHttpService])
       generator.converter.apiDocsPath shouldEqual generator.apiDocsPath
       generator.converter.basePath shouldEqual generator.basePath
+      generator.converter.schemes shouldEqual generator.schemes.asScala
       import com.github.swagger.akka.model.scala2swagger
       scala2swagger(generator.converter.info) shouldEqual testInfo
       generator.converter.securitySchemes.asJava shouldEqual generator.securitySchemes
