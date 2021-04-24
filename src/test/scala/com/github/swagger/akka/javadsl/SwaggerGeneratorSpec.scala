@@ -1,15 +1,14 @@
 package com.github.swagger.akka.javadsl
 
-import java.util
-
 import com.github.swagger.akka.samples.DictHttpService
-
-import scala.collection.JavaConverters._
 import io.swagger.v3.oas.models.ExternalDocumentation
 import io.swagger.v3.oas.models.info.{Contact, Info, License}
-import io.swagger.v3.oas.models.security.SecurityScheme
+import io.swagger.v3.oas.models.security.{SecurityRequirement, SecurityScheme}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+
+import java.util
+import scala.collection.JavaConverters._
 
 class SwaggerGeneratorSpec extends AnyWordSpec with Matchers {
 
@@ -37,10 +36,16 @@ class SwaggerGeneratorSpec extends AnyWordSpec with Matchers {
       val edocs = new ExternalDocumentation().description("edesc").url("http://b.com/docs")
       val generator = new SwaggerGenerator {
         override def apiClasses: util.Set[Class[_]] = util.Collections.singleton(classOf[DictHttpService])
+        override def host: String = "host"
         override def apiDocsPath: String = "docs"
         override def basePath: String = "basePath"
         override def info: Info = testInfo
         override def schemes: util.List[String] = util.Collections.singletonList("https")
+        override def security: util.List[SecurityRequirement] = {
+          val sr = new SecurityRequirement()
+          sr.addList("petstore_auth", List("write:pets", "read:pets").asJava)
+          util.Collections.singletonList(sr)
+        }
         override def securitySchemes: util.Map[String, SecurityScheme] = {
           val jmap = new util.HashMap[String, SecurityScheme]()
           jmap.put("bearerAuth", bearerTokenScheme)
@@ -60,9 +65,11 @@ class SwaggerGeneratorSpec extends AnyWordSpec with Matchers {
       generator.vendorExtensions should not be empty
 
       generator.converter.apiClasses shouldEqual Set(classOf[DictHttpService])
+      generator.converter.host shouldEqual generator.host
       generator.converter.apiDocsPath shouldEqual generator.apiDocsPath
       generator.converter.basePath shouldEqual generator.basePath
       generator.converter.schemes shouldEqual generator.schemes.asScala
+      generator.converter.security shouldEqual generator.security.asScala
       import com.github.swagger.akka.model.scala2swagger
       scala2swagger(generator.converter.info) shouldEqual testInfo
       generator.converter.securitySchemes.asJava shouldEqual generator.securitySchemes
