@@ -5,7 +5,7 @@ jdk:
   - openjdk16
 scala:
    - 2.12.13
-   - 2.13.5
+   - 2.13.6
 install:
   - |
     # update this only when sbt-the-bash-script needs to be updated
