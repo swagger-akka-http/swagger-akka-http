@@ -90,10 +90,11 @@ pomExtra := (
   </developers>)
 
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
-ThisBuild / githubWorkflowPublishTargetBranches +=
+ThisBuild / githubWorkflowPublishTargetBranches := Seq(
+  RefPredicate.Equals(Ref.Branch("main")),
+  RefPredicate.Equals(Ref.Branch("swagger-1.5")),
   RefPredicate.StartsWith(Ref.Tag("v"))
-
-ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("ci-release")))
+)
 
 ThisBuild / githubWorkflowPublish := Seq(
   WorkflowStep.Sbt(
