@@ -2,21 +2,19 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-scalaVersion := "2.13.5"
+ThisBuild / scalaVersion := "2.13.6"
 
-crossScalaVersions := Seq("2.12.12", scalaVersion.value)
+ThisBuild / crossScalaVersions := Seq("2.12.14", scalaVersion.value)
 
 val swaggerVersion = "1.6.2"
 val akkaVersion = "2.5.32"
-val akkaHttpVersion = "10.2.4"
-val jacksonVersion = "2.12.3"
-val slf4jVersion = "1.7.30"
+val akkaHttpVersion = "10.2.6"
+val jacksonVersion = "2.12.4"
+val slf4jVersion = "1.7.32"
 
-checksums in update := Nil
+update / checksums := Nil
 
 //resolvers += Resolver.sonatypeRepo("snapshots")
-
-Global / useGpg := false
 
 libraryDependencies ++= Seq(
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1",
@@ -39,10 +37,9 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "2.2.1" % "test",
   "org.slf4j" % "slf4j-simple" % slf4jVersion % "test"
 )
+Test / testOptions += Tests.Argument("-oD")
 
-testOptions in Test += Tests.Argument("-oD")
-
-parallelExecution in Test := false
+Test / parallelExecution := false
 logBuffered := false
 
 publishMavenStyle := true
@@ -55,11 +52,11 @@ publishTo := {
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
-publishArtifact in Test := false
+Test / publishArtifact  := false
 
 pomIncludeRepository := { _ => false }
 
-parallelExecution in Test := false
+Test / parallelExecution := false
 
 homepage := Some(url("https://github.com/swagger-akka-http/swagger-akka-http"))
 
@@ -94,3 +91,22 @@ pomExtra := (
       <url>https://github.com/pjfanning</url>
     </developer>
   </developers>)
+
+ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
+ThisBuild / githubWorkflowPublishTargetBranches := Seq(
+  RefPredicate.Equals(Ref.Branch("main")),
+  RefPredicate.Equals(Ref.Branch("swagger-1.5")),
+  RefPredicate.StartsWith(Ref.Tag("v"))
+)
+
+ThisBuild / githubWorkflowPublish := Seq(
+  WorkflowStep.Sbt(
+    List("ci-release"),
+    env = Map(
+      "PGP_PASSPHRASE" -> "${{ secrets.PGP_PASSPHRASE }}",
+      "PGP_SECRET" -> "${{ secrets.PGP_SECRET }}",
+      "SONATYPE_PASSWORD" -> "${{ secrets.SONATYPE_PASSWORD }}",
+      "SONATYPE_USERNAME" -> "${{ secrets.SONATYPE_USERNAME }}"
+    )
+  )
+)
