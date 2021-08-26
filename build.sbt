@@ -4,10 +4,8 @@ name := "swagger-akka-http"
 
 ThisBuild / scalaVersion := "2.13.6"
 
-ThisBuild / crossScalaVersions := Seq("2.12.14", "2.13.6")
-
 val swaggerVersion = "1.6.2"
-val akkaVersion = "2.5.32"
+val akkaVersion = "2.6.16"
 val akkaHttpVersion = "10.2.6"
 val jacksonVersion = "2.12.4"
 val slf4jVersion = "1.7.32"
@@ -17,7 +15,7 @@ update / checksums := Nil
 //resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
-  "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1",
+  "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.0",
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
