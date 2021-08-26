@@ -1,17 +1,17 @@
 package com.github.swagger.akka.converter
 
-import java.util
-
 import com.github.swagger.scala.converter.SwaggerScalaModelConverter
 import io.swagger.v3.core.converter._
 import io.swagger.v3.oas.models.media._
 import models._
-
-import scala.collection.JavaConverters._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
+import java.util
+import scala.collection.JavaConverters._
+
 class ModelPropertyParserTest extends AnyFlatSpec with Matchers {
+
   it should "verify swagger-core bug 814" in {
     val converter = ModelConverters.getInstance()
     val schemas = converter.readAll(classOf[CoreBug814])
