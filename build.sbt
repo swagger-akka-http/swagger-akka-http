@@ -4,8 +4,6 @@ name := "swagger-akka-http"
 
 ThisBuild / scalaVersion := "2.13.6"
 
-ThisBuild / crossScalaVersions := Seq("2.12.14", "2.13.6")
-
 val swaggerVersion = "2.1.10"
 val akkaVersion = "2.6.16"
 val akkaHttpVersion = "10.2.6"
@@ -89,6 +87,7 @@ pomExtra := (
     </developer>
   </developers>)
 
+ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.8", "adopt@1.11", "adopt@1.16")
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("main")),
