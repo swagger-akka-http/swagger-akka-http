@@ -41,16 +41,6 @@ libraryDependencies ++= Seq(
 
 Test / testOptions += Tests.Argument("-oD")
 
-publishMavenStyle := true
-
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
-
 Test / publishArtifact := false
 
 pomIncludeRepository := { _ => false }
@@ -62,10 +52,6 @@ licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.ap
 releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 pomExtra := (
-  <scm>
-    <url>git@github.com:swagger-akka-http/swagger-akka-http.git</url>
-    <connection>scm:git:git@github.com:swagger-akka-http/swagger-akka-http.git</connection>
-  </scm>
   <developers>
     <developer>
       <id>mhamrah</id>
