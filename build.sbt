@@ -40,16 +40,6 @@ Test / testOptions += Tests.Argument("-oD")
 Test / parallelExecution := false
 logBuffered := false
 
-publishMavenStyle := true
-
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
-
 Test / publishArtifact  := false
 
 pomIncludeRepository := { _ => false }
