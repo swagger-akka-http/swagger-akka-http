@@ -24,13 +24,13 @@ The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Mave
 
 Version | Stability | Branch | Description
 --------|-----------|--------|------------
-2.5.x (SNAPSHOT only) | snapshot | main | Supports Scala 2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
+2.5.x | stable | main | Supports Scala 2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
 2.4.x | stable | 2.4 | Supports Scala 2.12/2.13, Akka 2.5 and 2.6 (prior to 2.6.16), Akka-Http 10.1/10.2, Swagger 2.0/2.1 libs and OpenAPI 3.0 Specification.
 1.5.x | stable | swagger-1.5| Supports Scala 2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 1.6.x libs and Swagger 2.0 Specification.
 1.4.x | stable | 1.4| Supports  Scala 2.12/2.13, Akka 2.5 and 2.6 (prior to 2.6.16), Akka-Http 10.1/10.2, Swagger 1.5.x/1.6.x libs and Swagger 2.0 Specification.
 
 ```sbt
-libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "2.4.2"
+libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "2.5.0"
 ```
 swagger-akka-http 0.10.x and 0.11.x both have had some changes in APIs, for those who are upgrading. See below for details.
 
