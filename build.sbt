@@ -41,6 +41,8 @@ Test / testOptions += Tests.Argument("-oD")
 
 Test / publishArtifact := false
 
+Test / parallelExecution := false
+
 pomIncludeRepository := { _ => false }
 
 homepage := Some(url("https://github.com/swagger-akka-http/swagger-akka-http"))
