@@ -16,7 +16,7 @@
 package com.github.swagger.akka.samples
 
 import io.swagger.annotations._
-import javax.ws.rs.Path
+import jakarta.ws.rs.Path
 
 abstract class TestApiWithNoAnnotation
 
