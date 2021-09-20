@@ -1,12 +1,12 @@
 package com.github.swagger.akka.samples
 
-import javax.ws.rs.Path
 import akka.http.scaladsl.server.Directives
 import akka.stream.ActorMaterializer
 import akka.actor.ActorSystem
 import akka.http.scaladsl.marshalling.ToResponseMarshallable.apply
 import akka.http.scaladsl.server.Directive.addByNameNullaryApply
 import akka.http.scaladsl.server.Directive.addDirectiveApply
+import jakarta.ws.rs.Path
 import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.{Operation, Parameter}
 import io.swagger.v3.oas.annotations.media.{Content, Schema}

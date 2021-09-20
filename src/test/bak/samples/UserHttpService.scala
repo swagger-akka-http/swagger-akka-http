@@ -15,7 +15,7 @@
  */
 package com.github.swagger.akka.samples
 
-import javax.ws.rs.Path
+import jakarta.ws.rs.Path
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives

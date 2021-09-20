@@ -1,6 +1,5 @@
 package com.github.swagger.akka.samples
 
-import javax.ws.rs.Path
 
 import akka.http.scaladsl.server.Directives
 import akka.stream.ActorMaterializer
@@ -10,6 +9,7 @@ import akka.http.scaladsl.server.Directive.addByNameNullaryApply
 import akka.http.scaladsl.server.Directive.addDirectiveApply
 import io.swagger.annotations._
 import io.swagger.annotations.SwaggerDefinition.Scheme
+import jakarta.ws.rs.Path
 
 @Api(value = "/dict", description = "This is a dictionary api.")
 @Path("/dict")

@@ -15,7 +15,6 @@
   */
 package com.github.swagger.akka.samples
 
-import javax.ws.rs.{Consumes, Path, Produces}
 import akka.http.scaladsl.server.Directives
 import akka.stream.ActorMaterializer
 import akka.actor.ActorSystem
@@ -23,6 +22,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.{Operation, Parameter}
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import jakarta.ws.rs.{Consumes, Path, Produces}
 
 @Path("/pet")
 @Consumes(value = Array("application/json", "application/vnd.test.pet"))

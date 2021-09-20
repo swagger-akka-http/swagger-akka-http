@@ -1,6 +1,6 @@
 package com.github.swagger.akka.samples
 
-import javax.ws.rs.Path
+import jakarta.ws.rs.Path
 
 abstract class TestApiWithNoAnnotation
 

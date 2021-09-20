@@ -15,7 +15,6 @@
  */
 package com.github.swagger.akka.samples
 
-import javax.ws.rs.Path
 
 import com.github.swagger.akka._
 import com.github.swagger.akka.model.{Contact, Info, License}
@@ -26,6 +25,7 @@ import akka.http.scaladsl.model.StatusCodes.OK
 import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.{Directives, Route}
 import io.swagger.annotations._
+import jakarta.ws.rs.Path
 
 
 case class Dog(breed: String)

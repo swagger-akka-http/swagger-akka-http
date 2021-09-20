@@ -15,11 +15,10 @@
   */
 package com.github.swagger.akka.samples
 
-import javax.ws.rs.Path
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives
 import akka.stream.ActorMaterializer
+import jakarta.ws.rs.Path
 
 //@Api(value = "/user", description = "Operations about users.", produces = "application/json")
 @Path("/user")
