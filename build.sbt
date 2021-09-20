@@ -2,13 +2,18 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-ThisBuild / scalaVersion := "2.13.6"
-
 val swaggerVersion = "2.1.10"
 val akkaVersion = "2.6.16"
 val akkaHttpVersion = "10.2.6"
 val jacksonVersion = "2.12.5"
 val slf4jVersion = "1.7.32"
+val scala213 = "2.13.6"
+
+ThisBuild / scalaVersion := scala213
+ThisBuild / crossScalaVersions := Seq(scala213, "2.12.15")
+
+// NOTE: Once akka updates to 1.0.0 of scala-java8-compat, remove this
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % "always"
 
 update / checksums := Nil
 
