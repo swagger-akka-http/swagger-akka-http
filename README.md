@@ -31,7 +31,7 @@ Version | Stability | Branch | Description
 1.4.x | stable | 1.4| Supports  Scala 2.12/2.13, Akka 2.5 and 2.6 (prior to 2.6.16), Akka-Http 10.1/10.2, Swagger 1.5.x/1.6.x libs and Swagger 2.0 Specification.
 
 ```sbt
-libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "2.5.0"
+libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "<release-version>"
 ```
 swagger-akka-http 0.10.x and 0.11.x both have had some changes in APIs, for those who are upgrading. See below for details.
 
