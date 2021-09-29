@@ -7,6 +7,8 @@
 
 Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka-http/current/index.html) Apis. The included `SwaggerHttpService` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
 
+swagger-akka-http v1.x is still occasionally released to support swagger 1.x libs (Swagger 2 Specifcation). swagger-akka-http v2.x supports Open API 3 Specifcation.
+
 This project was featured in a [blog entry](https://blog.codecentric.de/en/2016/04/swagger-akka-http/) on codecentric.
 
 There is another blog entry and demo hosted by [Knoldus](https://blog.knoldus.com/2017/01/31/document-generation-of-akka-http-using-swagger/).
@@ -20,10 +22,12 @@ The [swagger spec](http://swagger.io/specification/) is helpful for understandin
 
 ### Release Version
 
-The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.11, 2.12 and 2.13. Snapshot releases are also hosted on sonatype. 
+The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Maven Central. Swagger-akka-http is built against scala 2.12 and 2.13. Snapshot releases are also hosted on sonatype.
+
+Scala 2.11 was last supported in swagger-akka-http 1.1.2.
 
 ```sbt
-libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "1.4.0"
+libraryDependencies += "com.github.swagger-akka-http" %% "swagger-akka-http" % "1.5.2"
 ```
 swagger-akka-http 0.10.x and 0.11.x both have had some changes in APIs, for those who are upgrading. See below for details.
 
