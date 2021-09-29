@@ -40,12 +40,12 @@ libraryDependencies ++= Seq(
 
 // While not ideal, Akka 2.12 is still on 0.8.0 so to align with them we'll
 // stick on 0.8.0 for 2.12 only. This will ensure that users are aligned and
-// dno't have to add in hacks to avoid the early-semver mismatch that comes if
-// you try to include both 1.0.0 and 0.8.0 since it can't safely evict in that
+// don't have to add in hacks to avoid the early-semver mismatch that comes if
+// you try to include both 1.0.1 and 0.8.0 since it can't safely evict in that
 // case.
 libraryDependencies += CrossVersion.partialVersion(scalaVersion.value).map {
-  case ((2, 12)) => "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1"
-  case _ => "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.0"
+  case ((2, 12)) => "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0"
+  case _ => "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.1"
 }
 
 Test / testOptions += Tests.Argument("-oD")

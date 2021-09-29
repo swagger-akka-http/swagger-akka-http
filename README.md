@@ -3,6 +3,7 @@
 ![Build Status](https://github.com/swagger-akka-http/swagger-akka-http/actions/workflows/ci.yml/badge.svg)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swagger-akka-http/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.swagger-akka-http/swagger-akka-http_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.swagger-akka-http/swagger-akka-http_2.13)
+[![Sonatype Snapshots](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.github.swagger-akka-http/swagger-akka-http_2.13.svg)](https://oss.sonatype.org/content/repositories/snapshots/com/github/swagger-akka-http/swagger-akka-http_2.13/)
 [![codecov.io](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/coverage.svg?branch=master)](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/branch/master)
 
 Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka-http/current/index.html) Apis. The included `SwaggerHttpService` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
@@ -27,7 +28,7 @@ Version | Stability | Branch | Description
 2.6.x | not released | main | First releases to support [jakarta](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) namespace jars. Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
 2.5.x | stable | 2.5-javax | Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
 2.4.x | stable | 2.4 | Supports Scala 2.12/2.13, Akka 2.5 and 2.6 (prior to 2.6.16), Akka-Http 10.1/10.2, Swagger 2.0/2.1 libs and OpenAPI 3.0 Specification.
-1.5.x | stable | swagger-1.5| Supports Scala 2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 1.6.x libs and Swagger 2.0 Specification.
+1.5.x | stable | swagger-1.5| Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 1.6.x libs and Swagger 2.0 Specification.
 1.4.x | stable | 1.4| Supports  Scala 2.12/2.13, Akka 2.5 and 2.6 (prior to 2.6.16), Akka-Http 10.1/10.2, Swagger 1.5.x/1.6.x libs and Swagger 2.0 Specification.
 
 ```sbt
