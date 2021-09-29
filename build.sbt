@@ -45,7 +45,7 @@ libraryDependencies ++= Seq(
 // case.
 libraryDependencies += CrossVersion.partialVersion(scalaVersion.value).map {
   case ((2, 12)) => "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0"
-  case _ => "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.0"
+  case _ => "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.1"
 }
 
 Test / testOptions += Tests.Argument("-oD")
