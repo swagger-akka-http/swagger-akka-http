@@ -25,7 +25,7 @@ The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Mave
 
 Version | Stability | Branch | Description
 --------|-----------|--------|------------
-2.6.x | not released | main | First releases to support [jakarta](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) namespace jars. Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
+2.6.x | stable | main | First releases to support [jakarta](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) namespace jars. Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
 2.5.x | stable | 2.5-javax | Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
 2.4.x | stable | 2.4 | Supports Scala 2.12/2.13, Akka 2.5 and 2.6 (prior to 2.6.16), Akka-Http 10.1/10.2, Swagger 2.0/2.1 libs and OpenAPI 3.0 Specification.
 1.5.x | stable | swagger-1.5| Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 1.6.x libs and Swagger 2.0 Specification.
