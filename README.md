@@ -179,7 +179,10 @@ case class ModelWOptionBooleanSchemaOverride(@Schema(implementation = classOf[Bo
 
 ## Swagger UI
 
-This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy with akka-http's `getFromResource` and `getFromResourceDirectory` [support](http://doc.akka.io/docs/akka-http/current/scala/http/routing-dsl/directives/alphabetically.html).
+This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy. 
+[swagger-akka-http-sample](https://github.com/pjfanning/swagger-akka-http-sample) does it be using ;ibs from webjars.
+
+Alternatively, you can include the static files for the Swagger UI and expose using akka-http's `getFromResource` and `getFromResourceDirectory` [support](http://doc.akka.io/docs/akka-http/current/scala/http/routing-dsl/directives/alphabetically.html).
 
 To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a `swagger` route hosting files from the `resources/swagger/` directory: 
 
