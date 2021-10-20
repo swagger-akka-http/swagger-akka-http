@@ -93,6 +93,8 @@ ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.StartsWith(Ref.Tag("v"))
 )
 
+ThisBuild / githubWorkflowBuildPostamble := Seq(WorkflowStep.Run(List("./codecov")))
+
 ThisBuild / githubWorkflowPublish := Seq(
   WorkflowStep.Sbt(
     List("ci-release"),
