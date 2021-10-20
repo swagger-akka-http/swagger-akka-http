@@ -52,8 +52,7 @@ jobs:
       - name: Check that workflows are up to date
         run: sbt ++${{ matrix.scala }} githubWorkflowCheck
 
-      - name: Build project
-        run: sbt ++${{ matrix.scala }} test
+      - run: sbt ++${{ matrix.scala }} coverage test coverageReport
 
       - name: Compress target directories
         run: tar cf targets.tar target project/target
