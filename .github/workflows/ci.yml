@@ -54,7 +54,9 @@ jobs:
 
       - run: sbt ++${{ matrix.scala }} coverage test coverageReport
 
-      - run: ./codecov
+      - uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
 
       - name: Compress target directories
         run: tar cf targets.tar target project/target
