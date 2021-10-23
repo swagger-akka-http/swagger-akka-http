@@ -4,7 +4,7 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swagger-akka-http/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.swagger-akka-http/swagger-akka-http_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.swagger-akka-http/swagger-akka-http_2.13)
 [![Sonatype Snapshots](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.github.swagger-akka-http/swagger-akka-http_2.13.svg)](https://oss.sonatype.org/content/repositories/snapshots/com/github/swagger-akka-http/swagger-akka-http_2.13/)
-[![codecov.io](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/coverage.svg?branch=master)](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/branch/main)
+[![codecov.io](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/coverage.svg?branch=main)](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/branch/main)
 
 Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka-http/current/index.html) Apis. The included `SwaggerHttpService` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
 
