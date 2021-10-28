@@ -24,7 +24,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         scala: [2.13.6, 2.12.15]
-        java: [adopt@1.8, adopt@1.11, adopt@1.16]
+        java: [adopt@1.8, adopt@1.11, zulu@1.17.0-0]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout current branch (full)
@@ -52,8 +52,11 @@ jobs:
       - name: Check that workflows are up to date
         run: sbt ++${{ matrix.scala }} githubWorkflowCheck
 
-      - name: Build project
-        run: sbt ++${{ matrix.scala }} test
+      - run: sbt ++${{ matrix.scala }} coverage test coverageReport
+
+      - uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
 
       - name: Compress target directories
         run: tar cf targets.tar target project/target

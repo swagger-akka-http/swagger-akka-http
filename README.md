@@ -4,7 +4,7 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swagger-akka-http/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.swagger-akka-http/swagger-akka-http_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.swagger-akka-http/swagger-akka-http_2.13)
 [![Sonatype Snapshots](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.github.swagger-akka-http/swagger-akka-http_2.13.svg)](https://oss.sonatype.org/content/repositories/snapshots/com/github/swagger-akka-http/swagger-akka-http_2.13/)
-[![codecov.io](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/coverage.svg?branch=master)](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/branch/master)
+[![codecov.io](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/coverage.svg?branch=main)](https://codecov.io/gh/swagger-akka-http/swagger-akka-http/branch/main)
 
 Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka-http/current/index.html) Apis. The included `SwaggerHttpService` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
 
@@ -25,10 +25,11 @@ The jars are hosted on [sonatype](https://oss.sonatype.org) and mirrored to Mave
 
 Version | Stability | Branch | Description
 --------|-----------|--------|------------
-2.6.x | not released | main | First releases to support [jakarta](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) namespace jars. Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
-2.5.x | stable | 2.5-javax | Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
+2.6.x | stable | main | First releases to support [jakarta](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) namespace jars. Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Jackson 2.13.x, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
+2.5.x | stable | 2.5-javax | Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Jackson 2.12.x, Swagger 2.1.x libs and OpenAPI 3.0 Specification.
 2.4.x | stable | 2.4 | Supports Scala 2.12/2.13, Akka 2.5 and 2.6 (prior to 2.6.16), Akka-Http 10.1/10.2, Swagger 2.0/2.1 libs and OpenAPI 3.0 Specification.
-1.5.x | stable | swagger-1.5| Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Swagger 1.6.x libs and Swagger 2.0 Specification.
+1.6.x | stable | swagger-1.5| Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Jackson 2.13.x,  Swagger 1.6.x libs and Swagger 2.0 Specification.
+1.5.x | stable | swagger-1.5| Supports Scala 2.12/2.13, Akka 2.6.16+, Akka-Http 10.2.6+, Scala-Java8-Compat 1.0+, Jackson 2.12.x, Swagger 1.6.x libs and Swagger 2.0 Specification.
 1.4.x | stable | 1.4| Supports  Scala 2.12/2.13, Akka 2.5 and 2.6 (prior to 2.6.16), Akka-Http 10.1/10.2, Swagger 1.5.x/1.6.x libs and Swagger 2.0 Specification.
 
 ```sbt
@@ -178,7 +179,10 @@ case class ModelWOptionBooleanSchemaOverride(@Schema(implementation = classOf[Bo
 
 ## Swagger UI
 
-This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy with akka-http's `getFromResource` and `getFromResourceDirectory` [support](http://doc.akka.io/docs/akka-http/current/scala/http/routing-dsl/directives/alphabetically.html).
+This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy. 
+[swagger-akka-http-sample](https://github.com/pjfanning/swagger-akka-http-sample) does it using libs from org.webjars.
+
+Alternatively, you can include the static files for the Swagger UI and expose using akka-http's `getFromResource` and `getFromResourceDirectory` [support](http://doc.akka.io/docs/akka-http/current/scala/http/routing-dsl/directives/alphabetically.html).
 
 To add a Swagger UI to your site, simply drop the static site files into the resources directory of your project. The following trait will expose a `swagger` route hosting files from the `resources/swagger/` directory: 
 

@@ -1,11 +1,13 @@
+import sbtghactions.UseRef.Public
+
 organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-val swaggerVersion = "2.1.10"
+val swaggerVersion = "2.1.11"
 val akkaVersion = "2.6.16"
 val akkaHttpVersion = "10.2.6"
-val jacksonVersion = "2.12.5"
+val jacksonVersion = "2.13.0"
 val slf4jVersion = "1.7.32"
 val scala213 = "2.13.6"
 
@@ -26,14 +28,14 @@ libraryDependencies ++= Seq(
   "io.swagger.core.v3" % "swagger-annotations-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-models-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-jaxrs2-jakarta" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.4.0",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.5.2",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
   "org.scalatest" %% "scalatest" % "3.2.10" % Test,
   "org.json4s" %% "json4s-native" % "4.0.3" % Test,
   "jakarta.ws.rs" % "jakarta.ws.rs-api" % "3.0.0" % Test,
-  "joda-time" % "joda-time" % "2.10.11" % Test,
+  "joda-time" % "joda-time" % "2.10.13" % Test,
   "org.joda" % "joda-convert" % "2.2.1" % Test,
   "org.slf4j" % "slf4j-simple" % slf4jVersion % Test
 )
@@ -44,8 +46,8 @@ libraryDependencies ++= Seq(
 // you try to include both 1.0.1 and 0.8.0 since it can't safely evict in that
 // case.
 libraryDependencies += CrossVersion.partialVersion(scalaVersion.value).map {
-  case ((2, 12)) => "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1"
-  case _ => "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.1"
+  case ((2, 12)) => "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0"
+  case _ => "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.2"
 }
 
 Test / testOptions += Tests.Argument("-oD")
@@ -84,12 +86,17 @@ pomExtra := (
     </developer>
   </developers>)
 
-ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.8", "adopt@1.11", "adopt@1.16")
+ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("coverage", "test", "coverageReport")))
+ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.8", "adopt@1.11", "zulu@1.17.0-0")
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("main")),
   RefPredicate.Equals(Ref.Branch("swagger-1.5")),
   RefPredicate.StartsWith(Ref.Tag("v"))
+)
+
+ThisBuild / githubWorkflowBuildPostamble := Seq(
+  WorkflowStep.Use(Public("codecov", "codecov-action", "v2"), Map("fail_ci_if_error" -> "true"))
 )
 
 ThisBuild / githubWorkflowPublish := Seq(
