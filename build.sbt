@@ -9,7 +9,7 @@ val akkaVersion = "2.6.16"
 val akkaHttpVersion = "10.2.7"
 val jacksonVersion = "2.13.0"
 val slf4jVersion = "1.7.32"
-val scala213 = "2.13.6"
+val scala213 = "2.13.7"
 
 ThisBuild / scalaVersion := scala213
 ThisBuild / crossScalaVersions := Seq(scala213, "2.12.15")
