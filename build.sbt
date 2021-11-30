@@ -87,7 +87,7 @@ pomExtra := (
   </developers>)
 
 ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("coverage", "test", "coverageReport")))
-ThisBuild / githubWorkflowJavaVersions := Seq("temurin@1.8", "temurin@11", "temurin@17")
+ThisBuild / githubWorkflowJavaVersions := Seq("zulu@1.8", "zulu@1.11", "zulu@1.17")
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("main")),
