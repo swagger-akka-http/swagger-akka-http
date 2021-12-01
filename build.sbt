@@ -1,3 +1,4 @@
+import sbtghactions.JavaSpec.Distribution.Zulu
 import sbtghactions.UseRef.Public
 
 organization := "com.github.swagger-akka-http"
@@ -87,7 +88,7 @@ pomExtra := (
   </developers>)
 
 ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("coverage", "test", "coverageReport")))
-ThisBuild / githubWorkflowJavaVersions := Seq("zulu@1.8", "zulu@1.11", "zulu@1.17")
+ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec(Zulu, "8"), JavaSpec(Zulu, "11"), JavaSpec(Zulu, "17"))
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("main")),
