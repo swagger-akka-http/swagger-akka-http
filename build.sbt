@@ -34,7 +34,7 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
   "org.scalatest" %% "scalatest" % "3.2.10" % Test,
-  "org.json4s" %% "json4s-native" % "4.0.3" % Test,
+  "org.json4s" %% "json4s-native" % "4.0.4" % Test,
   "jakarta.ws.rs" % "jakarta.ws.rs-api" % "3.0.0" % Test,
   "joda-time" % "joda-time" % "2.10.13" % Test,
   "org.joda" % "joda-convert" % "2.2.2" % Test,
