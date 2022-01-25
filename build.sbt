@@ -9,7 +9,7 @@ val swaggerVersion = "2.1.12"
 val akkaVersion = "2.6.18"
 val akkaHttpVersion = "10.2.7"
 val jacksonVersion = "2.13.1"
-val slf4jVersion = "1.7.33"
+val slf4jVersion = "1.7.35"
 val scala213 = "2.13.8"
 
 ThisBuild / scalaVersion := scala213
