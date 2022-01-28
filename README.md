@@ -47,7 +47,7 @@ Scala 2.10 support for akka-http 2.0.3 requires swagger-akka-http 0.6.2.
 
 [pjfanning/swagger-akka-http-sample](https://github.com/pjfanning/swagger-akka-http-sample) is a simple sample using this project.
 
-[pjfanning/swagger-akka-http-sample-java](https://github.com/pjfanning/swagger-akka-http-sample-java) demonstrates the experimental Java DSL support in swagger-akka-http 0.10.1.
+[pjfanning/swagger-akka-http-sample-java](https://github.com/pjfanning/swagger-akka-http-sample-java) demonstrates the experimental Java DSL support added in swagger-akka-http 0.10.1.
 
 The `/test` directory includes an `HttpSwaggerServiceSpec` which uses `akka-http-testkit` to test the API. It uses a `PetHttpService` and `UserHttpService` declared in the `/samples` folder. 
 
