@@ -94,6 +94,9 @@ trait SwaggerGenerator {
         schemes.foreach { scheme =>
           swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://$hostPath"))
         }
+        if (schemes.isEmpty && StringUtils.isNotBlank(hostPath)) {
+          swagger.addServersItem(new Server().url(hostPath))
+        }
       }
       case urlSeq => {
         urlSeq.foreach { url =>
