@@ -31,7 +31,7 @@ import scala.util.control.NonFatal
 
 object SwaggerHttpService {
 
-  val readerConfig = new SwaggerConfiguration
+  def readerConfig = new SwaggerConfiguration
 
   def removeInitialSlashIfNecessary(path: String): String =
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
@@ -59,7 +59,10 @@ trait SwaggerGenerator {
 
   def swaggerConfig: OpenAPI = {
     val swagger = new OpenAPI()
-    swagger.setSpecVersion(specVersion)
+    val sv = specVersion
+    swagger.setSpecVersion(sv)
+    val version = if (sv == SpecVersion.V31) "3.1.0" else "3.0.1"
+    swagger.setOpenapi(version)
     swagger.setInfo(info)
     components.foreach { c => swagger.setComponents(c) }
 
@@ -83,7 +86,13 @@ trait SwaggerGenerator {
     swagger
   }
 
-  def reader = new Reader(readerConfig.openAPI(swaggerConfig))
+  def reader = {
+    val config = readerConfig
+    if (specVersion == SpecVersion.V31) {
+      config.setOpenAPI31(true)
+    }
+    new Reader(config.openAPI(swaggerConfig))
+  }
 
   def generateSwaggerJson: String = {
     try {
@@ -119,10 +128,6 @@ trait SwaggerGenerator {
 
   private[akka] def filteredSwagger: OpenAPI = {
     val swagger: OpenAPI = reader.read(apiClasses.asJava)
-    val sv = specVersion
-    swagger.setSpecVersion(sv)
-    val version = if (sv == SpecVersion.V31) "3.1.0" else "3.0.1"
-    swagger.setOpenapi(version)
     if (!unwantedDefinitions.isEmpty) {
       val filteredSchemas = asJavaMutableMap(asScala(swagger.getComponents.getSchemas).filterKeys(
         definitionName => !unwantedDefinitions.contains(definitionName)).toMap)
