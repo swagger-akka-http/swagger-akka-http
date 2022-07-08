@@ -3,11 +3,11 @@ organization := "com.github.swagger-akka-http"
 name := "swagger-akka-http"
 
 val swaggerVersion = "1.6.3"
-val akkaVersion = "2.6.16"
-val akkaHttpVersion = "10.2.6"
-val jacksonVersion = "2.13.0"
-val slf4jVersion = "1.7.32"
-val scala213 = "2.13.6"
+val akkaVersion = "2.6.19"
+val akkaHttpVersion = "10.2.9"
+val jacksonVersion = "2.13.3"
+val slf4jVersion = "1.7.36"
+val scala213 = "2.13.8"
 
 ThisBuild / scalaVersion := scala213
 ThisBuild / crossScalaVersions := Seq(scala213, "2.12.15")
@@ -44,7 +44,7 @@ libraryDependencies ++= Seq(
 // case.
 libraryDependencies += CrossVersion.partialVersion(scalaVersion.value).map {
   case ((2, 12)) => "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0"
-  case _ => "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.1"
+  case _ => "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.2"
 }
 
 Test / testOptions += Tests.Argument("-oD")
