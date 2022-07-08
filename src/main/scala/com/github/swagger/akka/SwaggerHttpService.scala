@@ -119,6 +119,10 @@ trait SwaggerGenerator {
 
   private[akka] def filteredSwagger: OpenAPI = {
     val swagger: OpenAPI = reader.read(apiClasses.asJava)
+    val sv = specVersion
+    swagger.setSpecVersion(sv)
+    val version = if (sv == SpecVersion.V31) "3.1.0" else "3.0.1"
+    swagger.setOpenapi(version)
     if (!unwantedDefinitions.isEmpty) {
       val filteredSchemas = asJavaMutableMap(asScala(swagger.getComponents.getSchemas).filterKeys(
         definitionName => !unwantedDefinitions.contains(definitionName)).toMap)
