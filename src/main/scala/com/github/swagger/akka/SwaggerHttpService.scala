@@ -120,7 +120,7 @@ trait SwaggerGenerator {
   private[akka] def filteredSwagger: OpenAPI = {
     val swagger: OpenAPI = reader.read(apiClasses.asJava)
     if (!unwantedDefinitions.isEmpty) {
-      val filteredSchemas = asJavaMutableMap(asScala(swagger.getComponents.getSchemas).view.filterKeys(
+      val filteredSchemas = asJavaMutableMap(asScala(swagger.getComponents.getSchemas).filterKeys(
         definitionName => !unwantedDefinitions.contains(definitionName)).toMap)
       swagger.getComponents.setSchemas(filteredSchemas)
     }
