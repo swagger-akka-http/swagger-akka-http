@@ -1,11 +1,11 @@
 package com.github.swagger.akka.javadsl
 
-import java.util
-
 import com.github.swagger.akka.model.asScala
-import io.swagger.v3.oas.models.{Components, ExternalDocumentation}
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.{SecurityRequirement, SecurityScheme}
+import io.swagger.v3.oas.models.{Components, ExternalDocumentation, SpecVersion}
+
+import java.util
 
 trait SwaggerGenerator {
   def apiClasses: util.Set[Class[_]]
@@ -20,6 +20,7 @@ trait SwaggerGenerator {
   def externalDocs: util.Optional[ExternalDocumentation] = util.Optional.empty()
   def vendorExtensions: util.Map[String, Object] = util.Collections.emptyMap()
   def unwantedDefinitions: util.List[String] = util.Collections.emptyList()
+  def specVersion: SpecVersion = SpecVersion.V30
 
   private[javadsl] lazy val converter = new Converter(this)
 
@@ -41,4 +42,5 @@ private class Converter(javaGenerator: SwaggerGenerator) extends com.github.swag
   override def externalDocs: Option[ExternalDocumentation] = asScala(javaGenerator.externalDocs)
   override def vendorExtensions: Map[String, Object] = asScala(javaGenerator.vendorExtensions)
   override def unwantedDefinitions: Seq[String] = asScala(javaGenerator.unwantedDefinitions)
+  override def specVersion: SpecVersion = javaGenerator.specVersion
 }

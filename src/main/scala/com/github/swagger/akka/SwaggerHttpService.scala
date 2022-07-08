@@ -16,12 +16,12 @@ package com.github.swagger.akka
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
 import com.github.swagger.akka.model.{Info, asScala}
-import io.swagger.v3.core.util.{Json, Yaml}
+import io.swagger.v3.core.util.{Json, Json31, Yaml, Yaml31}
 import io.swagger.v3.jaxrs2.Reader
 import io.swagger.v3.oas.integration.SwaggerConfiguration
 import io.swagger.v3.oas.models.security.{SecurityRequirement, SecurityScheme}
 import io.swagger.v3.oas.models.servers.Server
-import io.swagger.v3.oas.models.{Components, ExternalDocumentation, OpenAPI}
+import io.swagger.v3.oas.models.{Components, ExternalDocumentation, OpenAPI, SpecVersion}
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 
@@ -55,9 +55,11 @@ trait SwaggerGenerator {
   def externalDocs: Option[ExternalDocumentation] = None
   def vendorExtensions: Map[String, Object] = Map.empty
   def unwantedDefinitions: Seq[String] = Seq.empty
+  def specVersion: SpecVersion = SpecVersion.V30
 
   def swaggerConfig: OpenAPI = {
     val swagger = new OpenAPI()
+    swagger.setSpecVersion(specVersion)
     swagger.setInfo(info)
     components.foreach { c => swagger.setComponents(c) }
 
@@ -85,7 +87,8 @@ trait SwaggerGenerator {
 
   def generateSwaggerJson: String = {
     try {
-      Json.pretty().writeValueAsString(filteredSwagger)
+      val objectWriter = if (specVersion == SpecVersion.V31) Json31.pretty() else Json.pretty()
+      objectWriter.writeValueAsString(filteredSwagger)
     } catch {
       case NonFatal(t) => {
         logger.error("Issue with creating swagger.json", t)
@@ -96,7 +99,8 @@ trait SwaggerGenerator {
 
   def generateSwaggerYaml: String = {
     try {
-      Yaml.pretty().writeValueAsString(filteredSwagger)
+      val objectWriter = if (specVersion == SpecVersion.V31) Yaml31.pretty() else Yaml.pretty()
+      objectWriter.writeValueAsString(filteredSwagger)
     } catch {
       case NonFatal(t) => {
         logger.error("Issue with creating swagger.yaml", t)
