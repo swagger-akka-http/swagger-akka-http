@@ -35,6 +35,8 @@ object SwaggerHttpService {
 
   def removeInitialSlashIfNecessary(path: String): String =
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
+  def removeTrailingSlashIfNecessary(path: String): String =
+    if(path.endsWith("/")) removeTrailingSlashIfNecessary(path.substring(0, path.length)) else path
   def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
 
   private[akka] def apiDocsBase(path: String) = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(path))
@@ -44,13 +46,28 @@ object SwaggerHttpService {
 trait SwaggerGenerator {
   import SwaggerHttpService._
   def apiClasses: Set[Class[_]]
+
+  /**
+   * @return the host (and possibly, port) for the API (eg `api.example.com` or `localhost:8080`)
+   *         - used in conjunction with the [[schemes]] - this is ignored if you have non-empty [[serverURLs]]
+   */
   def host: String = ""
+
+  /**
+   * @return list of URL schemes (default is `["http"]`) - this is ignored if you have non-empty [[serverURLs]]
+   */
+  def schemes: List[String] = List("http")
+
+  /**
+   * @return list of URLs (as strings) - if this list is empty, then the values are derived using the [[host]] and [[schemes]]
+   */
+  def serverURLs: Seq[String] = Seq.empty
+
   def basePath: String = ""
   def apiDocsPath: String = "api-docs"
   def info: Info = Info()
   def components: Option[Components] = None
-  def schemes: List[String] = List("http")
-  def security: List[SecurityRequirement] = List()
+  def security: List[SecurityRequirement] = List.empty
   def securitySchemes: Map[String, SecurityScheme] = Map.empty
   def externalDocs: Option[ExternalDocumentation] = None
   def vendorExtensions: Map[String, Object] = Map.empty
@@ -67,17 +84,29 @@ trait SwaggerGenerator {
     components.foreach { c => swagger.setComponents(c) }
 
     val path = removeInitialSlashIfNecessary(basePath)
-    val hostPath = if (StringUtils.isNotBlank(path)) {
-      s"${host}/${path}/"
-    } else {
-      host
+    serverURLs match {
+      case Seq() => {
+        val hostPath = if (StringUtils.isNotBlank(path)) {
+          s"${removeTrailingSlashIfNecessary(host)}/${path}/"
+        } else {
+          host
+        }
+        schemes.foreach { scheme =>
+          swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://$hostPath"))
+        }
+      }
+      case urlSeq => {
+        urlSeq.foreach { url =>
+          val urlPath = if (StringUtils.isNotBlank(path)) {
+            s"${removeTrailingSlashIfNecessary(url)}/${path}/"
+          } else {
+            url
+          }
+          swagger.addServersItem(new Server().url(urlPath))
+        }
+      }
     }
-    schemes.foreach { scheme =>
-      swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://$hostPath"))
-    }
-    if (schemes.isEmpty && StringUtils.isNotBlank(hostPath)) {
-      swagger.addServersItem(new Server().url(hostPath))
-    }
+
     securitySchemes.foreach { case (k: String, v: SecurityScheme) => swagger.schemaRequirement(k, v) }
     swagger.setSecurity(asJavaMutableList(security))
     swagger.extensions(asJavaMutableMap(vendorExtensions))
