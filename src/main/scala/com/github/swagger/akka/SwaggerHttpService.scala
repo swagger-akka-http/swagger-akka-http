@@ -16,12 +16,12 @@ package com.github.swagger.akka
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.{Directives, PathMatchers, Route}
 import com.github.swagger.akka.model.{Info, asScala}
-import io.swagger.v3.core.util.{Json, Yaml}
+import io.swagger.v3.core.util.{Json, Json31, Yaml, Yaml31}
 import io.swagger.v3.jaxrs2.Reader
 import io.swagger.v3.oas.integration.SwaggerConfiguration
 import io.swagger.v3.oas.models.security.{SecurityRequirement, SecurityScheme}
 import io.swagger.v3.oas.models.servers.Server
-import io.swagger.v3.oas.models.{Components, ExternalDocumentation, OpenAPI}
+import io.swagger.v3.oas.models.{Components, ExternalDocumentation, OpenAPI, SpecVersion}
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 
@@ -31,10 +31,12 @@ import scala.util.control.NonFatal
 
 object SwaggerHttpService {
 
-  val readerConfig = new SwaggerConfiguration
+  def readerConfig = new SwaggerConfiguration
 
   def removeInitialSlashIfNecessary(path: String): String =
     if(path.startsWith("/")) removeInitialSlashIfNecessary(path.substring(1)) else path
+  def removeTrailingSlashIfNecessary(path: String): String =
+    if(path.endsWith("/")) removeTrailingSlashIfNecessary(path.substring(0, path.length)) else path
   def prependSlashIfNecessary(path: String): String  = if(path.startsWith("/")) path else s"/$path"
 
   private[akka] def apiDocsBase(path: String) = PathMatchers.separateOnSlashes(removeInitialSlashIfNecessary(path))
@@ -44,35 +46,70 @@ object SwaggerHttpService {
 trait SwaggerGenerator {
   import SwaggerHttpService._
   def apiClasses: Set[Class[_]]
+
+  /**
+   * @return the host (and possibly, port) for the API (eg `api.example.com` or `localhost:8080`)
+   *         - used in conjunction with the [[schemes]] - this is ignored if you have non-empty [[serverURLs]]
+   */
   def host: String = ""
+
+  /**
+   * @return list of URL schemes (default is `["http"]`) - this is ignored if you have non-empty [[serverURLs]]
+   */
+  def schemes: List[String] = List("http")
+
+  /**
+   * @return list of URLs (as strings) - if this list is empty, then the values are derived using the [[host]] and [[schemes]]
+   */
+  def serverURLs: Seq[String] = Seq.empty
+
   def basePath: String = ""
   def apiDocsPath: String = "api-docs"
   def info: Info = Info()
   def components: Option[Components] = None
-  def schemes: List[String] = List("http")
-  def security: List[SecurityRequirement] = List()
+  def security: List[SecurityRequirement] = List.empty
   def securitySchemes: Map[String, SecurityScheme] = Map.empty
   def externalDocs: Option[ExternalDocumentation] = None
   def vendorExtensions: Map[String, Object] = Map.empty
   def unwantedDefinitions: Seq[String] = Seq.empty
+  def specVersion: SpecVersion = SpecVersion.V30
 
   def swaggerConfig: OpenAPI = {
     val swagger = new OpenAPI()
+    val sv = specVersion
+    swagger.setSpecVersion(sv)
+    val version = if (sv == SpecVersion.V31) "3.1.0" else "3.0.1"
+    swagger.setOpenapi(version)
     swagger.setInfo(info)
     components.foreach { c => swagger.setComponents(c) }
 
     val path = removeInitialSlashIfNecessary(basePath)
-    val hostPath = if (StringUtils.isNotBlank(path)) {
-      s"${host}/${path}/"
-    } else {
-      host
+    serverURLs match {
+      case Seq() => {
+        val hostPath = if (StringUtils.isNotBlank(path)) {
+          s"${removeTrailingSlashIfNecessary(host)}/${path}/"
+        } else {
+          host
+        }
+        schemes.foreach { scheme =>
+          swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://$hostPath"))
+        }
+        if (schemes.isEmpty && StringUtils.isNotBlank(hostPath)) {
+          swagger.addServersItem(new Server().url(hostPath))
+        }
+      }
+      case urlSeq => {
+        urlSeq.foreach { url =>
+          val urlPath = if (StringUtils.isNotBlank(path)) {
+            s"${removeTrailingSlashIfNecessary(url)}/${path}/"
+          } else {
+            url
+          }
+          swagger.addServersItem(new Server().url(urlPath))
+        }
+      }
     }
-    schemes.foreach { scheme =>
-      swagger.addServersItem(new Server().url(s"${scheme.toLowerCase}://$hostPath"))
-    }
-    if (schemes.isEmpty && StringUtils.isNotBlank(hostPath)) {
-      swagger.addServersItem(new Server().url(hostPath))
-    }
+
     securitySchemes.foreach { case (k: String, v: SecurityScheme) => swagger.schemaRequirement(k, v) }
     swagger.setSecurity(asJavaMutableList(security))
     swagger.extensions(asJavaMutableMap(vendorExtensions))
@@ -81,11 +118,18 @@ trait SwaggerGenerator {
     swagger
   }
 
-  def reader = new Reader(readerConfig.openAPI(swaggerConfig))
+  def reader = {
+    val config = readerConfig
+    if (specVersion == SpecVersion.V31) {
+      config.setOpenAPI31(true)
+    }
+    new Reader(config.openAPI(swaggerConfig))
+  }
 
   def generateSwaggerJson: String = {
     try {
-      Json.pretty().writeValueAsString(filteredSwagger)
+      val objectWriter = if (specVersion == SpecVersion.V31) Json31.pretty() else Json.pretty()
+      objectWriter.writeValueAsString(filteredSwagger)
     } catch {
       case NonFatal(t) => {
         logger.error("Issue with creating swagger.json", t)
@@ -96,7 +140,8 @@ trait SwaggerGenerator {
 
   def generateSwaggerYaml: String = {
     try {
-      Yaml.pretty().writeValueAsString(filteredSwagger)
+      val objectWriter = if (specVersion == SpecVersion.V31) Yaml31.pretty() else Yaml.pretty()
+      objectWriter.writeValueAsString(filteredSwagger)
     } catch {
       case NonFatal(t) => {
         logger.error("Issue with creating swagger.yaml", t)
