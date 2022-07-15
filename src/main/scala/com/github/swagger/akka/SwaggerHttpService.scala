@@ -59,7 +59,7 @@ trait SwaggerGenerator {
   def schemes: List[String] = List("http")
 
   /**
-   * @return list of URLs (as strings) - if this list is empty, then the values are derived using the [[host]] and [[schemes]]
+   * @return list of URLs (as strings) - if this list is empty, then the values are derived using the [[SwaggerGenerator.host]] and [[schemes]]
    */
   def serverURLs: Seq[String] = Seq.empty
 
