@@ -78,6 +78,13 @@ class SwaggerHttpServiceSpec
       license = Some(License(name = "MIT", url = "https://opensource.org/licenses/MIT")))
   }
 
+  private def addOptionService = new SwaggerHttpService {
+    override val apiClasses: Set[Class[_]] = Set(classOf[AddOptionService])
+    override val basePath = "api"
+    override val apiDocsPath = "add-option-api-doc"
+    override val host = "some.domain.com:12345"
+  }
+
   private implicit val formats = org.json4s.DefaultFormats
 
   "The SwaggerHttpService" when {
@@ -102,7 +109,7 @@ class SwaggerHttpServiceSpec
       }
 
       "return the basic set of api info (spec 3.1)" in {
-        Get(s"/${swaggerService.apiDocsPath}/swagger.json") ~> swaggerService31.routes ~> check {
+        Get(s"/${swaggerService31.apiDocsPath}/swagger.json") ~> swaggerService31.routes ~> check {
           handled shouldBe true
           contentType shouldBe ContentTypes.`application/json`
           val str = responseAs[String]
@@ -121,7 +128,7 @@ class SwaggerHttpServiceSpec
       }
 
       "return the servers based on serverURLs" in {
-        Get(s"/${swaggerService.apiDocsPath}/swagger.json") ~> swaggerServiceServiceUrls.routes ~> check {
+        Get(s"/${swaggerServiceServiceUrls.apiDocsPath}/swagger.json") ~> swaggerServiceServiceUrls.routes ~> check {
           handled shouldBe true
           contentType shouldBe ContentTypes.`application/json`
           val str = responseAs[String]
@@ -136,6 +143,16 @@ class SwaggerHttpServiceSpec
           val servers = (response \ "servers").extract[JArray]
           servers.arr should have size 1
           (servers.arr.head \ "url").extract[String] shouldEqual "https://some.domain.com:12345/api/"
+        }
+      }
+
+      "handle classes with options" in {
+        Get(s"/${addOptionService.apiDocsPath}/swagger.json") ~> addOptionService.routes ~> check {
+          handled shouldBe true
+          contentType shouldBe ContentTypes.`application/json`
+          val str = responseAs[String]
+          val response = parse(str)
+          response shouldEqual ""
         }
       }
     }
