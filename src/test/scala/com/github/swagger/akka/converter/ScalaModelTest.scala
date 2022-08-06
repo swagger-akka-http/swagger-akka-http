@@ -51,7 +51,7 @@ class ScalaModelTest extends AnyFlatSpec with Matchers {
     val model = schemas("ModelWithIntVector")
     val prop = model.getProperties().get("ints")
     prop shouldBe a [ArraySchema]
-    prop.asInstanceOf[ArraySchema].getItems.getType should be ("object")
+    prop.asInstanceOf[ArraySchema].getItems.getType should be ("integer")
   }
 }
 
