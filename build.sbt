@@ -1,14 +1,14 @@
-import sbtghactions.JavaSpec.Distribution.Zulu
-import sbtghactions.UseRef.Public
+import org.typelevel.sbt.gha.JavaSpec.Distribution.Zulu
+import org.typelevel.sbt.gha.UseRef.Public
 
 organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-val swaggerVersion = "2.2.0"
+val swaggerVersion = "2.2.2"
 val akkaVersion = "2.6.19"
 val akkaHttpVersion = "10.2.9"
-val jacksonVersion = "2.13.2"
+val jacksonVersion = "2.13.3"
 val slf4jVersion = "1.7.36"
 val scala213 = "2.13.8"
 
@@ -18,6 +18,30 @@ ThisBuild / crossScalaVersions := Seq(scala213, "2.12.15")
 update / checksums := Nil
 
 //resolvers += Resolver.sonatypeRepo("snapshots")
+
+autoAPIMappings := true
+
+apiMappings ++= {
+  def mappingsFor(organization: String, names: List[String], location: String, revision: (String) => String = identity): Seq[(File, URL)] =
+    for {
+      entry: Attributed[File] <- (Compile / fullClasspath).value
+      module: ModuleID <- entry.get(moduleID.key)
+      if module.organization == organization
+      if names.exists(module.name.startsWith)
+    } yield entry.data -> url(location.format(revision(module.revision)))
+
+  val mappings: Seq[(File, URL)] =
+    mappingsFor("org.scala-lang", List("scala-library"), "https://scala-lang.org/api/%s/") ++
+      mappingsFor("com.typesafe.akka", List("akka-actor", "akka-stream"), "https://doc.akka.io/api/akka/%s/") ++
+      mappingsFor("com.typesafe.akka", List("akka-http"), "https://doc.akka.io/api/akka-http/%s/") ++
+      mappingsFor("io.swagger.core.v3", List("swagger-core-jakarta"), "https://javadoc.io/doc/io.swagger.core.v3/swagger-core/%s/") ++
+      mappingsFor("io.swagger.core.v3", List("swagger-jaxrs2-jakarta"), "https://javadoc.io/doc/io.swagger.core.v3/swagger-jaxrs2/%s/") ++
+      mappingsFor("io.swagger.core.v3", List("swagger-models-jakarta"), "https://javadoc.io/doc/io.swagger.core.v3/swagger-models/%s/") ++
+      mappingsFor("com.fasterxml.jackson.core", List("jackson-core"), "https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/%s/") ++
+      mappingsFor("com.fasterxml.jackson.core", List("jackson-databind"), "https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-databind/%s/")
+
+  mappings.toMap
+}
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -29,14 +53,14 @@ libraryDependencies ++= Seq(
   "io.swagger.core.v3" % "swagger-annotations-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-models-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-jaxrs2-jakarta" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.6.0",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.7.3",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
-  "org.scalatest" %% "scalatest" % "3.2.11" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.13" % Test,
   "org.json4s" %% "json4s-native" % "4.0.5" % Test,
   "jakarta.ws.rs" % "jakarta.ws.rs-api" % "3.0.0" % Test,
-  "joda-time" % "joda-time" % "2.10.14" % Test,
+  "joda-time" % "joda-time" % "2.11.0" % Test,
   "org.joda" % "joda-convert" % "2.2.2" % Test,
   "org.slf4j" % "slf4j-simple" % slf4jVersion % Test
 )
@@ -61,7 +85,7 @@ pomIncludeRepository := { _ => false }
 
 homepage := Some(url("https://github.com/swagger-akka-http/swagger-akka-http"))
 
-licenses := Seq("The Apache Software License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+licenses := Seq("The Apache Software License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 pomExtra := (
   <developers>
@@ -89,7 +113,6 @@ pomExtra := (
 
 ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("coverage", "test", "coverageReport")))
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec(Zulu, "8"), JavaSpec(Zulu, "11"), JavaSpec(Zulu, "17"))
-ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("main")),
   RefPredicate.Equals(Ref.Branch("swagger-1.5")),

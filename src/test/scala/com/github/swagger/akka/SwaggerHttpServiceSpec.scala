@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
+import io.swagger.v3.oas.models.SpecVersion
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.parameters.Parameter
 import io.swagger.v3.oas.models.security.SecurityRequirement
@@ -28,14 +29,14 @@ class SwaggerHttpServiceSpec
     system.terminate()
   }
 
-  val someGlobalHeaderParam: Parameter = new Parameter()
+  private val someGlobalHeaderParam: Parameter = new Parameter()
     .name("X-Customer-Header")
     .description("A customer header defined in the global OpenAPI scope")
     .required(true)
     .in(In.HEADER.toString)
     .schema(new Schema().`type`("string"))
 
-  def swaggerService = new SwaggerHttpService {
+  private def swaggerService = new SwaggerHttpService {
     override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
     override val basePath = "api"
     override val apiDocsPath = "api-doc"
@@ -48,7 +49,36 @@ class SwaggerHttpServiceSpec
                    license = Some(License(name = "MIT", url = "https://opensource.org/licenses/MIT")))
   }
 
-  implicit val formats = org.json4s.DefaultFormats
+  private def swaggerService31 = new SwaggerHttpService {
+    override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
+    override val basePath = "api"
+    override val apiDocsPath = "api-doc"
+    override val host = "some.domain.com:12345"
+    override val schemes = List("https")
+    override val specVersion = SpecVersion.V31
+    override val info = Info(description = "desc1",
+      version = "v1.0",
+      title = "title1",
+      termsOfService = "Free and Open",
+      contact = Some(Contact(name = "Alice Smith", url = "http://com.example.com/alicesmith", email = "alice.smith@example.com")),
+      license = Some(License(name = "MIT", url = "https://opensource.org/licenses/MIT")))
+  }
+
+  private def swaggerServiceServiceUrls = new SwaggerHttpService {
+    override val apiClasses: Set[Class[_]] = Set(classOf[PetHttpService], classOf[UserHttpService])
+    override val basePath = "api"
+    override val apiDocsPath = "api-doc"
+    override val host = "xyz.domain.com"
+    override val serverURLs = Seq("https://some.domain.com:12345")
+    override val info = Info(description = "desc1",
+      version = "v1.0",
+      title = "title1",
+      termsOfService = "Free and Open",
+      contact = Some(Contact(name = "Alice Smith", url = "http://com.example.com/alicesmith", email = "alice.smith@example.com")),
+      license = Some(License(name = "MIT", url = "https://opensource.org/licenses/MIT")))
+  }
+
+  private implicit val formats = org.json4s.DefaultFormats
 
   "The SwaggerHttpService" when {
     "accessing the root doc path" should {
@@ -68,6 +98,44 @@ class SwaggerHttpServiceSpec
           val servers = (response \ "servers").extract[JArray]
           servers.arr should have size 1
           (servers.arr.head \ "url").extract[String] shouldEqual "http://some.domain.com:12345/api/"
+        }
+      }
+
+      "return the basic set of api info (spec 3.1)" in {
+        Get(s"/${swaggerService.apiDocsPath}/swagger.json") ~> swaggerService31.routes ~> check {
+          handled shouldBe true
+          contentType shouldBe ContentTypes.`application/json`
+          val str = responseAs[String]
+          val response = parse(str)
+          (response \ "openapi").extract[String] shouldEqual "3.1.0"
+          (response \ "info" \ "description").extract[String] shouldEqual swaggerService.info.description
+          (response \ "info" \ "title").extract[String] shouldEqual swaggerService.info.title
+          (response \ "info" \ "termsOfService").extract[String] shouldEqual swaggerService.info.termsOfService
+          (response \ "info" \ "version").extract[String] shouldEqual swaggerService.info.version
+          (response \ "info" \ "contact").extract[Option[Contact]] shouldEqual swaggerService.info.contact
+          (response \ "info" \ "license").extract[Option[License]] shouldEqual swaggerService.info.license
+          val servers = (response \ "servers").extract[JArray]
+          servers.arr should have size 1
+          (servers.arr.head \ "url").extract[String] shouldEqual "https://some.domain.com:12345/api/"
+        }
+      }
+
+      "return the servers based on serverURLs" in {
+        Get(s"/${swaggerService.apiDocsPath}/swagger.json") ~> swaggerServiceServiceUrls.routes ~> check {
+          handled shouldBe true
+          contentType shouldBe ContentTypes.`application/json`
+          val str = responseAs[String]
+          val response = parse(str)
+          (response \ "openapi").extract[String] shouldEqual "3.0.1"
+          (response \ "info" \ "description").extract[String] shouldEqual swaggerService.info.description
+          (response \ "info" \ "title").extract[String] shouldEqual swaggerService.info.title
+          (response \ "info" \ "termsOfService").extract[String] shouldEqual swaggerService.info.termsOfService
+          (response \ "info" \ "version").extract[String] shouldEqual swaggerService.info.version
+          (response \ "info" \ "contact").extract[Option[Contact]] shouldEqual swaggerService.info.contact
+          (response \ "info" \ "license").extract[Option[License]] shouldEqual swaggerService.info.license
+          val servers = (response \ "servers").extract[JArray]
+          servers.arr should have size 1
+          (servers.arr.head \ "url").extract[String] shouldEqual "https://some.domain.com:12345/api/"
         }
       }
     }
