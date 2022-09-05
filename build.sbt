@@ -8,7 +8,7 @@ name := "swagger-akka-http"
 val swaggerVersion = "2.2.2"
 val akkaVersion = "2.6.19"
 val akkaHttpVersion = "10.2.9"
-val jacksonVersion = "2.13.3"
+val jacksonVersion = "2.13.4"
 val slf4jVersion = "1.7.36"
 val scala213 = "2.13.8"
 
@@ -60,7 +60,7 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.13" % Test,
   "org.json4s" %% "json4s-native" % "4.0.5" % Test,
   "jakarta.ws.rs" % "jakarta.ws.rs-api" % "3.0.0" % Test,
-  "joda-time" % "joda-time" % "2.11.0" % Test,
+  "joda-time" % "joda-time" % "2.11.1" % Test,
   "org.joda" % "joda-convert" % "2.2.2" % Test,
   "org.slf4j" % "slf4j-simple" % slf4jVersion % Test
 )
