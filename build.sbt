@@ -8,16 +8,16 @@ name := "swagger-akka-http"
 val swaggerVersion = "2.2.3"
 val akkaVersion = "2.6.20"
 val akkaHttpVersion = "10.2.10"
-val jacksonVersion = "2.13.4"
+val jacksonVersion = "2.14.0-rc2"
 val slf4jVersion = "1.7.36"
-val scala213 = "2.13.8"
+val scala213 = "2.13.10"
 
 ThisBuild / scalaVersion := scala213
-ThisBuild / crossScalaVersions := Seq(scala213, "2.12.15")
+ThisBuild / crossScalaVersions := Seq(scala213, "2.12.17")
 
 update / checksums := Nil
 
-//resolvers += Resolver.sonatypeRepo("snapshots")
+resolvers ++= Resolver.sonatypeOssRepos("snapshots")
 
 autoAPIMappings := true
 
@@ -53,7 +53,7 @@ libraryDependencies ++= Seq(
   "io.swagger.core.v3" % "swagger-annotations-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-models-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-jaxrs2-jakarta" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.7.5",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.8.0-SNAPSHOT",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
