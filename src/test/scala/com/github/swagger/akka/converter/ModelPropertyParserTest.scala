@@ -153,7 +153,7 @@ class ModelPropertyParserTest extends AnyFlatSpec with Matchers {
   it should "handle null properties from converters later in the chain" in {
     object CustomConverter extends ModelConverter {
       override def resolve(`type`: AnnotatedType, context: ModelConverterContext, chain: util.Iterator[ModelConverter]): Schema[_] = {
-        if (chain.hasNext) chain.next().resolve(`type`, context, chain) else null
+        if (chain.hasNext && `type`.getType != null) chain.next().resolve(`type`, context, chain) else null
       }
     }
 
