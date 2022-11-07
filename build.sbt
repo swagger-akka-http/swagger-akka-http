@@ -8,7 +8,7 @@ name := "swagger-akka-http"
 val swaggerVersion = "2.2.4"
 val akkaVersion = "2.6.20"
 val akkaHttpVersion = "10.2.10"
-val jacksonVersion = "2.14.0"
+val jacksonVersion = "2.13.4"
 val slf4jVersion = "2.0.3"
 val scala213 = "2.13.10"
 
@@ -53,7 +53,7 @@ libraryDependencies ++= Seq(
   "io.swagger.core.v3" % "swagger-annotations-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-models-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-jaxrs2-jakarta" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.8.0-SNAPSHOT",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.7.9",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
