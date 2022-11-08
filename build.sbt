@@ -17,7 +17,7 @@ ThisBuild / crossScalaVersions := Seq(scala213, "2.12.17")
 
 update / checksums := Nil
 
-resolvers ++= Resolver.sonatypeOssRepos("snapshots")
+//resolvers ++= Resolver.sonatypeOssRepos("snapshots")
 
 autoAPIMappings := true
 
@@ -53,7 +53,7 @@ libraryDependencies ++= Seq(
   "io.swagger.core.v3" % "swagger-annotations-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-models-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-jaxrs2-jakarta" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.8.0-SNAPSHOT",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.8.0",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
