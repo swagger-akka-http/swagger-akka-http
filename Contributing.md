@@ -3,7 +3,7 @@ When contributing to this repository, it is a good idea to first discuss the cha
 before making a change. Pull requests will be reviewed anyway but it is not advised to do big Pull Requests without waiting
 for feedback on an issue.
 
-Please try to follow similar coding formats to the the existing code. Tests should be provided.
+Please try to follow similar coding formats to the existing code. Tests should be provided.
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
