@@ -17,7 +17,7 @@ There is another blog entry and demo hosted by [Knoldus](https://blog.knoldus.co
 This is a fork of [gettyimages/spray-swagger](https://github.com/gettyimages/spray-swagger) which has been extended to include pull requests to support the latest swagger.io annotations.
 [swagger-spray/swagger-spray](https://github.com/swagger-spray/swagger-spray) is the no longer maintained Spray equivalent.
 
-The [OpenAPI spec](http://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
+The [OpenAPI spec](https://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
 
 ## Getting Swagger-Akka-Http
 
@@ -183,7 +183,7 @@ case class ModelWOptionBooleanSchemaOverride(@Schema(implementation = classOf[Bo
 
 ## Swagger UI
 
-This library does not include [Swagger's UI](http://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy. 
+This library does not include [Swagger's UI](https://petstore.swagger.io/) only the api support for powering a UI. Adding such a UI to your akka-http app is easy. 
 [swagger-akka-http-sample](https://github.com/pjfanning/swagger-akka-http-sample) does it using libs from org.webjars.
 
 Alternatively, you can include the static files for the Swagger UI and expose using akka-http's `getFromResource` and `getFromResourceDirectory` [support](http://doc.akka.io/docs/akka-http/current/scala/http/routing-dsl/directives/alphabetically.html).
