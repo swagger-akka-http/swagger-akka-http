@@ -8,16 +8,16 @@
 
 :warning: This project is being ramped down due to Akka's move away from [Open Source](https://www.lightbend.com/blog/why-we-are-changing-the-license-for-akka).
 
-Swagger-Akka-Http brings [Swagger](http://swagger.io/swagger-core/) support for [Akka-Http](http://doc.akka.io/docs/akka-http/current/index.html) Apis. The included `SwaggerHttpService` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](http://petstore.swagger.io/).
+Swagger-Akka-Http brings [Swagger](https://swagger.io/swagger-core/) support for [Akka-Http](https://doc.akka.io/docs/akka-http/current/index.html) Apis. The included `SwaggerHttpService` route will inspect Scala types with Swagger annotations and build a swagger compliant endpoint for a [swagger compliant ui](https://petstore.swagger.io/).
 
 This project was featured in a [blog entry](https://blog.codecentric.de/en/2016/04/swagger-akka-http/) on codecentric.
 
 There is another blog entry and demo hosted by [Knoldus](https://blog.knoldus.com/2017/01/31/document-generation-of-akka-http-using-swagger/).
 
 This is a fork of [gettyimages/spray-swagger](https://github.com/gettyimages/spray-swagger) which has been extended to include pull requests to support the latest swagger.io annotations.
-[swagger-spray/swagger-spray](https://github.com/swagger-spray/swagger-spray) is an actively maintained Spray equivalent.
+[swagger-spray/swagger-spray](https://github.com/swagger-spray/swagger-spray) is the no longer maintained Spray equivalent.
 
-The [swagger spec](http://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
+The [OpenAPI spec](http://swagger.io/specification/) is helpful for understanding the swagger api and resource declaration semantics behind swagger-core annotations.
 
 ## Getting Swagger-Akka-Http
 
