@@ -163,7 +163,7 @@ trait SwaggerGenerator {
     Option(swagger.getComponents) match {
       case Some(components) => {
         if (!unwantedDefinitions.isEmpty) {
-          val filteredSchemas = asJavaMutableMap(asScala(components.getSchemas).view.filterKeys(
+          val filteredSchemas = asJavaMutableMap(asScala(components.getSchemas).filterKeys(
             definitionName => !unwantedDefinitions.contains(definitionName)).toMap)
           components.setSchemas(filteredSchemas)
         }
