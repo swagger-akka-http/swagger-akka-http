@@ -114,7 +114,7 @@ class SwaggerHttpServiceSpec
     val log: Logger = LoggerFactory.getLogger(classOf[PrivateUserSwaggerRoute])
 
     override val apiClasses: Set[Class[_]] = Set(
-      classOf[PrivateUserSwaggerRoute]
+      classOf[UserRoute]
     )
 
     override val host: String = domain
