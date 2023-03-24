@@ -165,10 +165,10 @@ trait SwaggerGenerator {
         if (!unwantedDefinitions.isEmpty) {
           val filteredSchemas = asJavaMutableMap(asScala(components.getSchemas).view.filterKeys(
             definitionName => !unwantedDefinitions.contains(definitionName)).toMap)
-          swagger.getComponents.setSchemas(filteredSchemas)
+          components.setSchemas(filteredSchemas)
         }
       }
-      case None =>
+      case _ =>
     }
     swagger
   }
