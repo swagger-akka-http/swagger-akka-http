@@ -341,7 +341,7 @@ class SwaggerHttpServiceSpec
     }
 
     "SwaggerHttpService" should {
-      "handle private methods" in {
+      "not fail when there are private methods" in {
         val route = new PrivateUserSwaggerRoute("abc.com", List("http"))
         val json = route.generateSwaggerJson
         json should not be empty
