@@ -2,7 +2,7 @@ package com.github.swagger.akka
 
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.{Directives, ExceptionHandler, Route}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.github.swagger.akka.model._
 import com.github.swagger.akka.samples._
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.models.parameters.Parameter
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme.In
 import io.swagger.v3.oas.models.servers.Server
+import jakarta.ws.rs.{GET, Path}
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.scalatest.BeforeAndAfterAll
@@ -20,6 +21,7 @@ import scala.collection.JavaConverters._
 import scala.collection.immutable.ListMap
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.slf4j.{Logger, LoggerFactory}
 
 class SwaggerHttpServiceSpec
     extends AnyWordSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest {
@@ -76,6 +78,72 @@ class SwaggerHttpServiceSpec
       termsOfService = "Free and Open",
       contact = Some(Contact(name = "Alice Smith", url = "http://com.example.com/alicesmith", email = "alice.smith@example.com")),
       license = Some(License(name = "MIT", url = "https://opensource.org/licenses/MIT")))
+  }
+
+  @Path("user")
+  private case class UserRoute() {
+
+    def apiRoute: Route = pathPrefix("user") {
+      concat(
+        path("1") {
+          get(firstApi)
+        },
+        path("2") {
+          get(secondApi)
+        },
+      )
+    }
+
+    @GET
+    @Path("1")
+    private def firstApi: Route = {
+      complete("Ok")
+    }
+
+    @GET
+    @Path("2")
+    private def secondApi: Route = {
+      complete("Ok")
+    }
+
+  }
+
+  class PrivateUserSwaggerRoute(domain: String,
+                                httpSchemes: List[String]) extends Directives with SwaggerGenerator {
+
+    val log: Logger = LoggerFactory.getLogger(classOf[PrivateUserSwaggerRoute])
+
+    override val apiClasses: Set[Class[_]] = Set(
+      classOf[PrivateUserSwaggerRoute]
+    )
+
+    override val host: String = domain
+
+    override val schemes: List[String] = httpSchemes
+
+    override val apiDocsPath = "swagger"
+
+    //When commented swagger is generated properly
+    override val unwantedDefinitions: Seq[String] = Seq("Function1", "Function1RequestContextFutureRouteResult")
+
+    //For printing to logs error thrown by generator
+    private def exceptionHandler: ExceptionHandler = ExceptionHandler {
+      case e: NullPointerException =>
+        log.error("NullPointerException occurred", e)
+        complete(StatusCodes.InternalServerError, "NullPointerException")
+
+      case e: Exception =>
+        log.error("Unexpected exception occurred", e)
+        complete(StatusCodes.InternalServerError, "InternalServerError")
+    }
+
+    def apiRoute: Route = path("swagger") {
+      handleExceptions(exceptionHandler) {
+        //Just always return swagger generation
+        complete(generateSwaggerJson)
+      }
+    }
+
   }
 
   private implicit val formats = org.json4s.DefaultFormats
@@ -269,6 +337,14 @@ class SwaggerHttpServiceSpec
       }
       "mean that getServers returns a mutable list" in {
         swaggerService.swaggerConfig.getServers.add(new Server)
+      }
+    }
+
+    "SwaggerHttpService" should {
+      "handle private methods" in {
+        val route = new PrivateUserSwaggerRoute("abc.com", List("http"))
+        val json = route.generateSwaggerJson
+        json should not be empty
       }
     }
   }
