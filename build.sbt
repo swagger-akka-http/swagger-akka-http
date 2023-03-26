@@ -5,11 +5,11 @@ organization := "com.github.swagger-akka-http"
 
 name := "swagger-akka-http"
 
-val swaggerVersion = "2.2.7"
+val swaggerVersion = "2.2.9"
 val akkaVersion = "2.6.20"
 val akkaHttpVersion = "10.2.10"
-val jacksonVersion = "2.14.1"
-val slf4jVersion = "2.0.5"
+val jacksonVersion = "2.14.2"
+val slf4jVersion = "2.0.7"
 val scala213 = "2.13.10"
 
 ThisBuild / scalaVersion := scala213
@@ -53,15 +53,15 @@ libraryDependencies ++= Seq(
   "io.swagger.core.v3" % "swagger-annotations-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-models-jakarta" % swaggerVersion,
   "io.swagger.core.v3" % "swagger-jaxrs2-jakarta" % swaggerVersion,
-  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.8.2",
+  "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.9.0",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion,
-  "org.scalatest" %% "scalatest" % "3.2.14" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.15" % Test,
   "org.json4s" %% "json4s-native" % "4.0.6" % Test,
   "jakarta.ws.rs" % "jakarta.ws.rs-api" % "3.0.0" % Test,
-  "joda-time" % "joda-time" % "2.12.2" % Test,
-  "org.joda" % "joda-convert" % "2.2.2" % Test,
+  "joda-time" % "joda-time" % "2.12.4" % Test,
+  "org.joda" % "joda-convert" % "2.2.3" % Test,
   "org.slf4j" % "slf4j-simple" % slf4jVersion % Test
 )
 
