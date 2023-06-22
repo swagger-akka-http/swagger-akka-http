@@ -111,6 +111,7 @@ pomExtra := (
     </developer>
   </developers>)
 
+ThisBuild / tlSonatypeUseLegacyHost := true
 ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("coverage", "test", "coverageReport")))
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec(Zulu, "8"), JavaSpec(Zulu, "11"), JavaSpec(Zulu, "17"))
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
